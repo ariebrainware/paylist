@@ -36,11 +36,11 @@ export default function HomeScreen() {
 
           <View
             style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
+            <MonoText>Hello</MonoText>
           </View>
 
           <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
+          I'm getting started with React Nativee now, want to start develop my first own app called "PAYLIST" 
           </Text>
         </View>
 
