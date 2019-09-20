@@ -1,154 +1,127 @@
 import React, { Component } from 'react';
-import {Alert, Button, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
-import Axios from 'axios';
-
-
-const t = require('tcomb-form-native')
-
-const Form = t.form.Form
-
-const User = t.struct({
-  username: t.String,
-  password:  t.String
-})
-
-const options = {
-  fields: {
-    username: {
-      autoCapitalize: 'none',
-      autoCorrect: false
-    },
-    password: {
-      autoCapitalize: 'none',
-      password: true,
-      autoCorrect: false
-    }
-  }
-}
+import { Alert, Button, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
 export default class LoginScreen extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props)
 
-        this.state = {
-            username: '',
-            password: '',
-            error:'',
-            loading:false
-        };
-        this.loginUser = this.loginUser.bind(this);
-        this.onLoginFail = this.onLoginFail.bind(this);
+    this.state = {
+      username: '',
+      password: '',
+      loading: false
+    };
+    this.loginUser = this.loginUser.bind(this)
+  }
+
+  loginUser() {
+    let credentials = {
+      'username': this.state.username,
+      'password': this.state.password,
     }
-
-    _onChange = (value) => {
-      this.setState({
-        value
-      })
+    let payload = []
+    for (let property in credentials) {
+      let encodedKey = encodeURIComponent(property)
+      let encodedValue = encodeURIComponent(credentials[property])
+      payload.push(encodedKey + "=" + encodedValue)
     }
+    payload = payload.join("&")
+    console.log(`payload: ${payload}`)
+    // Send a POST request
+    fetch('http://192.168.100.19:3002/v1/paylist/user/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/x-www-form-urlencoded',
 
-  loginUser(){
-    const value = this.refs.form.getValue();
-    // If the form is valid...
-    if (value) {
-      const data = {
-        username: value.email,
-        password: value.password
-      }
-      const json = JSON.stringify(data)
-      Axios.post("/user/signin", {
-        body: json
-       })
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.error){
-          alert(res.error)
-        } else {
-          alert("success")
-          this.props.navigation.navigate('Main')
-        }
-      })
+      },
+      body: payload,
+    })
+      .then(response => response.json())
+      .then(res => console.log(res))
       .catch((error) => {
         console.log(error);
         this.onLoginFail();
       })
       .done()
-    } else {
-        //form validation error
-        alert('Please fix the errors listed and try again.')
-    }
   }
 
   onLoginFail() {
     this.setState({
       error: 'Login Failed',
-      loading: false
     });
   }
-      render() {
-        return (
-          <ScrollView style={styles.container}>
-            <Form
-              ref='form'
-              options={options}
-              type={User}
-              value={this.state.value}
-              onChange={this._onChange}
-            />
-            <TouchableHighlight onPress={this.loginUser}>
-              <Text style={[styles.button, styles.greenButton]}>Log In</Text>
-            </TouchableHighlight>
-        
-                 <View style={styles.signupTextCont}>
-                    <Text style={styles.signupText}>Don't have an account yet?</Text>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
-                        <Text style={styles.signupButton}> Sign Up</Text>
-                    </TouchableOpacity>
-                 </View>
-             </ScrollView>   
-             );
-        }
+  render() {
+    return (
+      <ScrollView style={styles.container}>
+        <TextInput
+          value={this.state.username}
+          onChangeText={(username) => this.setState({ username })}
+          placeholder={'Username'}
+          style={styles.input}
+        />
+        <TextInput
+          value={this.state.password}
+          onChangeText={(password) => this.setState({ password })}
+          placeholder={'Password'}
+          style={styles.input}
+          secureTextEntry={true}
+        />
+        <TouchableHighlight onPress={this.loginUser}>
+          <Text style={[styles.button, styles.greenButton]}>Log In</Text>
+        </TouchableHighlight>
+
+        <View style={styles.signupTextCont}>
+          <Text style={styles.signupText}>Don't have an account yet?</Text>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
+            <Text style={styles.signupButton}> Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  }
 }
 
 var styles = StyleSheet.create({
-    container: {
-      padding: 20,
-      flex: 1,
-      flexDirection: 'column'
-    },
-    button: {
-      borderRadius: 4,
-      padding: 20,
-      textAlign: 'center',
-      marginBottom: 20,
-      color: '#fff'
-    },
-    greenButton: {
-      backgroundColor: '#4CD964'
-    },
-    centering: {
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    signupTextCont : {
-        flex:0,
-        alignItems:'flex-end',
-        justifyContent :'center',
-        paddingVertical:3,
-        flexDirection:'row', 
-    },
-    signupText: {
-        color:'black',
-        fontSize:16,
-    },
-    signupButton: {
-        color:'black',
-        fontSize:16,
-        fontWeight:'500',
-    },
-    signInText: {
-      color:'green',
-      fontSize:25,
-      fontWeight: 'bold',
-      padding: 0
+  container: {
+    padding: 20,
+    flex: 1,
+    flexDirection: 'column'
   },
-  })
+  button: {
+    borderRadius: 4,
+    padding: 20,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#fff'
+  },
+  greenButton: {
+    backgroundColor: '#4CD964'
+  },
+  centering: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  signupTextCont: {
+    flex: 0,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingVertical: 3,
+    flexDirection: 'row',
+  },
+  signupText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  signupButton: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  signInText: {
+    color: 'green',
+    fontSize: 25,
+    fontWeight: 'bold',
+    padding: 0
+  }
+})
