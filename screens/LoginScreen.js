@@ -87,6 +87,7 @@ export default class LoginScreen extends React.Component {
       .then(res => {
         switch (resStatus) {
           case 200:
+
             deviceStorage.saveKey(STORAGE_KEY, res.token);
             console.log('success')
             this.props.navigation.navigate('Main')
