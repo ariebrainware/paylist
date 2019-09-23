@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {Alert, Button, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
-import Axios from 'axios';
+import deviceStorage from '../service/deviceStorage';
 
-
+var STORAGE_KEY = 'token'
 const t = require('tcomb-form-native')
 
 const Form = t.form.Form
@@ -10,7 +10,7 @@ const Form = t.form.Form
 const User = t.struct({
   username: t.String,
   password:  t.String
-})
+});
 
 const options = {
   fields: {
@@ -31,13 +31,22 @@ export default class LoginScreen extends React.Component {
         super(props);
 
         this.state = {
+          value: {
             username: '',
-            password: '',
-            error:'',
-            loading:false
-        };
-        this.loginUser = this.loginUser.bind(this);
+            password: ''
+        }
+      }
+        this._handleLogin = this._handleLogin.bind(this);
         this.onLoginFail = this.onLoginFail.bind(this);
+    }
+
+    componentWillUnmount() {
+      this.setState = {
+        value: {
+          username: '',
+          password: null
+        }
+      }
     }
 
     _onChange = (value) => {
@@ -46,35 +55,63 @@ export default class LoginScreen extends React.Component {
       })
     }
 
-  loginUser(){
+  _handleLogin(){
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
       const data = {
-        username: value.email,
+        username: value.username,
         password: value.password
       }
-      const json = JSON.stringify(data)
-      Axios.post("/user/signin", {
-        body: json
+      let payload = []
+      for (let property in data) {
+        let encodedKey = encodeURIComponent(property)
+        let encodedValue = encodeURIComponent(data[property])
+        payload.push(encodedKey + "=" + encodedValue)
+      }
+      payload = payload.join("&")
+      console.log(`payload: ${payload}`)
+      //sent post request
+      fetch('http://192.168.100.8:8000/v1/paylist/user/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Accept : 'application/x-www-form-urlencoded'
+        },
+        body: payload
        })
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.error){
-          alert(res.error)
-        } else {
-          alert("success")
-          this.props.navigation.navigate('Main')
+       .then(res => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(res => {
+        switch (resStatus) {
+          case 200:
+            deviceStorage.saveKey(STORAGE_KEY, res.token);
+            console.log('success')
+            this.props.navigation.navigate('Main')
+            //console.log(res.data.jwt)
+            break
+          case 404:
+            console.log('wrong username or password')
+            alert('wrong username or password')
+            break
+          case 500:
+            console.log('already login')
+            alert('already login')
+            break
+          default:
+            console.log('unhandled')
+            break
         }
       })
-      .catch((error) => {
-        console.log(error);
-        this.onLoginFail();
+      .catch(err => {
+        console.error(err)
       })
       .done()
     } else {
         //form validation error
-        alert('Please fix the errors listed and try again.')
+        alert('please provide username or password')
     }
   }
 
@@ -83,7 +120,7 @@ export default class LoginScreen extends React.Component {
       error: 'Login Failed',
       loading: false
     });
-  }
+ }
       render() {
         return (
           <ScrollView style={styles.container}>
@@ -94,7 +131,7 @@ export default class LoginScreen extends React.Component {
               value={this.state.value}
               onChange={this._onChange}
             />
-            <TouchableHighlight onPress={this.loginUser}>
+            <TouchableHighlight onPress={this._handleLogin}>
               <Text style={[styles.button, styles.greenButton]}>Log In</Text>
             </TouchableHighlight>
         
@@ -112,8 +149,9 @@ export default class LoginScreen extends React.Component {
 var styles = StyleSheet.create({
     container: {
       padding: 20,
-      flex: 1,
-      flexDirection: 'column'
+      flex: 0,
+      flexDirection: 'column',
+      //backgroundColor:'red'
     },
     button: {
       borderRadius: 4,
@@ -144,11 +182,5 @@ var styles = StyleSheet.create({
         color:'black',
         fontSize:16,
         fontWeight:'500',
-    },
-    signInText: {
-      color:'green',
-      fontSize:25,
-      fontWeight: 'bold',
-      padding: 0
-  },
+    }
   })

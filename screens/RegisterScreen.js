@@ -6,8 +6,6 @@ import {
     Text,
     View } 
     from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import Axios from 'axios';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
@@ -87,24 +85,53 @@ class RegisterScreen extends React.Component {
                 username: value.username,
                 password: value.password,
             }
-            const json = JSON.stringify(data);
-            Axios.post("/v1/paylist/user/signup", {
-               body: json
-           },)
-        .then((response) => response.json())
-        .then(() => {
-            alert('Success! You may now log in');
-            //redirect to
-            this.props.navigation.navigate('Login');
-        })
-        .catch((error) => {
-          console.info(error.message);
-          this.onRegistrationFail();
-        })
+            let payload = []
+            for (let property in data) {
+                let encodedKey = encodeURIComponent(property)
+                let encodedValue = encodeURIComponent(data[property])
+                payload.push(encodedKey + "=" + encodedValue)
+            }
+    payload = payload.join("&")
+    console.log(`payload: ${payload}`)
+    //sent post request
+    fetch('http://192.168.100.8:8000/v1/paylist/user/signup', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept : 'application/x-www-form-urlencoded'
+    },
+    body: payload
+    })
+    .then(res => {
+    resStatus = res.status
+    return res.json()
+    })
+    .then(res => {
+        switch (resStatus) {
+          case 200:
+            console.log('success')
+            alert('You may login now')
+            break
+        //   case 400:
+        //     if (res.code === 'ValidationFailed') {
+        //     // My custom error messages from the API.
+        //         console.log('field can not be null')
+        //         alert('field can not be null')
+        //     }
+        //     break
+          case 500:
+            console.log('username exist')
+            alert('username exist')
+            break
+          default:
+            console.log('unhandled')
+            break
+        }
+      })
         .done()
         } else {
             //form validation error
-            alert('Please fix the errors listed and try again.')
+            alert('Please fill the empty field')
         }
     }
 
