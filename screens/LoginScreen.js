@@ -20,6 +20,7 @@ const options = {
     password: {
       autoCapitalize: 'none',
       password: true,
+      secureTextEntry: true,
       autoCorrect: false
     }
   }
@@ -76,7 +77,7 @@ export default class LoginScreen extends React.Component {
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       //sent post request
-      fetch('http://192.168.100.14:8000/v1/paylist/user/signin', {
+      fetch('http://192.168.100.26:8000/v1/paylist/user/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -92,11 +93,9 @@ export default class LoginScreen extends React.Component {
         console.log('saat login :' + res.data)
         switch (resStatus) {
           case 200:
-            deviceStorage.saveKey('token', res.data);
-            //this.props.newJWT(res.data.jwt);
-            console.log('success')
+            let token = {"type": "sensitive", "value":res.data}
+            deviceStorage.saveKey("token", JSON.stringify(token));
             this.props.navigation.navigate('Main')
-            //console.log(res.data.jwt)
             break
           case 404:
             console.log('wrong username or password')
@@ -105,6 +104,7 @@ export default class LoginScreen extends React.Component {
           case 500:
             console.log('already login')
             alert('already login')
+            this.props.navigation.navigate('Main')
             break
           default:
             console.log('unhandled')

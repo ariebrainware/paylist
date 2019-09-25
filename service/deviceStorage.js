@@ -1,9 +1,9 @@
 import { AsyncStorage }  from 'react-native';
 
 const deviceStorage = {
-    async saveKey(token, valueToSave) {
+    async saveKey(key, valueToSave) {
         try {
-            await AsyncStorage.setItem(token, valueToSave);
+            await AsyncStorage.setItem(key, valueToSave);
         } catch (error) {
             console.log('AsyncStorage Error: ' + error.message);
         }
@@ -11,18 +11,19 @@ const deviceStorage = {
 
     async loadJWT() {
         try {
-            let value = await AsyncStorage.getItem('token');
-            // let data = JSON.parse(value);
-            // return data;
-            if (value!== null) {
-               console.log('dari device :' + value)
-            } 
-            return value;
+            let payload = await AsyncStorage.getItem('token');
+            let token = JSON.parse(payload);
+            // console.log(token.value)
+            // if (!token) {
+                // console.log('dari device :' + token.value);
+            return token.value;
+            // } 
             //else {
             //     this.setState({
             //         loading: false
             //     });
             // }
+            // alert('You\'re not authorized to perform this action')
         } catch (error) {
             console.log('AsyncStorage error :' + error.message);
         }
