@@ -94,7 +94,7 @@ class RegisterScreen extends React.Component {
     payload = payload.join("&")
     console.log(`payload: ${payload}`)
     //sent post request
-    fetch('http://192.168.100.8:8000/v1/paylist/user/signup', {
+    fetch('http://192.168.100.14:8000/v1/paylist/user/signup', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

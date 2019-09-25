@@ -3,14 +3,15 @@ import { ExpoConfigView } from '@expo/samples';
 import { View, Button} from 'react-native';
 import { deviceStorage } from '../service/deviceStorage';
 
-var STORAGE_KEY = 'token';
 export default class SettingsScreen extends React.Component {
 
-  _handleLogOut(){
-    fetch('http://192.168.100.8:8000/v1/paylist/users/signout', {
+ async _handleLogOut(){
+    var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
+    console.log(DEMO_TOKEN)
+    fetch('http://192.168.100.14:8000/v1/paylist/users/signout', {
         method: 'GET',
         headers: {
-          'Authorization' : STORAGE_KEY
+          'Authorization' : DEMO_TOKEN
         }
       })
       .then(res => {
@@ -18,13 +19,11 @@ export default class SettingsScreen extends React.Component {
        return res.json()
      })
      .then(res => {
+       console.log(res.data)
        switch (resStatus) {
          case 200:
-            deviceStorage.deleteJWT(STORAGE_KEY, res.token);
            console.log('success')
-           console.log(STORAGE_KEY)
            this.props.navigation.navigate('Login')
-           
            alert('You have been logged out.');
            break
         //  case 404:

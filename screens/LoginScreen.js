@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Alert, Button, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
 
-var STORAGE_KEY = 'token'
 const t = require('tcomb-form-native')
 
 const Form = t.form.Form
@@ -33,7 +32,9 @@ export default class LoginScreen extends React.Component {
         this.state = {
           value: {
             username: '',
-            password: ''
+            password: '',
+            error: '',
+            loading: false
         }
       }
         this._handleLogin = this._handleLogin.bind(this);
@@ -44,7 +45,10 @@ export default class LoginScreen extends React.Component {
       this.setState = {
         value: {
           username: '',
-          password: null
+          password: null,
+          error:'',
+          loading:true
+
         }
       }
     }
@@ -72,7 +76,7 @@ export default class LoginScreen extends React.Component {
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       //sent post request
-      fetch('http://192.168.100.8:8000/v1/paylist/user/signin', {
+      fetch('http://192.168.100.14:8000/v1/paylist/user/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -85,10 +89,11 @@ export default class LoginScreen extends React.Component {
         return res.json()
       })
       .then(res => {
+        console.log('saat login :' + res.data)
         switch (resStatus) {
           case 200:
-
-            deviceStorage.saveKey(STORAGE_KEY, res.token);
+            deviceStorage.saveKey('token', res.data);
+            //this.props.newJWT(res.data.jwt);
             console.log('success')
             this.props.navigation.navigate('Main')
             //console.log(res.data.jwt)

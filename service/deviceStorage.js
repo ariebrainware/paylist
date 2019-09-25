@@ -1,9 +1,9 @@
 import { AsyncStorage }  from 'react-native';
 
 const deviceStorage = {
-    async saveKey(key, valueToSave) {
+    async saveKey(token, valueToSave) {
         try {
-            await AsyncStorage.setItem(key, valueToSave);
+            await AsyncStorage.setItem(token, valueToSave);
         } catch (error) {
             console.log('AsyncStorage Error: ' + error.message);
         }
@@ -11,17 +11,18 @@ const deviceStorage = {
 
     async loadJWT() {
         try {
-            const value = await AsyncStorage.getItem('token');
-            if (value !== null) {
-                this.setState({
-                    jwt: value,
-                    loading: false
-                });
-            } else {
-                this.setState({
-                    loading: false
-                });
-            }
+            let value = await AsyncStorage.getItem('token');
+            // let data = JSON.parse(value);
+            // return data;
+            if (value!== null) {
+               console.log('dari device :' + value)
+            } 
+            return value;
+            //else {
+            //     this.setState({
+            //         loading: false
+            //     });
+            // }
         } catch (error) {
             console.log('AsyncStorage error :' + error.message);
         }

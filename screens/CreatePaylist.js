@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
 
-var STORAGE_KEY = 'token';
 const t = require('tcomb-form-native');
 const Form = t.form.Form
 const createPaylist = t.struct ({
@@ -43,7 +42,6 @@ export default class CreatePaylist extends React.Component {
                 name:'',
                 amount: '',
                 completed: '',
-                jwt:'',
                 error:'',
                 loading: false
             }
@@ -57,7 +55,8 @@ export default class CreatePaylist extends React.Component {
                 name: '',
                 amount: '',
                 completed:'',
-                jwt:''
+                error:'',
+                loading:true
             }
         }
     }
@@ -69,7 +68,7 @@ export default class CreatePaylist extends React.Component {
     }
 
     async _CreatePaylist(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT(STORAGE_KEY);
+    var DEMO_TOKEN = await deviceStorage.loadJWT('token');
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
@@ -86,14 +85,16 @@ export default class CreatePaylist extends React.Component {
       }
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
+      const header= {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept : 'application/x-www-form-urlencoded',
+        'Authorization': DEMO_TOKEN
+      };
       //sent post request
-      fetch('http://192.168.100.8:8000/v1/paylist/paylist', {
+      fetch('http://192.168.100.14:8000/v1/paylist/paylist', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept : 'application/x-www-form-urlencoded',
-          'Authorization': DEMO_TOKEN
-        },
+        headers: header,
         body: payload
        })
        .then(res => {
@@ -104,7 +105,7 @@ export default class CreatePaylist extends React.Component {
         switch (resStatus) {
           case 200:
             console.log('success')
-            //console.log(res.data.jwt)
+            console.log('dari res' +res.data.jwt)
             break
           case 403:
             console.log('please sign in again')

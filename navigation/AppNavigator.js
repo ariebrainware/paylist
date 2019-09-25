@@ -31,7 +31,10 @@ export default createAppContainer(
       }
     },
     Main: {
-      screen: MainTabNavigator
+      screen: MainTabNavigator,
+      navigationOptions: {
+        header: null,
+      }
     },
     CreatePaylist: {
         screen: CreatePaylist,
