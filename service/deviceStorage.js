@@ -31,14 +31,17 @@ const deviceStorage = {
 
     async deleteJWT() {
         try{
-            await AsyncStorage.removeItem('token')
-            .then(
-                () => {
-                    this.setState({
-                        jwt:''
-                    })
-                }
-            );
+            let payload = await AsyncStorage.getItem('token');
+            let token = JSON.parse(payload);
+            await AsyncStorage.removeItem(token.value);
+            return token.value;
+            // .then(
+            //     () => {
+            //         this.setState({
+            //             jwt:''
+            //         })
+            //     }
+            // );
         } catch (error){
             console.log('AsyncStorage Error: ' + error.message);
         }

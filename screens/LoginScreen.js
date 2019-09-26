@@ -60,6 +60,11 @@ export default class LoginScreen extends React.Component {
       })
     }
 
+    clearForm() {
+      // clear content from all textbox
+      this.setState({ value: null });
+    }
+
   _handleLogin(){
     const value = this.refs.form.getValue();
     // If the form is valid...
@@ -96,15 +101,17 @@ export default class LoginScreen extends React.Component {
             let token = {"type": "sensitive", "value":res.data}
             deviceStorage.saveKey("token", JSON.stringify(token));
             this.props.navigation.navigate('Main')
+            this.clearForm();
             break
           case 404:
             console.log('wrong username or password')
             alert('wrong username or password')
             break
-          case 500:
+          case 202:
             console.log('already login')
             alert('already login')
             this.props.navigation.navigate('Main')
+            this.clearForm();
             break
           default:
             console.log('unhandled')

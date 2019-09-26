@@ -7,7 +7,6 @@ import {
     TouchableHighlight,
 } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
-import { numericLiteral } from '@babel/types';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
