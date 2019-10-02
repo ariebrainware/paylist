@@ -10,51 +10,69 @@ import { Button } from 'react-native-paper';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
-const createPaylist = t.struct ({
+const User = t.struct ({
+    email: t.String,
     name: t.String,
-    amount: t.String,
-    //completed: t.String
+    username: t.String,
+    password: t.String,
+    balance: t.String,
 })
 
 const option = {
     fields: {
+        email: {
+            autoCapitalize: 'none',
+            autoCorrect: false,
+        },
         name: {
             autoCapitalize: 'none',
             autoCorrect: false,
         },
-        amount: {
+        username: {
+            autoCapitalize: 'none',
+            autoCorrect: false,
+        },
+        password: {
+            autoCapitalize: 'none',
+            autoCorrect: false,
+            secureTextEntry: true,
+            password: true,
+        },
+        balance: {
             autoCapitalize: 'none',
             autoCorrect: false,
             keyboardType: 'phone-pad'
         },
-        // completed: {
-        //     autoCapitalize: 'none',
-        //     autoCorrect: false,
-        //     editable: false
-        // }
     }
 }
 
-export default class CreatePaylist extends React.Component {
+export default class UpdateUser extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            data:[],
             value: {
+                email:'',
                 name:'',
-                amount: '',
+                username:'',
+                password:'',
+                balance: '',
                 error:'',
                 loading: false
             }
         }
-        this._CreatePaylist = this._CreatePaylist.bind(this);
+        this._UpdateUser = this._UpdateUser.bind(this);
     }
 
     componentWillUnmount() {
         this.setState = {
             value: {
+                email:'',
                 name: '',
-                amount: '',
+                username:'',
+                password:'',
+                balance: '',
                 error:'',
                 loading:true
             }
@@ -62,20 +80,23 @@ export default class CreatePaylist extends React.Component {
     }
 
     _onChange = (value) => {
-        this.setState({
-            value
-        })
-    }
+      this.setState({
+          value
+      })
+  }
 
-    async _CreatePaylist(){
+    async _UpdateUser(id){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token");
     console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
       const data = {
+        email: value.email,
         name: value.name,
-        amount: value.amount,
+        username: value.username,
+        password: value.password,
+        balance: value.balance,
       }
       let payload = []
       for (let property in data) {
@@ -93,30 +114,27 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       };
       //sent post request
-      fetch('http://192.168.100.17:8000/v1/paylist/paylist', {
-        method: 'POST',
+      fetch('http://192.168.100.17:8000/v1/paylist/user' + id, {
+        method: 'PUT',
         headers: header,
         body: payload
       })
-      .then(res => {
-        switch (res.status) {
-          case 200:
-            alert('Success save paylist')
-            this.props.navigation.navigate('Main')
-            break
-          case 403:
-            alert('You have to login first.')
-            this.props.navigation.navigate('Login')
-            break
-          case 500:
-            alert('token expired')
-            this.props.navigation.navigate('Login')
-            break
-          default:
-            alert('Something wrong, please try again later!')
-            break
-        }
+      .then((res) => {
+        resStatus = res.status
+        return res.json()
       })
+      .then(resJson => {
+        switch (resStatus) {
+          case 200:
+          let list = JSON.stringify(resJson.data)
+          let json = JSON.parse(list)
+            this.setState({
+              loading: false,
+              data: json,
+            });
+          break
+        }      
+    })
       .catch(err => {
         console.error(err)
       })
@@ -127,32 +145,46 @@ export default class CreatePaylist extends React.Component {
     }
 }
 
-    render() {
-            return (
-                <ScrollView style={styles.container}>
-                  <Form
-                    ref='form'
-                    options={option}
-                    type={createPaylist}
-                    value={this.state.value}
-                    onChange={this._onChange}
-                  />
-                  <View>
-                    <Button style={styles.button} mode="contained" onPress={this._CreatePaylist}>
-                        <Text style={[styles.button, styles.greenButton]}>Create</Text>
-                    </Button>
-                  </View>
-                </ScrollView>   
-                );
-      }
-};
+// componentDidMount(){
+//   this.setState = {
+//     value: {
+//         email:'',
+//         name: '',
+//         username:'',
+//         password:'',
+//         balance: '',
+//         error:'',
+//         loading:true
+//     }
+// }
+// }
+    
+render() {
+    return (
+      <View>
+        <ScrollView style={styles.container}>
+          <Form ref='form'
+                options={option}
+                type={User}
+                value={this.state.value}
+                onChange={this._onChange}
+          />
+        </ScrollView> 
+          <View>
+            <Button style={styles.button} mode="contained" onPress={this._UpdateUser}>
+              <Text style={[styles.button, styles.greenButton]}>Update</Text>
+            </Button>
+          </View>  
+      </View>
+    );
+  }
+}
 
 var styles = StyleSheet.create({
     container: {
       padding: 20,
       flex: 0,
       flexDirection: 'column',
-      //backgroundColor:'red'
     },
     button: {
       borderRadius: 4,

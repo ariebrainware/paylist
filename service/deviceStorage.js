@@ -13,9 +13,6 @@ const deviceStorage = {
         try {
             let payload = await AsyncStorage.getItem('token');
             let token = JSON.parse(payload);
-            // console.log(token.value)
-            // if (!token) {
-                // console.log('dari device :' + token.value);
             return token.value;
             // } 
             //else {

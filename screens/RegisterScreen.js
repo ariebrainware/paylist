@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import {
     ScrollView,
     StyleSheet, 
-    TouchableHighlight,
     Text,
     View } 
     from 'react-native';
+import { Button } from 'react-native-paper';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
@@ -94,7 +94,7 @@ class RegisterScreen extends React.Component {
     payload = payload.join("&")
     console.log(`payload: ${payload}`)
     //sent post request
-    fetch('http://192.168.100.26:8000/v1/paylist/user/signup', {
+    fetch('http://192.168.100.19:8000/v1/paylist/user/signup', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -145,11 +145,13 @@ class RegisterScreen extends React.Component {
     render() {
         return (
             <ScrollView style={styles.container}>
-                <Form ref='form' type={newUser} options={option}
-                value={this.state.value} onChange={this._onChange}/>
-                <TouchableHighlight onPress={this._handleAdd}>
-                    <Text style={[styles.button, styles.greenButton]}>Create Account</Text>
-                </TouchableHighlight>
+                <Form ref='form' 
+                type={newUser} options={option}
+                value={this.state.value} 
+                onChange={this._onChange}/>
+                <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
+                    <Text style={{}}>Create Account</Text>
+                </Button>
             </ScrollView>
         )
     }
@@ -164,13 +166,10 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 4,
-        padding: 20,
+        padding: 3,
         textAlign: 'center',
         marginBottom: 20,
-        color: '#fff',
-    },
-    greenButton: {
-        backgroundColor: '#4CD964',
+        backgroundColor: '#4CD964'
     },
     centering: {
         alignItems: 'center',

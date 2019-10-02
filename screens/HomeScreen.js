@@ -5,75 +5,179 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  RefreshControl,
   TouchableOpacity,
   View,
-  FlatList
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 import deviceStorage from '../service/deviceStorage';
+import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper';
+import { AppLoading } from 'expo';
 
 export default class HomeScreen extends React.Component{
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = {
-      dataP:[],
-      Loading:true
-  };
+      paylist :[],
+      loading: true,
+      checked: false
+    };
+    this._DeletePaylist = this._DeletePaylist.bind(this);
+    this._GetData = this._GetData.bind(this);
   }
 
-  _itemComponent=({item})=>{
-    return(
-        <View style={{flex:1,flexDirection: 'row',marginLeft: 10,}} >
-            <View style={{height:50,justifyContent: 'center',}}>
-                {/* <Image source={{uri: item.picture.thumbnail }} 
-                style={{width:40,height:40,borderRadius: 25,}}
-                /> */}
-            </View>
-
-            <View style={{flex:2,height:50}}>
-                <Text style={{padding:5}} >{item.paylist.name}</Text>
-                <Text style={{ padding: 5 }}>{item.paylist.amount}</Text>
-            </View>
-        </View>
-    ) 
-}
-componentDidMount = () => {
+componentDidMount(){
   this._GetData()
 }
-  async _GetData(){
+ async _GetData(){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token");
     console.log(DEMO_TOKEN)
-    fetch('http://192.168.100.26:8000/v1/paylist/paylist', {
+    const header= {
+      'Authorization': DEMO_TOKEN
+    };
+    fetch('http://192.168.100.17:8000/v1/paylist/paylist', {
         method: 'GET',
-        headers: {
-        'Authorization': DEMO_TOKEN
-        }
-       })
-      .then(resJson => {
-        console.log(resJson)
-        this.setState({
-          Loading:false,
-          dataP: resJson.paylist
-        });
+        headers: header
       })
+      .then((res) => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(resJson => {
+        switch (resStatus) {
+          case 200:
+          let list = JSON.stringify(resJson.data)
+          let json = JSON.parse(list)
+            this.setState({
+              loading: false,
+              paylist: json
+            });
+          break
+        }      
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
+  async _DeletePaylist(id){
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    console.log(" demo "+ DEMO_TOKEN)
+    const header = {
+      'Authorization' : DEMO_TOKEN
+    }
+    fetch('http://192.168.100.17:8000/v1/paylist/paylist/' + id, {
+        method: 'DELETE',
+        headers: header
+      })
+      .then(res => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(res => {
+       console.log(res)
+       switch (resStatus) {
+         case 200:
+           console.log('success')
+           alert('Delete Success.');
+           break
+         case 404:
+           console.log('no paylist found')
+           alert('no paylist found')
+           break
+        case 400:
+          console.log('specify paylist id')
+          alert('specify paylist id')
+           break
+        case 500:
+           alert('token expired')
+           this.props.navigation.navigate('Login')
+           break
+         default:
+           console.log('unhandled')
+           alert('Something wrong, please try again later!')
+           break
+       }
+     })
+     .catch(err => {
+       console.error(err)
+     })
+     .done()
+    }
+
+    componentWillMount() {
+    }
+
+    async _UpdatePaylistStatus(id){
+      var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+      console.log(" demo "+ DEMO_TOKEN)
+      const header = {
+        'Authorization' : DEMO_TOKEN
+      }
+      fetch('http://192.168.100.17:8000/v1/paylist/status/'+id, {
+          method: 'PUT',
+          headers: header
+        })
+        .then(res => {
+          resStatus = res.status
+          return res.json()
+        })
+        .then(res => {
+          console.log(res.data)
+          this.setState({ 
+            checked: checked
+        })
+    })
+  }
+    
+    onRefresh() {
+      this.setState({
+        paylist:[]
+      });
+      this._GetData();
+    }
+
   render(){
-  return (
-    
-    <View style={styles.container}>
-    
+    if (this.state.loading) {
+      return(
+          <View style={{padding:20}}>
+                <AppLoading/>
+            </View>
+        )
+    } else {
+    const { checked } = this.state;
+    console.log(this.state)
+    let pay = this.state.paylist.map((item) => {
+      return (<Card key={item.ID} style={styles.Item}>
+        
+        <List.Accordion
+          title={item.name}
+          left={props => <List.Icon {...props} icon="monetization-on" />}>
+
+          <List.Item style={{right: 50}} title={item.amount}/>
+          <Card.Actions style={{right:50}}>
+            <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+            <Button icon="edit">edit</Button>
+            <Checkbox/>
+          </Card.Actions>
+        </List.Accordion>
+        </Card>    
+      )
+    });
+    return (
+      <View style={styles.container}>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
+        contentContainerStyle={styles.contentContainer}  refreshControl={
+          <RefreshControl
+            //refresh control used for the Pull to Refresh
+            refreshing={this.state.loading}
+            onRefresh={this.onRefresh.bind(this)}
+          />
+        }>{pay}
       </ScrollView>
-      <View>
-      <FlatList
-       data={this.state.dataP}
-       renderItem={this._itemComponent}>
-    </FlatList>
-      </View>
+     
       <View style={styles.tabBarInfoContainer}>
       <TouchableOpacity
           activeOpacity={0.7}
@@ -91,14 +195,18 @@ componentDidMount = () => {
   );
  }
 }
+}
 
+HomeScreen.navigationOptions = {
+  title: 'Home',
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#eee',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop:10,
   },
   TouchableOpacityStyle: {
     position: 'absolute',
@@ -113,6 +221,13 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: 50,
     height: 50,
-    //backgroundColor:'black'
   },
+  Item: {
+    //alignItems:'center',
+    margin:0,
+    //alignContent:'space-between',
+    //justifyContent:'center',
+    //borderBottomWidth:1,
+    //borderBottomColor: '#eee'
+  }
 });
