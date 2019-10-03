@@ -1,14 +1,14 @@
-import React from 'react';
-import { ExpoConfigView } from '@expo/samples';
-import { View, Button} from 'react-native';
-import { deviceStorage } from '../service/deviceStorage';
-
+import React from 'react'
+import { ExpoConfigView } from '@expo/samples'
+import { View, Button } from 'react-native'
+import { deviceStorage } from '../service/deviceStorage'
+import Config from '../config';
 export default class SettingsScreen extends React.Component {
 
- async _handleLogOut(){
+  async _handleLogOut() {
     var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
     console.log(DEMO_TOKEN)
-    fetch('http://192.168.100.17:8000/v1/paylist/users/signout', {
+    fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
         method: 'GET',
         headers: {
           'Authorization' : DEMO_TOKEN
@@ -41,20 +41,20 @@ export default class SettingsScreen extends React.Component {
     return (
       <View style={{}}>
         <Button
-         backgroundColor="#03A9F4"
-         title="SIGN OUT"
-         onPress={this._handleLogOut.bind(this)}
+          backgroundColor="#03A9F4"
+          title="SIGN OUT"
+          onPress={this._handleLogOut.bind(this)}
         />
       </View>
-    );
+    )
   }
-} 
-  /**
+}
+/**
    * Go ahead and delete ExpoConfigView and replace it with your content;
    * we just wanted to give you a quick view of your config.
    */
-  // return <ExpoConfigView />;
+// return <ExpoConfigView />;
 
 SettingsScreen.navigationOptions = {
   title: 'Profile',
-};
+}

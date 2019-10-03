@@ -9,7 +9,7 @@ const Form = t.form.Form
 
 const User = t.struct({
   username: t.String,
-  password:  t.String
+  password: t.String
 });
 
 const options = {
@@ -27,40 +27,40 @@ const options = {
 }
 
 export default class LoginScreen extends React.Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-          value: {
-            username: '',
-            password: '',
-            error: '',
-            loading: false
-        }
-      }
-        this._handleLogin = this._handleLogin.bind(this);
-        this.onLoginFail = this.onLoginFail.bind(this);
-    }
-
-    componentWillUnmount() {
-      this.setState = {
-        value: {
-          username: '',
-          password: null,
-          error:'',
-          loading:true
-
-        }
+    this.state = {
+      value: {
+        username: '',
+        password: '',
+        error: '',
+        loading: false
       }
     }
+    this._handleLogin = this._handleLogin.bind(this);
+    this.onLoginFail = this.onLoginFail.bind(this);
+  }
 
-    _onChange = (value) => {
-      this.setState({
-        value
-      })
+  componentWillUnmount() {
+    this.setState = {
+      value: {
+        username: '',
+        password: null,
+        error: '',
+        loading: true
+
+      }
     }
+  }
 
-  _handleLogin(){
+  _onChange = (value) => {
+    this.setState({
+      value
+    })
+  }
+
+  _handleLogin() {
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
@@ -81,44 +81,44 @@ export default class LoginScreen extends React.Component {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Accept : 'application/x-www-form-urlencoded'
+          Accept: 'application/x-www-form-urlencoded'
         },
         body: payload
-       })
-       .then(res => {
-        resStatus = res.status
-        return res.json()
       })
-      .then(res => {
-        console.log('saat login :' + res.data)
-        switch (resStatus) {
-          case 200:
-            deviceStorage.saveKey('token', res.data);
-            //this.props.newJWT(res.data.jwt);
-            console.log('success')
-            this.props.navigation.navigate('Main')
-            //console.log(res.data.jwt)
-            break
-          case 404:
-            console.log('wrong username or password')
-            alert('wrong username or password')
-            break
-          case 500:
-            console.log('already login')
-            alert('already login')
-            break
-          default:
-            console.log('unhandled')
-            break
-        }
-      })
-      .catch(err => {
-        console.error(err)
-      })
-      .done()
+        .then(res => {
+          resStatus = res.status
+          return res.json()
+        })
+        .then(res => {
+          console.log('saat login :' + res.data)
+          switch (resStatus) {
+            case 200:
+              deviceStorage.saveKey('token', res.data);
+              //this.props.newJWT(res.data.jwt);
+              console.log('success')
+              this.props.navigation.navigate('Main')
+              //console.log(res.data.jwt)
+              break
+            case 404:
+              console.log('wrong username or password')
+              alert('wrong username or password')
+              break
+            case 500:
+              console.log('already login')
+              alert('already login')
+              break
+            default:
+              console.log('unhandled')
+              break
+          }
+        })
+        .catch(err => {
+          console.error(err)
+        })
+        .done()
     } else {
-        //form validation error
-        alert('please provide username or password')
+      //form validation error
+      alert('please provide username or password')
     }
   }
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
+import React from 'react'
+import { ScrollView, StyleSheet } from 'react-native'
+import { ExpoLinksView } from '@expo/samples'
 
 export default function LinksScreen() {
   return (
@@ -11,12 +11,12 @@ export default function LinksScreen() {
        */}
       <ExpoLinksView />
     </ScrollView>
-  );
+  )
 }
 
 LinksScreen.navigationOptions = {
   title: 'Links',
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     backgroundColor: '#fff',
   },
-});
+})
