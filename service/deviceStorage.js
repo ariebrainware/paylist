@@ -12,17 +12,10 @@ const deviceStorage = {
     async loadJWT() {
         try {
             let value = await AsyncStorage.getItem('token');
-            // let data = JSON.parse(value);
-            // return data;
             if (value!== null) {
                console.log('dari device :' + value)
             } 
             return value;
-            //else {
-            //     this.setState({
-            //         loading: false
-            //     });
-            // }
         } catch (error) {
             console.log('AsyncStorage error :' + error.message);
         }

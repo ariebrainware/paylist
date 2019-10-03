@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import {Alert, Button, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
+import {ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
+import { Button } from 'react-native-paper';
+import Config from '../config';
 
 const t = require('tcomb-form-native')
-
 const Form = t.form.Form
 
 const User = t.struct({
@@ -76,7 +77,7 @@ export default class LoginScreen extends React.Component {
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       //sent post request
-      fetch('http://192.168.100.14:8000/v1/paylist/user/signin', {
+      fetch(`${Config.PaylistApiURL}/paylist/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -137,9 +138,8 @@ export default class LoginScreen extends React.Component {
               value={this.state.value}
               onChange={this._onChange}
             />
-            <TouchableHighlight onPress={this._handleLogin}>
-              <Text style={[styles.button, styles.greenButton]}>Log In</Text>
-            </TouchableHighlight>
+             <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN
+            </Button>
         
                  <View style={styles.signupTextCont}>
                     <Text style={styles.signupText}>Don't have an account yet?</Text>
@@ -161,11 +161,11 @@ var styles = StyleSheet.create({
     },
     button: {
       borderRadius: 4,
-      padding: 20,
+      padding: 3,
       textAlign: 'center',
       marginBottom: 20,
-      color: '#fff'
-    },
+      backgroundColor: '#4CD964'
+  },
     greenButton: {
       backgroundColor: '#4CD964'
     },

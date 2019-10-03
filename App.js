@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import { createStackNavigator} from 'react-navigation';
 
+
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 

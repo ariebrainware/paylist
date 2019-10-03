@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import {
     ScrollView,
     StyleSheet, 
-    TouchableHighlight,
-    Text,
-    View } 
+    Text} 
     from 'react-native';
-
+import { Button } from 'react-native-paper';
 const t = require('tcomb-form-native');
 const Form = t.form.Form
 
@@ -112,13 +110,6 @@ class RegisterScreen extends React.Component {
             console.log('success')
             alert('You may login now')
             break
-        //   case 400:
-        //     if (res.code === 'ValidationFailed') {
-        //     // My custom error messages from the API.
-        //         console.log('field can not be null')
-        //         alert('field can not be null')
-        //     }
-        //     break
           case 500:
             console.log('username exist')
             alert('username exist')
@@ -147,9 +138,9 @@ class RegisterScreen extends React.Component {
             <ScrollView style={styles.container}>
                 <Form ref='form' type={newUser} options={option}
                 value={this.state.value} onChange={this._onChange}/>
-                <TouchableHighlight onPress={this._handleAdd}>
-                    <Text style={[styles.button, styles.greenButton]}>Create Account</Text>
-                </TouchableHighlight>
+                 <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
+                    <Text style={{}}>Create Account</Text>
+                </Button>
             </ScrollView>
         )
     }
@@ -164,10 +155,10 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 4,
-        padding: 20,
+        padding: 3,
         textAlign: 'center',
         marginBottom: 20,
-        color: '#fff',
+        backgroundColor: '#4CD964'
     },
     greenButton: {
         backgroundColor: '#4CD964',
