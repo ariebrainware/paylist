@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { 
     StyleSheet,
     View,
     ScrollView,
     Text,
-    TouchableHighlight
+    TouchableHighlight,
 } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
 
@@ -13,7 +13,7 @@ const Form = t.form.Form
 const createPaylist = t.struct ({
     name: t.String,
     amount: t.String,
-    completed: t.String
+    //completed: t.String
 })
 
 const option = {
@@ -25,11 +25,13 @@ const option = {
         amount: {
             autoCapitalize: 'none',
             autoCorrect: false,
+            keyboardType: 'phone-pad'
         },
-        completed: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        }
+        // completed: {
+        //     autoCapitalize: 'none',
+        //     autoCorrect: false,
+        //     editable: false
+        // }
     }
 }
 
@@ -41,7 +43,6 @@ export default class CreatePaylist extends React.Component {
             value: {
                 name:'',
                 amount: '',
-                completed: '',
                 error:'',
                 loading: false
             }
@@ -54,7 +55,6 @@ export default class CreatePaylist extends React.Component {
             value: {
                 name: '',
                 amount: '',
-                completed:'',
                 error:'',
                 loading:true
             }
@@ -68,14 +68,14 @@ export default class CreatePaylist extends React.Component {
     }
 
     async _CreatePaylist(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token');
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
       const data = {
         name: value.name,
         amount: value.amount,
-        completed: value.completed
       }
       let payload = []
       for (let property in data) {
@@ -83,8 +83,9 @@ export default class CreatePaylist extends React.Component {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
+      // console.log(payload)
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
+     console.log(`payload: ${payload}`)
       const header= {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -92,31 +93,27 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       };
       //sent post request
-      fetch('http://192.168.100.14:8000/v1/paylist/paylist', {
+      fetch('http://192.168.100.26:8000/v1/paylist/paylist', {
         method: 'POST',
         headers: header,
         body: payload
-       })
-       .then(res => {
-        resStatus = res.status
-        return res.json()
       })
       .then(res => {
-        switch (resStatus) {
+        switch (res.status) {
           case 200:
-            console.log('success')
-            console.log('dari res' +res.data.jwt)
+            alert('Success save paylist')
+            this.props.navigation.navigate('Main')
             break
           case 403:
-            console.log('please sign in again')
             alert('You have to login first.')
+            this.props.navigation.navigate('Login')
             break
           case 500:
-            console.log('token expired')
             alert('Please sign in again')
+            this.props.navigation.navigate('Login')
             break
           default:
-            console.log('unhandled')
+            alert('Something wrong, please try again later!')
             break
         }
       })

@@ -9,17 +9,17 @@ const deviceStorage = {
     }
   },
 
-    async loadJWT() {
-        try {
-            let value = await AsyncStorage.getItem('token');
-            if (value!== null) {
-               console.log('dari device :' + value)
-            } 
-            return value;
-        } catch (error) {
-            console.log('AsyncStorage error :' + error.message);
-        }
-    },
+  async loadJWT() {
+    try {
+      let value = await AsyncStorage.getItem('token');
+      if (value !== null) {
+        console.log('dari device :' + value)
+      }
+      return value;
+    } catch (error) {
+      console.log('AsyncStorage error :' + error.message);
+    }
+  },
 
   async deleteJWT() {
     try {

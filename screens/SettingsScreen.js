@@ -9,35 +9,29 @@ export default class SettingsScreen extends React.Component {
     var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
     console.log(DEMO_TOKEN)
     fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
-        method: 'GET',
-        headers: {
-          'Authorization' : DEMO_TOKEN
+      method: 'GET',
+      headers: header
+    })
+      .then(res => {
+        switch (res.status) {
+          case 200:
+            console.log('success')
+            this.props.navigation.navigate('Login')
+            alert('You have been logged out.');
+            break
+          default:
+            console.log('unhandled')
+            alert('Something wrong, please try again later!')
+            break
         }
       })
-      .then(res => {
-       resStatus = res.status
-       return res.json()
-     })
-     .then(res => {
-       console.log(res.data)
-       switch (resStatus) {
-         case 200:
-           console.log('success')
-           this.props.navigation.navigate('Login')
-           alert('You have been logged out.');
-           break
-         default:
-           console.log('unhandled')
-           break
-       }
-     })
-     .catch(err => {
-       console.error(err)
-     })
-     .done()
-    }
-  
-  render(){
+      .catch(err => {
+        console.error(err)
+      })
+      .done()
+  }
+
+  render() {
     return (
       <View style={{}}>
         <Button
