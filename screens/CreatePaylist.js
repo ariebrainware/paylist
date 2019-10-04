@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
 import { Button } from 'react-native-paper';
+import Config from '../config';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
@@ -27,11 +28,6 @@ const option = {
             autoCorrect: false,
             keyboardType: 'phone-pad'
         },
-        // completed: {
-        //     autoCapitalize: 'none',
-        //     autoCorrect: false,
-        //     editable: false
-        // }
     }
 }
 
@@ -93,7 +89,7 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       };
       //sent post request
-      fetch('http://192.168.100.17:8000/v1/paylist/paylist', {
+      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'POST',
         headers: header,
         body: payload

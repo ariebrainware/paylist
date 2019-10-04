@@ -8,6 +8,7 @@ import { Platform, StatusBar } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import CreatePaylist from '../screens/CreatePaylist';
 import UpdateUser from '../screens/UpdateUser';
+import UpdatePaylist from '../screens/UpdatePaylist';
 
 const headerStyle = {
   marginTop: Platform.OS === "ios" ? StatusBar.currentHeight : 0
@@ -50,6 +51,13 @@ export default createAppContainer(
           title: "Edit Data",
           headerStyle
         }
-    },  
+    },
+    UpdatePaylist: {
+      screen: UpdatePaylist,
+      navigationOptions: {
+        title: "Edit Data",
+        headerStyle
+      }
+  },
   })
 )

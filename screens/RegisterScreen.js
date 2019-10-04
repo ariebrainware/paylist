@@ -6,7 +6,7 @@ import {
     View } 
     from 'react-native';
 import { Button } from 'react-native-paper';
-
+import Config from '../config'
 const t = require('tcomb-form-native');
 const Form = t.form.Form
 
@@ -34,7 +34,8 @@ const option = {
         password: {
             autoCapitalize: 'none',
             password: true,
-            autoCorrect: false
+            autoCorrect: false,
+            secureTextEntry: true,
         }
     }
 }
@@ -74,10 +75,10 @@ class RegisterScreen extends React.Component {
         })
     }
 
-    _handleAdd = () => {
-        const value = this.refs.form.getValue();
-        //IF the form valid ..
-        this.setState({ error: '', loading: true });
+_handleAdd = () => {
+    const value = this.refs.form.getValue();
+     //IF the form valid ..
+    this.setState({ error: '', loading: true });
         if (value) {
             const data = {
                 name: value.name,
@@ -94,7 +95,7 @@ class RegisterScreen extends React.Component {
     payload = payload.join("&")
     console.log(`payload: ${payload}`)
     //sent post request
-    fetch('http://192.168.100.19:8000/v1/paylist/user/signup', {
+    fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -112,13 +113,6 @@ class RegisterScreen extends React.Component {
             console.log('success')
             alert('You may login now')
             break
-        //   case 400:
-        //     if (res.code === 'ValidationFailed') {
-        //     // My custom error messages from the API.
-        //         console.log('field can not be null')
-        //         alert('field can not be null')
-        //     }
-        //     break
           case 500:
             console.log('username exist')
             alert('username exist')
@@ -134,7 +128,6 @@ class RegisterScreen extends React.Component {
             alert('Please fill the empty field')
         }
     }
-
     onRegistrationFail() {
         this.setState({
             error: 'Registration Failed',

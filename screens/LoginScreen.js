@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Alert, ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
 import { Button } from 'react-native-paper';
 import deviceStorage from '../service/deviceStorage';
+import Config from '../config';
+import { placeholder } from '@babel/types';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
@@ -82,7 +84,7 @@ export default class LoginScreen extends React.Component {
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       //sent post request
-      fetch('http://192.168.100.17:8000/v1/paylist/user/signin', {
+      fetch(`${Config.PaylistApiURL}/paylist/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

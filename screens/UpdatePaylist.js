@@ -3,45 +3,28 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    Text,Image,TouchableOpacity 
+    Text,
+    Image,
+    TouchableOpacity 
 } from 'react-native';
 import deviceStorage from '../service/deviceStorage';
-import { Button, TextInput,} from 'react-native-paper';
+import { Button, Appbar,} from 'react-native-paper';
 import Config from '../config';
-import { isTSEnumMember } from '@babel/types';
 
 const t = require('tcomb-form-native');
 const Form = t.form.Form
-const User = t.struct ({
-    email: t.String,
+const paylist = t.struct ({
     name: t.String,
-    username: t.String,
-    password: t.String,
-    balance: t.Number,
+    amount: t.Number,
 })
 
 const option = {
     fields: {
-        username: {
+        name: {
           autoCapitalize: 'none',
           autoCorrect: false,
-          editable: false
         },
-        email: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        name: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        password: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-            secureTextEntry: true,
-            password: true,
-        },
-        balance: {
+        amount: {
             autoCapitalize: 'none',
             autoCorrect: false,
             keyboardType: 'phone-pad'
@@ -49,40 +32,29 @@ const option = {
     }
 }
 
-export default class UpdateUser extends React.Component {
+export default class UpdatePaylist extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             value: {
-                email:'',
                 name:'',
-                username:'',
-                password:'',
-                balance: '',
+                amount:'',
                 error:'',
                 loading: false
             }
         }
-        this._UpdateUser = this._UpdateUser.bind(this);
+        this._UpdatePaylist = this._UpdatePaylist.bind(this);
     }
 
     componentWillMount() {
       const { navigation } = this.props;
-      const data = JSON.parse(navigation.getParam('name',[]));
       {
-        data.map((item)=> {
-          return (
             this.setState({
               value : {
-                email : item.email,
-                name: item.name,
-                username: item.username,
-                password: item.password,
-                balance: item.balance
+                name : JSON.parse(navigation.getParam('name','')),
+                amount: JSON.parse(navigation.getParam('amount',''))
               }
             })
-          )
-        });
       }
     }
     
@@ -90,18 +62,15 @@ export default class UpdateUser extends React.Component {
     this.setState({ value })
     }
 
-    async _UpdateUser(id){
+    async _UpdatePaylist(id){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token");
     console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue();
     // If the form is valid...
     if (value) {
       const data = {
-        email: value.email,
         name: value.name,
-        username: value.username,
-        password: value.password,
-        balance: value.balance,
+        amount: value.amount,
       }
       let payload = []
       for (let property in data) {
@@ -119,20 +88,17 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       };
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/`+ id, {
+      fetch(`${Config.PaylistApiURL}/paylist/paylist/`+ id, {
         method: 'PUT',
         headers: header,
         body: payload
       })
-      // .then(res => {
-      //   resStatus = res.status
-      //   return res.json()
-      //   })
       .then(res => {
         console.log(res)
         switch (res.status) {
           case 200:
             alert('Success save paylist')
+            this.props.navigation.navigate('Main')
             break
         }      
     })
@@ -145,60 +111,33 @@ export default class UpdateUser extends React.Component {
         alert('Please fill the empty field')
     }
 }
-  
+
 render() {
   const { navigation } = this.props;
-  const data = JSON.parse(navigation.getParam('name',[]));
+  const data = JSON.parse(navigation.getParam('id',''));
+  console.log(this.state)
     return (
       <View>
         <ScrollView style={styles.container}> 
          <Form ref='form'
                 options={option}
-                type={User}
+                type={paylist}
                 value={this.state.value}
                 onChange={this._onChange}
           />          
-        </ScrollView> 
+        </ScrollView>
           <View> 
-          {
-             data.map((item)=> {
-               return <View key={item.ID}>
-               <Button style={styles.button} mode="contained" onPress={ () => this._UpdateUser(item.ID)}>
-                      <Text style={[styles.button, styles.greenButton]}>Update</Text>
-                      </Button>
-                      </View>
-             })
-      }
-            
-          </View>  
+          <Button style={styles.button} mode="contained" onPress={ () => this._UpdatePaylist(data)}>
+              <Text style={[styles.button, styles.greenButton]}>Update</Text>
+          </Button>
+          </View>
       </View>
     );
   }
 }
 
-UpdateUser.navigationOptions = {
-  headerRight :(
-    <TouchableOpacity
-      style={{position: 'absolute',
-      width: 50,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 5,
-      bottom: 3}}
-        //title="Logout"
-        onPress={this._UpdateUser}>
-      <Image 
-      source={
-        require ('../assets/images/ceklis.png')
-      }
-        style={{resizeMode: 'contain',
-        width: 20,
-        height: 20,}}
-        />
-      </TouchableOpacity>
-  )
-}
+
+
 var styles = StyleSheet.create({
     container: {
       padding: 20,

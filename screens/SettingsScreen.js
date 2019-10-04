@@ -1,19 +1,17 @@
 import React from 'react';
-import { ExpoConfigView } from '@expo/samples';
 import {Image, View, Text,StyleSheet, TouchableHighlight, RefreshControl} from 'react-native';
 import deviceStorage  from '../service/deviceStorage';
 import { Card, Button, Title, Paragraph, DataTable } from 'react-native-paper';
 import { AppLoading } from 'expo';
 import { ScrollView } from 'react-native-gesture-handler';
-import FormUpdate from './UpdateUser';
+import Config from '../config';
 
 export default class SettingsScreen extends React.Component {
   constructor(props){
     super(props)
     this.state ={
       data: [],
-      Loading: true,
-      user: this.props.navigation.state.params
+      Loading:true
   };
     this._handleLogOut = this._handleLogOut.bind(this);
     this._GetDataUser = this._GetDataUser.bind(this);   
@@ -24,7 +22,7 @@ export default class SettingsScreen extends React.Component {
     const header = {
       'Authorization' : DEMO_TOKEN
     }
-    fetch('http://192.168.100.17:8000/v1/paylist/users/signout', {
+    fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
         method: 'GET',
         headers: header
       })
@@ -35,10 +33,6 @@ export default class SettingsScreen extends React.Component {
            this.props.navigation.navigate('Login')
            alert('You have been logged out.');
            break
-        //  case 404:
-        //    console.log('wrong username or password')
-        //    alert('wrong username or password')
-        //    break
          case 500:
            alert('token expired')
            this.props.navigation.navigate('Login')
@@ -59,21 +53,13 @@ export default class SettingsScreen extends React.Component {
     this._GetDataUser();
   }
 
-  // handleEdit= (edit) => {
-  //   const NewData = this.state.data.map(val => {
-  //     if (val.id == edit) {
-  //       val.value = this.state.value
-  //     }
-  //   })
-  // }
-
   async _GetDataUser(){
       var DEMO_TOKEN = await deviceStorage.loadJWT("token");
       console.log(DEMO_TOKEN)
       const header= {
           'Authorization': DEMO_TOKEN
       };
-        fetch('http://192.168.100.17:8000/v1/paylist/users', {
+        fetch(`${Config.PaylistApiURL}/paylist/users`, {
             method: 'GET',
             headers: header
           })
@@ -87,8 +73,8 @@ export default class SettingsScreen extends React.Component {
                       let dataString = JSON.stringify(ress.data)
                       let dataParse = JSON.parse(dataString)
                       this.setState({
-                          Loading: false,
-                          data: dataParse
+                          data: dataParse,
+                          Loading:false
                       });
                   break    
               } 
@@ -104,15 +90,7 @@ export default class SettingsScreen extends React.Component {
         });
         this._GetDataUser();
       }
-
   render(){
-    if (this.state.Loading) {
-      return(
-          <View style={{padding:20}}>
-              <AppLoading/>
-          </View>
-      )
-    }
     console.log(this.state)
     let user= this.state.data.map((val) => {
     return (<Card key={val.ID} style={{margin: 0}}>
@@ -126,29 +104,30 @@ export default class SettingsScreen extends React.Component {
                 <Card.Content style={{paddingTop:10}}>
                   <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
                 </Card.Content>
+                <Card>
+            <Card.Actions>
+              <Button onPress={() =>  this.props.navigation.navigate('UpdateUser',{
+                name: JSON.stringify(this.state.data)
+              })}>Edit Data </Button>
+              </Card.Actions>
+          </Card>
               </Card>
            </Card>
     )
     });   
     return (
-      <View style={styles.logoutTextCont}>
-        <View style={styles.container}  refreshControl={
+      <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
+        refreshControl={
           <RefreshControl
             //refresh control used for the Pull to Refresh
             refreshing={this.state.Loading}
             onRefresh={this.onRefresh.bind(this)}
           />
         }>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        {user}
+       {user}
         </ScrollView>
-        </View>
         <View>
-          <Card>
-            <Card.Actions>
-              <Button onPress={() => {this._GetDataUser(); this.props.navigation.navigate('UpdateUser')}}>Edit Data </Button>
-              </Card.Actions>
-          </Card>
           <Card>
             <Card.Actions>
             <Button onPress={this._handleLogOut}>
@@ -158,15 +137,10 @@ export default class SettingsScreen extends React.Component {
           </Card>
         </View>
       </View>
-      
     );
   }
 } 
-  /**
-   * Go ahead and delete ExpoConfigView and replace it with your content;
-   * we just wanted to give you a quick view of your config.
-   */
-  // return <ExpoConfigView />;
+
 
 SettingsScreen.navigationOptions = {
   title: 'Profile',

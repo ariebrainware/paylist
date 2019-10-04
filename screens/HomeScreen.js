@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
+import Config from '../config';
 import { MonoText } from '../components/StyledText';
 import deviceStorage from '../service/deviceStorage';
-import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper';
+import { List, Card, Checkbox, Button, ActivityIndicator} from 'react-native-paper';
 import { AppLoading } from 'expo';
 
 export default class HomeScreen extends React.Component{
@@ -36,7 +36,7 @@ componentDidMount(){
     const header= {
       'Authorization': DEMO_TOKEN
     };
-    fetch('http://192.168.100.17:8000/v1/paylist/paylist', {
+    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'GET',
         headers: header
       })
@@ -50,7 +50,7 @@ componentDidMount(){
           let list = JSON.stringify(resJson.data)
           let json = JSON.parse(list)
             this.setState({
-              loading: false,
+              loading:false,
               paylist: json
             });
           break
@@ -67,7 +67,7 @@ componentDidMount(){
     const header = {
       'Authorization' : DEMO_TOKEN
     }
-    fetch('http://192.168.100.17:8000/v1/paylist/paylist/' + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
         method: 'DELETE',
         headers: header
       })
@@ -115,7 +115,7 @@ componentDidMount(){
       const header = {
         'Authorization' : DEMO_TOKEN
       }
-      fetch('http://192.168.100.17:8000/v1/paylist/status/'+id, {
+      fetch(`${Config.PaylistApiURL}/paylist/status/`+id, {
           method: 'PUT',
           headers: header
         })
@@ -142,14 +142,14 @@ componentDidMount(){
     if (this.state.loading) {
       return(
           <View style={{padding:20}}>
-                <AppLoading/>
+                <ActivityIndicator/>
             </View>
         )
-    } else {
+    }
     const { checked } = this.state;
     console.log(this.state)
     let pay = this.state.paylist.map((item) => {
-      return (<Card key={item.ID} style={styles.Item}>
+      return <Card key={item.ID} style={styles.Item}>
         
         <List.Accordion
           title={item.name}
@@ -158,13 +158,17 @@ componentDidMount(){
           <List.Item style={{right: 50}} title={item.amount}/>
           <Card.Actions style={{right:50}}>
             <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
-            <Button icon="edit">edit</Button>
+            <Button icon="edit" onPress={() =>  this.props.navigation.navigate('UpdatePaylist',{
+                id : item.ID,
+                name: JSON.stringify(item.name),
+                amount: JSON.stringify(item.amount)
+              })}>edit</Button>
             <Checkbox/>
           </Card.Actions>
         </List.Accordion>
         </Card>    
-      )
-    });
+    })
+
     return (
       <View style={styles.container}>
       <ScrollView
@@ -194,7 +198,6 @@ componentDidMount(){
     </View>
   );
  }
-}
 }
 
 HomeScreen.navigationOptions = {
