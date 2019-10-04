@@ -1,12 +1,44 @@
-import React from 'react';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import React from 'react'
+import { createAppContainer, createSwitchNavigator, createBottomTabNavigator } from 'react-navigation'
+import MainTabNavigator from './MainTabNavigator'
+import LoginScreen from '../screens/LoginScreen'
+import RegisterScreen from '../screens/RegisterScreen'
+import { createStackNavigator } from 'react-navigation-stack'
+import { Platform, StatusBar } from 'react-native'
+import CreatePaylist from '../screens/CreatePaylist'
 
-import MainTabNavigator from './MainTabNavigator';
+const headerStyle = {
+  marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
+}
 
 export default createAppContainer(
-  createSwitchNavigator({
-    // You could add another route here for authentication.
-    // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-    Main: MainTabNavigator,
+  createStackNavigator({
+    Login: {
+      screen: LoginScreen,
+      navigationOptions: {
+        title: 'Sign In',
+        headerStyle
+      }
+    },
+    Register: {
+      screen: RegisterScreen,
+      navigationOptions: {
+        title: 'Sign Up',
+        headerStyle
+      }
+    },
+    Main: {
+      screen: MainTabNavigator,
+      navigationOptions: {
+        header: null,
+      }
+    },
+    CreatePaylist: {
+      screen: CreatePaylist,
+      navigationOptions: {
+        title: 'Create Paylist',
+        headerStyle
+      }
+    },
   })
-);
+)
