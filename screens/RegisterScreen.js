@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import {
     ScrollView,
-    StyleSheet, 
-    TouchableHighlight,
-    Text,
-    View } 
+    StyleSheet,
+    Text
+}
     from 'react-native';
-
+import Config from '../config';
+import { Button } from 'react-native-paper';
 const t = require('tcomb-form-native');
 const Form = t.form.Form
 
-const newUser = t.struct ({
+const newUser = t.struct({
     name: t.String,
     email: t.String,
     username: t.String,
@@ -45,11 +45,11 @@ class RegisterScreen extends React.Component {
         super(props)
         this.state = {
             value: {
-                name:'',
+                name: '',
                 email: '',
-                username:'',
-                password:'',
-                error:'',
+                username: '',
+                password: '',
+                error: '',
                 loading: false
             }
         }
@@ -62,7 +62,7 @@ class RegisterScreen extends React.Component {
             value: {
                 name: '',
                 email: '',
-                username:'',
+                username: '',
                 password: null,
             }
         }
@@ -91,44 +91,37 @@ class RegisterScreen extends React.Component {
                 let encodedValue = encodeURIComponent(data[property])
                 payload.push(encodedKey + "=" + encodedValue)
             }
-    payload = payload.join("&")
-    console.log(`payload: ${payload}`)
-    //sent post request
-    fetch('http://192.168.100.26:8000/v1/paylist/user/signup', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept : 'application/x-www-form-urlencoded'
-    },
-    body: payload
-    })
-    .then(res => {
-    resStatus = res.status
-    return res.json()
-    })
-    .then(res => {
-        switch (resStatus) {
-          case 200:
-            console.log('success')
-            alert('You may login now')
-            break
-        //   case 400:
-        //     if (res.code === 'ValidationFailed') {
-        //     // My custom error messages from the API.
-        //         console.log('field can not be null')
-        //         alert('field can not be null')
-        //     }
-        //     break
-          case 500:
-            console.log('username exist')
-            alert('username exist')
-            break
-          default:
-            console.log('unhandled')
-            break
-        }
-      })
-        .done()
+            payload = payload.join("&")
+            console.log(`payload: ${payload}`)
+            //sent post request
+            fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    Accept: 'application/x-www-form-urlencoded'
+                },
+                body: payload
+            })
+                .then(res => {
+                    resStatus = res.status
+                    return res.json()
+                })
+                .then(res => {
+                    switch (resStatus) {
+                        case 200:
+                            console.log('success')
+                            alert('You may login now')
+                            break
+                        case 500:
+                            console.log('username exist')
+                            alert('username exist')
+                            break
+                        default:
+                            console.log('unhandled')
+                            break
+                    }
+                })
+                .done()
         } else {
             //form validation error
             alert('Please fill the empty field')
@@ -146,28 +139,28 @@ class RegisterScreen extends React.Component {
         return (
             <ScrollView style={styles.container}>
                 <Form ref='form' type={newUser} options={option}
-                value={this.state.value} onChange={this._onChange}/>
-                <TouchableHighlight onPress={this._handleAdd}>
-                    <Text style={[styles.button, styles.greenButton]}>Create Account</Text>
-                </TouchableHighlight>
+                    value={this.state.value} onChange={this._onChange} />
+                <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
+                    <Text style={{}}>Create Account</Text>
+                </Button>
             </ScrollView>
         )
     }
-} 
-  
+}
+
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        padding:10,
+    container: {
+        flex: 1,
+        padding: 10,
         flexDirection: 'column',
         // backgroundColor:'red',
     },
     button: {
         borderRadius: 4,
-        padding: 20,
+        padding: 3,
         textAlign: 'center',
         marginBottom: 20,
-        color: '#fff',
+        backgroundColor: '#4CD964'
     },
     greenButton: {
         backgroundColor: '#4CD964',
