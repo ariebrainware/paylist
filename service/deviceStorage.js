@@ -32,13 +32,6 @@ const deviceStorage = {
             let token = JSON.parse(payload);
             await AsyncStorage.removeItem(token.value);
             return token.value;
-            // .then(
-            //     () => {
-            //         this.setState({
-            //             jwt:''
-            //         })
-            //     }
-            // );
         } catch (error){
             console.log('AsyncStorage Error: ' + error.message);
         }

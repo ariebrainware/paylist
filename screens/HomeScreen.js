@@ -150,12 +150,13 @@ componentDidMount(){
     console.log(this.state)
     let pay = this.state.paylist.map((item) => {
       return <Card key={item.ID} style={styles.Item}>
-        
+        <Card style={styles.content}>
         <List.Accordion
           title={item.name}
           left={props => <List.Icon {...props} icon="monetization-on" />}>
 
           <List.Item style={{right: 50}} title={item.amount}/>
+          <List.Item style={{right: 50}} title={JSON.stringify(item.completed)}/>
           <Card.Actions style={{right:50}}>
             <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
             <Button icon="edit" onPress={() =>  this.props.navigation.navigate('UpdatePaylist',{
@@ -166,6 +167,7 @@ componentDidMount(){
             <Checkbox/>
           </Card.Actions>
         </List.Accordion>
+        </Card>
         </Card>    
     })
 
@@ -206,7 +208,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor: '#74e1f2',
   },
   contentContainer: {
     paddingTop:10,
@@ -227,10 +229,14 @@ const styles = StyleSheet.create({
   },
   Item: {
     //alignItems:'center',
-    margin:0,
-    //alignContent:'space-between',
+    margin:1.5,
+    padding:3.5
     //justifyContent:'center',
     //borderBottomWidth:1,
     //borderBottomColor: '#eee'
+  },
+  content: {
+    backgroundColor: '#fff',
+    margin: 0.5,
   }
 });
