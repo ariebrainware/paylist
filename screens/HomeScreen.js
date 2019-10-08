@@ -191,7 +191,7 @@ componentDidMount(){
           style={styles.TouchableOpacityStyle}>
           <Image
             source={
-             require ('../assets/images/Add-butt.png')
+             require ('../assets/images/plus.png')
             }
             style={styles.FloatingButtonStyle}
           />
@@ -208,7 +208,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#74e1f2',
+    backgroundColor: '#78f0df',
   },
   contentContainer: {
     paddingTop:10,
