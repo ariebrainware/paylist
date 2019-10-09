@@ -14,7 +14,6 @@ const Form = t.form.Form
 const createPaylist = t.struct ({
     name: t.String,
     amount: t.String,
-    //completed: t.String
 })
 
 const option = {
@@ -148,7 +147,6 @@ var styles = StyleSheet.create({
       padding: 20,
       flex: 0,
       flexDirection: 'column',
-      //backgroundColor:'red'
     },
     button: {
       borderRadius: 4,

@@ -170,7 +170,6 @@ var styles = StyleSheet.create({
       padding: 20,
       flex: 0,
       flexDirection: 'column',
-      //backgroundColor:'red'
     },
     button: {
       borderRadius: 4,

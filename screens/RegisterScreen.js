@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
         flex:1,
         padding:10,
         flexDirection: 'column',
-        // backgroundColor:'red',
     },
     button: {
         borderRadius: 4,

@@ -124,10 +124,6 @@ export default class UpdateUser extends React.Component {
         headers: header,
         body: payload
       })
-      // .then(res => {
-      //   resStatus = res.status
-      //   return res.json()
-      //   })
       .then(res => {
         console.log(res)
         switch (res.status) {
@@ -186,7 +182,6 @@ UpdateUser.navigationOptions = {
       justifyContent: 'center',
       right: 5,
       bottom: 3}}
-        //title="Logout"
         onPress={this._UpdateUser}>
       <Image 
       source={
