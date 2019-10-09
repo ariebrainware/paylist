@@ -14,13 +14,6 @@ const deviceStorage = {
             let payload = await AsyncStorage.getItem('token');
             let token = JSON.parse(payload);
             return token.value;
-            // } 
-            //else {
-            //     this.setState({
-            //         loading: false
-            //     });
-            // }
-            // alert('You\'re not authorized to perform this action')
         } catch (error) {
             console.log('AsyncStorage error :' + error.message);
         }
@@ -32,13 +25,6 @@ const deviceStorage = {
             let token = JSON.parse(payload);
             await AsyncStorage.removeItem(token.value);
             return token.value;
-            // .then(
-            //     () => {
-            //         this.setState({
-            //             jwt:''
-            //         })
-            //     }
-            // );
         } catch (error){
             console.log('AsyncStorage Error: ' + error.message);
         }

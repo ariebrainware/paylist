@@ -17,20 +17,20 @@ export default createAppContainer(
   createStackNavigator({
     //You could add another route here for authentication.
     //Read more at https://reactnavigation.org/docs/en/auth-flow.html
-    // Login: {
-    // screen: LoginScreen,
-    // navigationOptions: {
-    //   title: "Sign In",
-    //   headerStyle
-    //  }
-    // },
-    // Register: {
-    //   screen: RegisterScreen,
-    //   navigationOptions: {
-    //     title: "Sign Up",
-    //     headerStyle
-    //   }
-    // },
+    Login: {
+    screen: LoginScreen,
+    navigationOptions: {
+      title: "Sign In",
+      headerStyle
+     }
+    },
+    Register: {
+      screen: RegisterScreen,
+      navigationOptions: {
+        title: "Sign Up",
+        headerStyle
+      }
+    },
     Main: {
       screen: MainTabNavigator,
       navigationOptions: {
