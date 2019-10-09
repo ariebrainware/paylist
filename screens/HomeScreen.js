@@ -79,6 +79,7 @@ componentDidMount(){
        console.log(res)
        switch (resStatus) {
          case 200:
+           console.log('success')
            alert('Delete Success.');
            break
          case 404:
