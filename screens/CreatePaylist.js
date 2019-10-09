@@ -4,12 +4,12 @@ import {
     View,
     ScrollView,
     Text,
-} from 'react-native';
-import deviceStorage from '../service/deviceStorage';
-import { Button } from 'react-native-paper';
-import Config from '../config';
+} from 'react-native'
+import deviceStorage from '../service/deviceStorage'
+import { Button } from 'react-native-paper'
+import Config from '../config'
 
-const t = require('tcomb-form-native');
+const t = require('tcomb-form-native')
 const Form = t.form.Form
 const createPaylist = t.struct ({
     name: t.String,
@@ -42,7 +42,7 @@ export default class CreatePaylist extends React.Component {
                 loading: false
             }
         }
-        this._CreatePaylist = this._CreatePaylist.bind(this);
+        this._CreatePaylist = this._CreatePaylist.bind(this)
     }
 
     componentWillUnmount() {
@@ -63,9 +63,9 @@ export default class CreatePaylist extends React.Component {
     }
 
     async _CreatePaylist(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     console.log(DEMO_TOKEN)
-    const value = this.refs.form.getValue();
+    const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
       const data = {
@@ -86,7 +86,7 @@ export default class CreatePaylist extends React.Component {
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept : 'application/x-www-form-urlencoded',
         'Authorization': DEMO_TOKEN
-      };
+      }
       //sent post request
       fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'POST',
@@ -138,9 +138,9 @@ export default class CreatePaylist extends React.Component {
                     </Button>
                   </View>
                 </ScrollView>   
-                );
+                )
       }
-};
+}
 
 var styles = StyleSheet.create({
     container: {
@@ -162,4 +162,4 @@ var styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center'
     }
-});
+})

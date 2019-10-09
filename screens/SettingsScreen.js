@@ -1,10 +1,9 @@
-import React from 'react';
-import {Image, View, Text,StyleSheet, TouchableHighlight, RefreshControl} from 'react-native';
-import deviceStorage  from '../service/deviceStorage';
-import { Card, Button, Title, Paragraph, DataTable } from 'react-native-paper';
-import { AppLoading } from 'expo';
-import { ScrollView } from 'react-native-gesture-handler';
-import Config from '../config';
+import React from 'react'
+import {View, Text,StyleSheet, RefreshControl} from 'react-native'
+import deviceStorage  from '../service/deviceStorage'
+import { Card, Button, Title, Paragraph} from 'react-native-paper'
+import { ScrollView } from 'react-native-gesture-handler'
+import Config from '../config'
 
 export default class SettingsScreen extends React.Component {
   constructor(props){
@@ -12,12 +11,12 @@ export default class SettingsScreen extends React.Component {
     this.state ={
       data: [],
       Loading:true
-  };
-    this._handleLogOut = this._handleLogOut.bind(this);
-    this._GetDataUser = this._GetDataUser.bind(this);   
+  }
+    this._handleLogOut = this._handleLogOut.bind(this)
+    this._GetDataUser = this._GetDataUser.bind(this) 
   }
  async _handleLogOut(){
-    var DEMO_TOKEN = await deviceStorage.deleteJWT("token");
+    var DEMO_TOKEN = await deviceStorage.deleteJWT("token")
     console.log(" demo "+ DEMO_TOKEN)
     const header = {
       'Authorization' : DEMO_TOKEN
@@ -31,7 +30,7 @@ export default class SettingsScreen extends React.Component {
          case 200:
            console.log('success')
            this.props.navigation.navigate('Login')
-           alert('You have been logged out.');
+           alert('You have been logged out.')
            break
          case 500:
            alert('token expired')
@@ -50,15 +49,15 @@ export default class SettingsScreen extends React.Component {
     }
 
   componentDidMount(){
-    this._GetDataUser();
+    this._GetDataUser()
   }
 
   async _GetDataUser(){
-      var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+      var DEMO_TOKEN = await deviceStorage.loadJWT("token")
       console.log(DEMO_TOKEN)
       const header= {
           'Authorization': DEMO_TOKEN
-      };
+      }
         fetch(`${Config.PaylistApiURL}/paylist/users`, {
             method: 'GET',
             headers: header
@@ -75,7 +74,7 @@ export default class SettingsScreen extends React.Component {
                       this.setState({
                           data: dataParse,
                           Loading:false
-                      });
+                      })
                   break    
               } 
         })
@@ -87,8 +86,8 @@ export default class SettingsScreen extends React.Component {
       onRefresh() {
         this.setState({
           data:[]
-        });
-        this._GetDataUser();
+        })
+        this._GetDataUser()
       }
   render(){
     console.log(this.state)
@@ -114,7 +113,7 @@ export default class SettingsScreen extends React.Component {
               </Card>
            </Card>
     )
-    });   
+    })
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
@@ -141,31 +140,6 @@ export default class SettingsScreen extends React.Component {
   }
 } 
 
-
-SettingsScreen.navigationOptions = {
-  title: 'Profile',
-  // headerRight: (
-  //   <TouchableOpacity
-  //   style={{position: 'absolute',
-  //   width: 50,
-  //   height: 50,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   right: 10,
-  //   bottom: 3}}
-  //       //title="Logout"
-  //       onPress={this._handleLogOut}>
-  //     <Image 
-  //     source={
-  //       require ('../assets/images/logout.png')
-  //     }
-  //       style={{resizeMode: 'contain',
-  //       width: 40,
-  //       height: 40,}}
-  //       />
-  //     </TouchableOpacity>
-  // )
-};
 
 var styles = StyleSheet.create({
   container: {

@@ -2,19 +2,16 @@ import * as WebBrowser from 'expo-web-browser'
 import React from 'react'
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
-  Text,
   RefreshControl,
   TouchableOpacity,
   View,
-} from 'react-native';
-import Config from '../config';
-import { MonoText } from '../components/StyledText';
-import deviceStorage from '../service/deviceStorage';
-import { List, Card, Checkbox, Button, ActivityIndicator} from 'react-native-paper';
-import { AppLoading } from 'expo';
+} from 'react-native'
+import Config from '../config'
+import { MonoText } from '../components/StyledText'
+import deviceStorage from '../service/deviceStorage'
+import { List, Card, Checkbox, Button, ActivityIndicator} from 'react-native-paper'
 
 export default class HomeScreen extends React.Component{
   constructor(props){
@@ -23,20 +20,20 @@ export default class HomeScreen extends React.Component{
       paylist :[],
       loading: true,
       checked: false
-    };
-    this._DeletePaylist = this._DeletePaylist.bind(this);
-    this._GetData = this._GetData.bind(this);
+    }
+    this._DeletePaylist = this._DeletePaylist.bind(this)
+    this._GetData = this._GetData.bind(this)
   }
 
 componentDidMount(){
   this._GetData()
 }
  async _GetData(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     console.log(DEMO_TOKEN)
     const header= {
       'Authorization': DEMO_TOKEN
-    };
+    }
     fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'GET',
         headers: header
@@ -53,7 +50,7 @@ componentDidMount(){
             this.setState({
               loading:false,
               paylist: json
-            });
+            })
           break
         }      
     })
@@ -63,7 +60,7 @@ componentDidMount(){
   }
 
   async _DeletePaylist(id){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     console.log(" demo "+ DEMO_TOKEN)
     const header = {
       'Authorization' : DEMO_TOKEN
@@ -81,7 +78,7 @@ componentDidMount(){
        switch (resStatus) {
          case 200:
            console.log('success')
-           alert('Delete Success.');
+           alert('Delete Success.')
            break
          case 404:
            console.log('no paylist found')
@@ -111,7 +108,7 @@ componentDidMount(){
     }
 
     async _UpdatePaylistStatus(id){
-      var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+      var DEMO_TOKEN = await deviceStorage.loadJWT("token")
       console.log(" demo "+ DEMO_TOKEN)
       const header = {
         'Authorization' : DEMO_TOKEN
@@ -135,8 +132,8 @@ componentDidMount(){
     onRefresh() {
       this.setState({
         paylist:[]
-      });
-      this._GetData();
+      })
+      this._GetData()
     }
 
   render(){
@@ -147,7 +144,7 @@ componentDidMount(){
             </View>
         )
     }
-    const { checked } = this.state;
+    const { checked } = this.state
     console.log(this.state)
     let pay = this.state.paylist.map((item) => {
       return <Card key={item.ID} style={styles.Item}>
@@ -198,7 +195,7 @@ componentDidMount(){
         </TouchableOpacity>
       </View>
     </View>
-  );
+  )
  }
 }
 
@@ -287,4 +284,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: 0.5,
   }
-});
+})

@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
     ScrollView,
     StyleSheet, 
     Text,
     View } 
-    from 'react-native';
-import { Button } from 'react-native-paper';
+    from 'react-native'
+import { Button } from 'react-native-paper'
 import Config from '../config'
-const t = require('tcomb-form-native');
+const t = require('tcomb-form-native')
 const Form = t.form.Form
 
 const newUser = t.struct({
@@ -54,8 +54,8 @@ class RegisterScreen extends React.Component {
                 loading: false
             }
         }
-        this._handleAdd = this._handleAdd.bind(this);
-        this.onRegistrationFail = this.onRegistrationFail.bind(this);
+        this._handleAdd = this._handleAdd.bind(this)
+        this.onRegistrationFail = this.onRegistrationFail.bind(this)
     }
 
     componentWillUnmount() {
@@ -76,9 +76,9 @@ class RegisterScreen extends React.Component {
     }
 
 _handleAdd = () => {
-    const value = this.refs.form.getValue();
+    const value = this.refs.form.getValue()
      //IF the form valid ..
-    this.setState({ error: '', loading: true });
+    this.setState({ error: '', loading: true })
         if (value) {
             const data = {
                 name: value.name,
@@ -133,7 +133,7 @@ _handleAdd = () => {
         this.setState({
             error: 'Registration Failed',
             loading: false
-        });
+        })
     }
 
     render() {
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default RegisterScreen;
+export default RegisterScreen

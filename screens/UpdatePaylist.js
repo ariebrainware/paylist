@@ -4,14 +4,12 @@ import {
     View,
     ScrollView,
     Text,
-    Image,
-    TouchableOpacity 
-} from 'react-native';
-import deviceStorage from '../service/deviceStorage';
-import { Button, Appbar,} from 'react-native-paper';
-import Config from '../config';
+} from 'react-native'
+import deviceStorage from '../service/deviceStorage'
+import { Button,} from 'react-native-paper'
+import Config from '../config'
 
-const t = require('tcomb-form-native');
+const t = require('tcomb-form-native')
 const Form = t.form.Form
 const paylist = t.struct ({
     name: t.String,
@@ -43,11 +41,11 @@ export default class UpdatePaylist extends React.Component {
                 loading: false
             }
         }
-        this._UpdatePaylist = this._UpdatePaylist.bind(this);
+        this._UpdatePaylist = this._UpdatePaylist.bind(this)
     }
 
     componentWillMount() {
-      const { navigation } = this.props;
+      const { navigation } = this.props
       {
             this.setState({
               value : {
@@ -63,9 +61,9 @@ export default class UpdatePaylist extends React.Component {
     }
 
     async _UpdatePaylist(id){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     console.log(DEMO_TOKEN)
-    const value = this.refs.form.getValue();
+    const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
       const data = {
@@ -86,7 +84,7 @@ export default class UpdatePaylist extends React.Component {
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept : 'application/x-www-form-urlencoded',
         'Authorization': DEMO_TOKEN
-      };
+      }
       //sent post request
       fetch(`${Config.PaylistApiURL}/paylist/paylist/`+ id, {
         method: 'PUT',
@@ -113,8 +111,8 @@ export default class UpdatePaylist extends React.Component {
 }
 
 render() {
-  const { navigation } = this.props;
-  const data = JSON.parse(navigation.getParam('id',''));
+  const { navigation } = this.props
+  const data = JSON.parse(navigation.getParam('id',''))
   console.log(this.state)
     return (
       <View>
@@ -132,7 +130,7 @@ render() {
           </Button>
           </View>
       </View>
-    );
+    )
   }
 }
 
@@ -158,4 +156,4 @@ var styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center'
     }
-});
+})
