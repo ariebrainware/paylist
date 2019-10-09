@@ -126,7 +126,7 @@ componentDidMount(){
         .then(res => {
           console.log(res.data)
           this.setState({ 
-            checked: checked
+            checked: true
         })
     })
   }
@@ -156,6 +156,7 @@ componentDidMount(){
           left={props => <List.Icon {...props} icon="monetization-on" />}>
 
           <List.Item style={{right: 50}} title={item.amount}/>
+          <List.Item style={{right: 50}} title={JSON.stringify(item.completed)}/>
           <Card.Actions style={{right:50}}>
             <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
             <Button icon="edit" onPress={() =>  this.props.navigation.navigate('UpdatePaylist',{
@@ -163,7 +164,7 @@ componentDidMount(){
                 name: JSON.stringify(item.name),
                 amount: JSON.stringify(item.amount)
               })}>edit</Button>
-            <Checkbox/>
+            <Checkbox status={checked ? 'checked' : 'unchecked' } onPress={ () => this._UpdatePaylistStatus(item.ID)}/>
           </Card.Actions>
         </List.Accordion>
         </Card>    
@@ -206,7 +207,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    backgroundColor:  '#78f0df',
   },
   contentContainer: {
     paddingTop:10,
@@ -226,11 +227,11 @@ const styles = StyleSheet.create({
     height: 50,
   },
   Item: {
-    //alignItems:'center',
-    margin:0,
-    //alignContent:'space-between',
-    //justifyContent:'center',
-    //borderBottomWidth:1,
-    //borderBottomColor: '#eee'
+    margin:1.5,
+    padding:3.5
+  },
+  content: {
+    backgroundColor: '#fff',
+    margin: 0.5,
   }
 });

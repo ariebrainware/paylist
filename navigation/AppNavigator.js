@@ -5,7 +5,6 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import { createStackNavigator } from 'react-navigation-stack';
 import { Platform, StatusBar } from 'react-native';
-import HomeScreen from '../screens/HomeScreen';
 import CreatePaylist from '../screens/CreatePaylist';
 import UpdateUser from '../screens/UpdateUser';
 import UpdatePaylist from '../screens/UpdatePaylist';
