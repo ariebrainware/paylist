@@ -126,7 +126,7 @@ componentDidMount(){
         .then(res => {
           console.log(res.data)
           this.setState({ 
-            checked: checked
+            checked: true
         })
     })
   }
@@ -164,7 +164,7 @@ componentDidMount(){
                 name: JSON.stringify(item.name),
                 amount: JSON.stringify(item.amount)
               })}>edit</Button>
-            <Checkbox/>
+            <Checkbox status={checked ? 'checked' : 'unchecked' } onPress={ () => this._UpdatePaylistStatus(item.ID)}/>
           </Card.Actions>
         </List.Accordion>
         </Card>
@@ -208,7 +208,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#78f0df',
+    backgroundColor:  '#78f0df',
   },
   contentContainer: {
     paddingTop:10,
@@ -228,12 +228,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   Item: {
-    //alignItems:'center',
     margin:1.5,
     padding:3.5
-    //justifyContent:'center',
-    //borderBottomWidth:1,
-    //borderBottomColor: '#eee'
   },
   content: {
     backgroundColor: '#fff',

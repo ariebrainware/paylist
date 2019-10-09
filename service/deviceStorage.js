@@ -9,32 +9,26 @@ const deviceStorage = {
     }
   },
 
-  async loadJWT() {
-    try {
-      let value = await AsyncStorage.getItem('token');
-      if (value !== null) {
-        console.log('dari device :' + value)
-      }
-      return value;
-    } catch (error) {
-      console.log('AsyncStorage error :' + error.message);
-    }
-  },
+    async loadJWT() {
+        try {
+            let payload = await AsyncStorage.getItem('token');
+            let token = JSON.parse(payload);
+            return token.value;
+        } catch (error) {
+            console.log('AsyncStorage error :' + error.message);
+        }
+    },
 
-  async deleteJWT() {
-    try {
-      await AsyncStorage.removeItem('token')
-        .then(
-          () => {
-            this.setState({
-              jwt: ''
-            })
-          }
-        )
-    } catch (error) {
-      console.log('AsyncStorage Error: ' + error.message)
+    async deleteJWT() {
+        try{
+            let payload = await AsyncStorage.getItem('token');
+            let token = JSON.parse(payload);
+            await AsyncStorage.removeItem(token.value);
+            return token.value;
+        } catch (error){
+            console.log('AsyncStorage Error: ' + error.message);
+        }
     }
   }
-}
 
 export default deviceStorage
