@@ -112,6 +112,7 @@ _handleAdd = () => {
           case 200:
             console.log('success')
             alert('You may login now')
+            this.props.navigation.navigate('Login')
             break
           case 500:
             console.log('username exist')

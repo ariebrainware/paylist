@@ -124,36 +124,6 @@ export default class LoginScreen extends React.Component {
             break
         }
       })
-      .catch(err => {
-        console.error(err)
-      })
-        .then(res => {
-          resStatus = res.status
-          return res.json()
-        })
-        .then(res => {
-          console.log('saat login :' + res.data)
-          switch (resStatus) {
-            case 200:
-              deviceStorage.saveKey('token', res.data);
-              //this.props.newJWT(res.data.jwt);
-              console.log('success')
-              this.props.navigation.navigate('Main')
-              //console.log(res.data.jwt)
-              break
-            case 404:
-              console.log('wrong username or password')
-              alert('wrong username or password')
-              break
-            case 500:
-              console.log('already login')
-              alert('already login')
-              break
-            default:
-              console.log('unhandled')
-              break
-          }
-        })
         .catch(err => {
           console.error(err)
         })
@@ -199,7 +169,6 @@ var styles = StyleSheet.create({
     padding: 20,
     flex: 0,
     flexDirection: 'column',
-    //backgroundColor:'red'
   },
   button: {
     borderRadius: 4,
