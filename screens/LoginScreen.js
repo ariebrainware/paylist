@@ -90,6 +90,42 @@ export default class LoginScreen extends React.Component {
           Accept: 'application/x-www-form-urlencoded'
         },
         body: payload
+       })
+       .then(res => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(res => {
+        console.log('saat login :' + res.data)
+        switch (resStatus) {
+          case 200:
+            let token = {"type": "sensitive", "value":res.data}
+            deviceStorage.saveKey("token", JSON.stringify(token));
+            this.props.navigation.navigate('Main')
+            this.clearForm();
+            break
+          case 404:
+            console.log('wrong username or password')
+            alert('wrong username or password')
+            break
+          case 202:
+            console.log('already login')
+            alert('already login')
+            this.props.navigation.navigate('Main')
+            this.clearForm();
+            break
+          case 500:
+              console.log('token expired')
+              alert('token expired, please sign in again')
+              this.clearForm();
+            break
+          default:
+            console.log('unhandled')
+            break
+        }
+      })
+      .catch(err => {
+        console.error(err)
       })
         .then(res => {
           resStatus = res.status

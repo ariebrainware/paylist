@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
     ScrollView,
-    StyleSheet,
-    Text
-}
+    StyleSheet, 
+    Text,
+    View } 
     from 'react-native';
-import Config from '../config';
 import { Button } from 'react-native-paper';
+import Config from '../config'
 const t = require('tcomb-form-native');
 const Form = t.form.Form
 
@@ -34,7 +34,8 @@ const option = {
         password: {
             autoCapitalize: 'none',
             password: true,
-            autoCorrect: false
+            autoCorrect: false,
+            secureTextEntry: true,
         }
     }
 }
@@ -74,10 +75,10 @@ class RegisterScreen extends React.Component {
         })
     }
 
-    _handleAdd = () => {
-        const value = this.refs.form.getValue();
-        //IF the form valid ..
-        this.setState({ error: '', loading: true });
+_handleAdd = () => {
+    const value = this.refs.form.getValue();
+     //IF the form valid ..
+    this.setState({ error: '', loading: true });
         if (value) {
             const data = {
                 name: value.name,
@@ -91,43 +92,42 @@ class RegisterScreen extends React.Component {
                 let encodedValue = encodeURIComponent(data[property])
                 payload.push(encodedKey + "=" + encodedValue)
             }
-            payload = payload.join("&")
-            console.log(`payload: ${payload}`)
-            //sent post request
-            fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    Accept: 'application/x-www-form-urlencoded'
-                },
-                body: payload
-            })
-                .then(res => {
-                    resStatus = res.status
-                    return res.json()
-                })
-                .then(res => {
-                    switch (resStatus) {
-                        case 200:
-                            console.log('success')
-                            alert('You may login now')
-                            break
-                        case 500:
-                            console.log('username exist')
-                            alert('username exist')
-                            break
-                        default:
-                            console.log('unhandled')
-                            break
-                    }
-                })
-                .done()
+    payload = payload.join("&")
+    console.log(`payload: ${payload}`)
+    //sent post request
+    fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept : 'application/x-www-form-urlencoded'
+    },
+    body: payload
+    })
+    .then(res => {
+    resStatus = res.status
+    return res.json()
+    })
+    .then(res => {
+        switch (resStatus) {
+          case 200:
+            console.log('success')
+            alert('You may login now')
+            break
+          case 500:
+            console.log('username exist')
+            alert('username exist')
+            break
+          default:
+            console.log('unhandled')
+            break
+        }
+      })
+        .done()
         } else {
             //form validation error
             alert('Please fill the empty field')
         }
     }
-
     onRegistrationFail() {
         this.setState({
             error: 'Registration Failed',
@@ -138,8 +138,10 @@ class RegisterScreen extends React.Component {
     render() {
         return (
             <ScrollView style={styles.container}>
-                <Form ref='form' type={newUser} options={option}
-                    value={this.state.value} onChange={this._onChange} />
+                <Form ref='form' 
+                type={newUser} options={option}
+                value={this.state.value} 
+                onChange={this._onChange}/>
                 <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
                     <Text style={{}}>Create Account</Text>
                 </Button>
@@ -153,7 +155,6 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         flexDirection: 'column',
-        // backgroundColor:'red',
     },
     button: {
         borderRadius: 4,
@@ -161,9 +162,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         backgroundColor: '#4CD964'
-    },
-    greenButton: {
-        backgroundColor: '#4CD964',
     },
     centering: {
         alignItems: 'center',
