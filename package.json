@@ -32,7 +32,7 @@
     "react-native-vector-icons": "^4.0.0",
     "react-native-web": "^0.11.4",
     "react-navigation": "^4.0.7",
-    "react-navigation-stack": "^1.9.0",
+    "react-navigation-stack": "^1.9.4",
     "tcomb-form-native": "^0.6.20"
   },
   "devDependencies": {
