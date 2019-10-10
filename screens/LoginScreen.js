@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native';
-import deviceStorage from '../service/deviceStorage';
-import { Button } from 'react-native-paper';
-import Config from '../config';
+import React, { Component } from 'react'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
+import deviceStorage from '../service/deviceStorage'
+import { Button } from 'react-native-paper'
+import Config from '../config'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -10,7 +10,7 @@ const Form = t.form.Form
 const User = t.struct({
   username: t.String,
   password: t.String
-});
+})
 
 const options = {
   fields: {
@@ -29,7 +29,7 @@ const options = {
 
 export default class LoginScreen extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       value: {
@@ -39,8 +39,8 @@ export default class LoginScreen extends React.Component {
         loading: false
       }
     }
-    this._handleLogin = this._handleLogin.bind(this);
-    this.onLoginFail = this.onLoginFail.bind(this);
+    this._handleLogin = this._handleLogin.bind(this)
+    this.onLoginFail = this.onLoginFail.bind(this)
   }
 
   componentWillUnmount() {
@@ -63,11 +63,11 @@ export default class LoginScreen extends React.Component {
 
   clearForm() {
     // clear content from all textbox
-    this.setState({ value: null });
+    this.setState({ value: null })
   }
 
   _handleLogin() {
-    const value = this.refs.form.getValue();
+    const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
       const data = {
@@ -90,34 +90,40 @@ export default class LoginScreen extends React.Component {
           Accept: 'application/x-www-form-urlencoded'
         },
         body: payload
+       })
+       .then(res => {
+        resStatus = res.status
+        return res.json()
       })
-        .then(res => {
-          resStatus = res.status
-          return res.json()
-        })
-        .then(res => {
-          console.log('saat login :' + res.data)
-          switch (resStatus) {
-            case 200:
-              deviceStorage.saveKey('token', res.data);
-              //this.props.newJWT(res.data.jwt);
-              console.log('success')
-              this.props.navigation.navigate('Main')
-              //console.log(res.data.jwt)
-              break
-            case 404:
-              console.log('wrong username or password')
-              alert('wrong username or password')
-              break
-            case 500:
-              console.log('already login')
-              alert('already login')
-              break
-            default:
-              console.log('unhandled')
-              break
-          }
-        })
+      .then(res => {
+        console.log('saat login :' + res.data)
+        switch (resStatus) {
+          case 200:
+            let token = {"type": "sensitive", "value":res.data}
+            deviceStorage.saveKey("token", JSON.stringify(token))
+            this.props.navigation.navigate('Main')
+            this.clearForm()
+            break
+          case 404:
+            console.log('wrong username or password')
+            alert('wrong username or password')
+            break
+          case 202:
+            console.log('already login')
+            alert('already login')
+            this.props.navigation.navigate('Main')
+            this.clearForm()
+            break
+          case 500:
+              console.log('token expired')
+              alert('token expired, please sign in again')
+              this.clearForm()
+            break
+          default:
+            console.log('unhandled')
+            break
+        }
+      })
         .catch(err => {
           console.error(err)
         })
@@ -132,7 +138,7 @@ export default class LoginScreen extends React.Component {
     this.setState({
       error: 'Login Failed',
       loading: false
-    });
+    })
   }
   render() {
     return (
@@ -154,7 +160,7 @@ export default class LoginScreen extends React.Component {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    );
+    )
   }
 }
 
@@ -163,7 +169,6 @@ var styles = StyleSheet.create({
     padding: 20,
     flex: 0,
     flexDirection: 'column',
-    //backgroundColor:'red'
   },
   button: {
     borderRadius: 4,
