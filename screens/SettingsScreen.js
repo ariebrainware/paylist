@@ -11,127 +11,127 @@ export default class SettingsScreen extends React.Component {
     this.state ={
       data: [],
       Loading:true
-  }
+    }
     this._handleLogOut = this._handleLogOut.bind(this)
     this._GetDataUser = this._GetDataUser.bind(this) 
   }
- async _handleLogOut(){
-    var DEMO_TOKEN = await deviceStorage.deleteJWT("token")
-    console.log(" demo "+ DEMO_TOKEN)
+  async _handleLogOut(){
+    var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
+    console.log(' demo '+ DEMO_TOKEN)
     const header = {
       'Authorization' : DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
-        method: 'GET',
-        headers: header
+      method: 'GET',
+      headers: header
+    })
+      .then(res => {
+        switch (res.status) {
+        case 200:
+          console.log('success')
+          this.props.navigation.navigate('Login')
+          alert('You have been logged out.')
+          break
+        case 500:
+          alert('token expired')
+          this.props.navigation.navigate('Login')
+          break
+        default:
+          console.log('unhandled')
+          alert('Something wrong, please try again later!')
+          break
+        }
       })
-     .then(res => {
-       switch (res.status) {
-         case 200:
-           console.log('success')
-           this.props.navigation.navigate('Login')
-           alert('You have been logged out.')
-           break
-         case 500:
-           alert('token expired')
-           this.props.navigation.navigate('Login')
-           break
-         default:
-           console.log('unhandled')
-           alert('Something wrong, please try again later!')
-           break
-       }
-     })
-     .catch(err => {
-       console.error(err)
-     })
-     .done()
-    }
+      .catch(err => {
+        console.error(err)
+      })
+      .done()
+  }
 
   componentDidMount(){
     this._GetDataUser()
   }
 
   async _GetDataUser(){
-      var DEMO_TOKEN = await deviceStorage.loadJWT("token")
-      console.log(DEMO_TOKEN)
-      const header= {
-          'Authorization': DEMO_TOKEN
-      }
-        fetch(`${Config.PaylistApiURL}/paylist/users`, {
-            method: 'GET',
-            headers: header
+    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    console.log(DEMO_TOKEN)
+    const header= {
+      'Authorization': DEMO_TOKEN
+    }
+    fetch(`${Config.PaylistApiURL}/paylist/users`, {
+      method: 'GET',
+      headers: header
+    })
+      .then((res) => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(ress => {
+        switch (resStatus) {
+        case 200:
+          let dataString = JSON.stringify(ress.data)
+          let dataParse = JSON.parse(dataString)
+          this.setState({
+            data: dataParse,
+            Loading:false
           })
-          .then((res) => {
-          resStatus = res.status
-          return res.json()
-          })
-          .then(ress => {
-              switch (resStatus) {
-                  case 200:
-                      let dataString = JSON.stringify(ress.data)
-                      let dataParse = JSON.parse(dataString)
-                      this.setState({
-                          data: dataParse,
-                          Loading:false
-                      })
-                  break    
-              } 
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-      }
+          break    
+        } 
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
     
-      onRefresh() {
-        this.setState({
-          data:[]
-        })
-        this._GetDataUser()
-      }
+  onRefresh() {
+    this.setState({
+      data:[]
+    })
+    this._GetDataUser()
+  }
   render(){
     console.log(this.state)
     let user= this.state.data.map((val) => {
-    return (<Card key={val.ID} style={{margin: 0}}>
-              <Card>
-                <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#eee', alignItems:'center', justifyContent:'center', left:90}}>
-                    <Title>{val.name}</Title>
-                    <Paragraph>{val.email}</Paragraph>
-                </Card.Content>
-              </Card>
-              <Card style={{}}>
-                <Card.Content style={{paddingTop:10}}>
-                  <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
-                </Card.Content>
-                <Card>
+      return (<Card key={val.ID} style={{margin: 0}}>
+        <Card>
+          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#eee', alignItems:'center', justifyContent:'center', left:90}}>
+            <Title>{val.name}</Title>
+            <Paragraph>{val.email}</Paragraph>
+          </Card.Content>
+        </Card>
+        <Card style={{}}>
+          <Card.Content style={{paddingTop:10}}>
+            <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
+          </Card.Content>
+          <Card>
             <Card.Actions>
               <Button onPress={() =>  this.props.navigation.navigate('UpdateUser',{
                 name: JSON.stringify(this.state.data)
               })}>Edit Data </Button>
-              </Card.Actions>
+            </Card.Actions>
           </Card>
-              </Card>
-           </Card>
-    )
+        </Card>
+      </Card>
+      )
     })
     return (
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
-        refreshControl={
-          <RefreshControl
+          refreshControl={
+            <RefreshControl
             //refresh control used for the Pull to Refresh
-            refreshing={this.state.Loading}
-            onRefresh={this.onRefresh.bind(this)}
-          />
-        }>
-       {user}
+              refreshing={this.state.Loading}
+              onRefresh={this.onRefresh.bind(this)}
+            />
+          }>
+          {user}
         </ScrollView>
         <View>
           <Card>
             <Card.Actions>
-            <Button onPress={this._handleLogOut}>
-             <Text style={styles.logoutButton}>Logout</Text>
-            </Button>
+              <Button onPress={this._handleLogOut}>
+                <Text style={styles.logoutButton}>Logout</Text>
+              </Button>
             </Card.Actions>
           </Card>
         </View>
@@ -167,15 +167,15 @@ var styles = StyleSheet.create({
   LogoutText: {
     color:'black',
     fontSize:16,
-},
+  },
   logoutButton: {
     color:'#4CD964',
     fontSize:20,
     fontWeight:'500',
-},
+  },
   logoutStyle: {
-  resizeMode: 'contain',
-  width: 50,
-  height: 50,
-},
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
+  },
 })

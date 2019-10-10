@@ -36,25 +36,25 @@ export default createAppContainer(
       }
     },
     CreatePaylist: {
-        screen: CreatePaylist,
-        navigationOptions: {
-          title: "Create Paylist",
-          headerStyle
-        }
-      },
+      screen: CreatePaylist,
+      navigationOptions: {
+        title: 'Create Paylist',
+        headerStyle
+      }
+    },
     UpdateUser: {
-        screen: UpdateUser,
-        navigationOptions: {
-          title: "Edit Data",
-          headerStyle
-        }
+      screen: UpdateUser,
+      navigationOptions: {
+        title: 'Edit Data',
+        headerStyle
+      }
     },
     UpdatePaylist: {
       screen: UpdatePaylist,
       navigationOptions: {
-        title: "Edit Data",
+        title: 'Edit Data',
         headerStyle
       }
-  },
+    },
   })
 )
