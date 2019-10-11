@@ -8,6 +8,7 @@ import { Platform, StatusBar } from 'react-native'
 import CreatePaylist from '../screens/CreatePaylist'
 import UpdateUser from '../screens/UpdateUser'
 import UpdatePaylist from '../screens/UpdatePaylist'
+import AddBalance from '../screens/AddBalance'
 
 const headerStyle = {
   marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
@@ -15,20 +16,20 @@ const headerStyle = {
 
 export default createAppContainer(
   createStackNavigator({
-    Login: {
-      screen: LoginScreen,
-      navigationOptions: {
-        title: 'Sign In',
-        headerStyle
-      }
-    },
-    Register: {
-      screen: RegisterScreen,
-      navigationOptions: {
-        title: 'Sign Up',
-        headerStyle
-      }
-    },
+    // Login: {
+    //   screen: LoginScreen,
+    //   navigationOptions: {
+    //     title: 'Sign In',
+    //     headerStyle
+    //   }
+    // },
+    // Register: {
+    //   screen: RegisterScreen,
+    //   navigationOptions: {
+    //     title: 'Sign Up',
+    //     headerStyle
+    //   }
+    // },
     Main: {
       screen: MainTabNavigator,
       navigationOptions: {
@@ -56,5 +57,12 @@ export default createAppContainer(
         headerStyle
       }
     },
+    AddBalance: {
+      screen: AddBalance,
+      navigationOptions:{
+        title:'Add Balance',
+        headerStyle
+      }
+    }
   })
 )

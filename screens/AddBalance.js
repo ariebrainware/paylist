@@ -12,34 +12,11 @@ import Config from '../config'
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 const User = t.struct ({
-    email: t.String,
-    name: t.String,
-    username: t.String,
-    password: t.String,
     balance: t.Number,
 })
 
 const option = {
     fields: {
-        username: {
-          autoCapitalize: 'none',
-          autoCorrect: false,
-          editable: false
-        },
-        email: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        name: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        password: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-            secureTextEntry: true,
-            password: true,
-        },
         balance: {
             autoCapitalize: 'none',
             autoCorrect: false,
@@ -48,58 +25,38 @@ const option = {
     }
 }
 
-export default class UpdateUser extends React.Component {
+export default class AddBalance extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             value: {
-                email:'',
-                name:'',
-                username:'',
-                password:'',
                 balance: '',
                 error:'',
                 loading: false
             }
         }
-        this._UpdateUser = this._UpdateUser.bind(this)
+        this._AddBalance = this._AddBalance.bind(this)
     }
-
-    componentWillMount() {
-      const { navigation } = this.props
-      const data = JSON.parse(navigation.getParam('name',[]))
-      {
-        data.map((item)=> {
-          return (
-            this.setState({
-              value : {
-                email : item.email,
-                name: item.name,
-                username: item.username,
-                password: item.password,
-                balance: item.balance
-              }
-            })
-          )
-        })
+    componentWillUnmount() {
+      this.setState = {
+          value: {
+              balance:'',
+              error:'',
+              loading:true
+          }
       }
-    }
-    
+  }
     _onChange = (value) => {
     this.setState({ value })
     }
 
-    async _UpdateUser(id){
+    async _AddBalance(){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
       const data = {
-        email: value.email,
-        name: value.name,
-        username: value.username,
-        password: value.password,
         balance: value.balance,
       }
       let payload = []
@@ -118,8 +75,8 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/`+ id, {
-        method: 'PUT',
+      fetch(`${Config.PaylistApiURL}/paylist/addsaldo`, {
+        method: 'POST',
         headers: header,
         body: payload
       })
@@ -127,7 +84,11 @@ export default class UpdateUser extends React.Component {
         console.log(res)
         switch (res.status) {
           case 200:
-            alert('Success Update User Data')
+            alert('Success Add Balance')
+            this.props.navigation.navigate('Main')
+            break
+          case 400:
+            alert('field can\'t be negative or zero')
             break
         }      
     })
@@ -142,8 +103,6 @@ export default class UpdateUser extends React.Component {
 }
   
 render() {
-  const { navigation } = this.props
-  const data = JSON.parse(navigation.getParam('name',[]))
     return (
       <View>
         <ScrollView style={styles.container}> 
@@ -155,44 +114,15 @@ render() {
           />          
         </ScrollView> 
           <View> 
-          {
-             data.map((item)=> {
-               return <View key={item.ID}>
-               <Button style={styles.button} mode="contained" onPress={ () => this._UpdateUser(item.ID)}>
-                      <Text style={[styles.button, styles.greenButton]}>Update</Text>
-                      </Button>
-                      </View>
-             })
-      }
-            
+               <Button style={styles.button} mode="contained" onPress={this._AddBalance}>
+                    <Text style={[styles.greenButton]}>Add</Text>
+                </Button>
           </View>  
       </View>
     )
   }
 }
 
-UpdateUser.navigationOptions = {
-  headerRight :(
-    <TouchableOpacity
-      style={{position: 'absolute',
-      width: 50,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 5,
-      bottom: 3}}
-        onPress={this._UpdateUser}>
-      <Image 
-      source={
-        require ('../assets/images/ceklis.png')
-      }
-        style={{resizeMode: 'contain',
-        width: 20,
-        height: 20,}}
-        />
-      </TouchableOpacity>
-  )
-}
 var styles = StyleSheet.create({
     container: {
       padding: 20,

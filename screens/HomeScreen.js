@@ -6,19 +6,24 @@ import {
   StyleSheet,
   RefreshControl,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native'
 import Config from '../config'
 import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
-import { List, Card, Checkbox, Button, ActivityIndicator} from 'react-native-paper'
+import SearchInput, { createFilter } from 'react-native-search-filter'
+import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar,Provider, Portal, FAB} from 'react-native-paper'
 
+
+const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
 export default class HomeScreen extends React.Component{
   constructor(props){
     super(props)
     this.state = {
       paylist :[],
+      Search: '',
       loading: true,
+      open:false,
       checked: false
     }
     this._DeletePaylist = this._DeletePaylist.bind(this)
@@ -57,6 +62,10 @@ export default class HomeScreen extends React.Component{
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  searchUpdated(term) {
+    this.setState({ Search: term })
   }
 
   async _DeletePaylist(id){
@@ -144,17 +153,19 @@ export default class HomeScreen extends React.Component{
         </View>
       )
     }
+    const filteredPaylist = this.state.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     const { checked } = this.state
     console.log(this.state)
-    let pay = this.state.paylist.map((item) => {
+    let pay = filteredPaylist.map((item) => {
+    var tgl = new Date(item.CreatedAt)
       return <Card key={item.ID} style={styles.Item}>
-        
+        <Card style={styles.content}>
         <List.Accordion
           title={item.name}
           left={props => <List.Icon {...props} icon="monetization-on" />}>
-
           <List.Item style={{right: 50}} title={item.amount}/>
-          <List.Item style={{right: 50}} title={JSON.stringify(item.completed)}/>
+          {/* <List.Item style={{right: 50}} title={JSON.stringify(item.completed)}/> */}
+          <List.Item style={{right: 50}} title={tgl.toDateString()}/>
           <Card.Actions style={{right:50}}>
             <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
             <Button icon="edit" onPress={() =>  this.props.navigation.navigate('UpdatePaylist',{
@@ -165,11 +176,18 @@ export default class HomeScreen extends React.Component{
             <Checkbox status={checked ? 'checked' : 'unchecked' } onPress={ () => this._UpdatePaylistStatus(item.ID)}/>
           </Card.Actions>
         </List.Accordion>
+        </Card>
       </Card>    
     })
-
+   
     return (
+      <Provider>
       <View style={styles.container}>
+        <Searchbar
+        style={{padding:0, margin:4}}
+        placeholder="Search"
+        onChangeText={(term) => { this.searchUpdated(term)}}       
+        />
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}  refreshControl={
@@ -178,23 +196,26 @@ export default class HomeScreen extends React.Component{
               refreshing={this.state.loading}
               onRefresh={this.onRefresh.bind(this)}
             />
-          }>{pay}
-        </ScrollView>
-     
-        <View style={styles.tabBarInfoContainer}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.props.navigation.navigate('CreatePaylist')}
-            style={styles.TouchableOpacityStyle}>
-            <Image
-              source={
-                require ('../assets/images/Add-butt.png')
+          }>{pay}        
+          </ScrollView>
+         <Portal>
+          <FAB.Group
+            open={this.state.open}
+            icon={this.state.open ? 'today' : 'add'}
+            actions={[
+              { icon: 'create', label: 'Saldo',onPress: () =>  this.props.navigation.navigate('AddBalance') },
+              { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
+            ]}
+            onStateChange={({ open }) => this.setState({ open })}
+            onPress={() => {
+              if (this.state.open) {
+                // do something if the speed dial is open
               }
-              style={styles.FloatingButtonStyle}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+            }}
+          /> 
+          </Portal>
+       </View>
+       </Provider>
     )
   }
 }
@@ -208,19 +229,7 @@ const styles = StyleSheet.create({
     backgroundColor:  '#78f0df',
   },
   contentContainer: {
-    paddingTop:10,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
+    paddingTop:0,
   },
   getStartedContainer: {
     alignItems: 'center',
@@ -255,27 +264,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     alignItems: 'center',
   },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-  TouchableOpacityStyle: {
-    position: 'absolute',
-    width: 50,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    right: 30,
-    bottom: 30,
-  },
-  FloatingButtonStyle: {
-    resizeMode: 'contain',
-    width: 50,
-    height: 50,
-  },
   Item: {
     margin:1.5,
     padding:3.5
@@ -283,5 +271,5 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: '#fff',
     margin: 0.5,
-  }
+  },
 })

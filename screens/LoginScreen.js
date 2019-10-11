@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button } from 'react-native-paper'
 import Config from '../config'

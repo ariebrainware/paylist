@@ -140,6 +140,9 @@ export default class SettingsScreen extends React.Component {
   }
 } 
 
+SettingsScreen.navigationOptions = {
+  title: 'My Account',
+}
 
 var styles = StyleSheet.create({
   container: {
