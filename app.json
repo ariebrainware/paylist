@@ -24,7 +24,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.ritalin.Paylist"
+      "package": "com.ritalin.paylist"
     },
     "ios": {
       "supportsTablet": true
