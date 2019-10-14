@@ -30,7 +30,6 @@ export default class HomeScreen extends React.Component {
   }
   async _GetData() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -54,14 +53,10 @@ export default class HomeScreen extends React.Component {
             break
         }
       })
-      .catch((error) => {
-        console.log(error)
-      })
   }
 
   async _DeletePaylist(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo ' + DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -74,18 +69,14 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(res => {
-        console.log(res)
         switch (resStatus) {
           case 200:
-            console.log('success')
             alert('Delete Success.')
             break
           case 404:
-            console.log('no paylist found')
             alert('no paylist found')
             break
           case 400:
-            console.log('specify paylist id')
             alert('specify paylist id')
             break
           case 500:
@@ -93,13 +84,9 @@ export default class HomeScreen extends React.Component {
             this.props.navigation.navigate('Login')
             break
           default:
-            console.log('unhandled')
             alert('Something wrong, please try again later!')
             break
         }
-      })
-      .catch(err => {
-        console.error(err)
       })
       .done()
   }
@@ -109,7 +96,6 @@ export default class HomeScreen extends React.Component {
 
   async _UpdatePaylistStatus(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo ' + DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -122,7 +108,6 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(res => {
-        console.log(res.data)
         this.setState({
           checked: true
         })
@@ -145,7 +130,6 @@ export default class HomeScreen extends React.Component {
       )
     }
     const { checked } = this.state
-    console.log(this.state)
     let pay = this.state.paylist.map((item) => {
       return <Card key={item.ID} style={styles.Item}>
 

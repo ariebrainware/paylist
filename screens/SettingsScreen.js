@@ -1,25 +1,24 @@
 import React from 'react'
-import {View, Text,StyleSheet, RefreshControl} from 'react-native'
-import deviceStorage  from '../service/deviceStorage'
-import { Card, Button, Title, Paragraph} from 'react-native-paper'
+import { View, Text, StyleSheet, RefreshControl } from 'react-native'
+import deviceStorage from '../service/deviceStorage'
+import { Card, Button, Title, Paragraph } from 'react-native-paper'
 import { ScrollView } from 'react-native-gesture-handler'
 import Config from '../config'
 
 export default class SettingsScreen extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state ={
+    this.state = {
       data: [],
-      Loading:true
+      Loading: true
     }
     this._handleLogOut = this._handleLogOut.bind(this)
-    this._GetDataUser = this._GetDataUser.bind(this) 
+    this._GetDataUser = this._GetDataUser.bind(this)
   }
-  async _handleLogOut(){
+  async _handleLogOut() {
     var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
-    console.log(' demo '+ DEMO_TOKEN)
     const header = {
-      'Authorization' : DEMO_TOKEN
+      'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
       method: 'GET',
@@ -27,19 +26,17 @@ export default class SettingsScreen extends React.Component {
     })
       .then(res => {
         switch (res.status) {
-        case 200:
-          console.log('success')
-          this.props.navigation.navigate('Login')
-          alert('You have been logged out.')
-          break
-        case 500:
-          alert('token expired')
-          this.props.navigation.navigate('Login')
-          break
-        default:
-          console.log('unhandled')
-          alert('Something wrong, please try again later!')
-          break
+          case 200:
+            this.props.navigation.navigate('Login')
+            alert('You have been logged out.')
+            break
+          case 500:
+            alert('token expired')
+            this.props.navigation.navigate('Login')
+            break
+          default:
+            alert('Something wrong, please try again later!')
+            break
         }
       })
       .catch(err => {
@@ -48,14 +45,13 @@ export default class SettingsScreen extends React.Component {
       .done()
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this._GetDataUser()
   }
 
-  async _GetDataUser(){
+  async _GetDataUser() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(DEMO_TOKEN)
-    const header= {
+    const header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/users`, {
@@ -68,44 +64,40 @@ export default class SettingsScreen extends React.Component {
       })
       .then(ress => {
         switch (resStatus) {
-        case 200:
-          let dataString = JSON.stringify(ress.data)
-          let dataParse = JSON.parse(dataString)
-          this.setState({
-            data: dataParse,
-            Loading:false
-          })
-          break    
-        } 
-      })
-      .catch((error) => {
-        console.log(error)
+          case 200:
+            let dataString = JSON.stringify(ress.data)
+            let dataParse = JSON.parse(dataString)
+            this.setState({
+              data: dataParse,
+              Loading: false
+            })
+            break
+        }
       })
   }
-    
+
   onRefresh() {
     this.setState({
-      data:[]
+      data: []
     })
     this._GetDataUser()
   }
-  render(){
-    console.log(this.state)
-    let user= this.state.data.map((val) => {
-      return (<Card key={val.ID} style={{margin: 0}}>
+  render() {
+    let user = this.state.data.map((val) => {
+      return (<Card key={val.ID} style={{ margin: 0 }}>
         <Card>
-          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#eee', alignItems:'center', justifyContent:'center', left:90}}>
+          <Card.Content style={{ flex: 1, borderWidth: 0, width: 250, height: 80, backgroundColor: '#eee', alignItems: 'center', justifyContent: 'center', left: 90 }}>
             <Title>{val.name}</Title>
             <Paragraph>{val.email}</Paragraph>
           </Card.Content>
         </Card>
         <Card style={{}}>
-          <Card.Content style={{paddingTop:10}}>
+          <Card.Content style={{ paddingTop: 10 }}>
             <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
           </Card.Content>
           <Card>
             <Card.Actions>
-              <Button onPress={() =>  this.props.navigation.navigate('UpdateUser',{
+              <Button onPress={() => this.props.navigation.navigate('UpdateUser', {
                 name: JSON.stringify(this.state.data)
               })}>Edit Data </Button>
             </Card.Actions>
@@ -119,7 +111,7 @@ export default class SettingsScreen extends React.Component {
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
           refreshControl={
             <RefreshControl
-            //refresh control used for the Pull to Refresh
+              //refresh control used for the Pull to Refresh
               refreshing={this.state.Loading}
               onRefresh={this.onRefresh.bind(this)}
             />
@@ -138,7 +130,7 @@ export default class SettingsScreen extends React.Component {
       </View>
     )
   }
-} 
+}
 
 
 var styles = StyleSheet.create({
@@ -147,13 +139,13 @@ var styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    paddingTop:0,
+    paddingTop: 0,
   },
-  logoutTextCont : {
-    flex:1,
-    justifyContent :'space-between',
-    paddingVertical:3,
-    flexDirection:'column', 
+  logoutTextCont: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingVertical: 3,
+    flexDirection: 'column',
   },
   TouchableOpacityStyle: {
     position: 'absolute',
@@ -165,13 +157,13 @@ var styles = StyleSheet.create({
     bottom: 30,
   },
   LogoutText: {
-    color:'black',
-    fontSize:16,
+    color: 'black',
+    fontSize: 16,
   },
   logoutButton: {
-    color:'#4CD964',
-    fontSize:20,
-    fontWeight:'500',
+    color: '#4CD964',
+    fontSize: 20,
+    fontWeight: '500',
   },
   logoutStyle: {
     resizeMode: 'contain',
