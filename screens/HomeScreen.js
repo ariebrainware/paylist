@@ -1,127 +1,214 @@
-import * as WebBrowser from 'expo-web-browser';
-import React from 'react';
+import * as WebBrowser from 'expo-web-browser'
+import React from 'react'
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
-  Text,
+  RefreshControl,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from 'react-native'
+import Config from '../config'
+import { MonoText } from '../components/StyledText'
+import deviceStorage from '../service/deviceStorage'
+import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper'
 
-import { MonoText } from '../components/StyledText';
+export default class HomeScreen extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      paylist: [],
+      loading: true,
+      checked: false
+    }
+    this._DeletePaylist = this._DeletePaylist.bind(this)
+    this._GetData = this._GetData.bind(this)
+  }
 
-export default function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
-          />
+  componentDidMount() {
+    this._GetData()
+  }
+  async _GetData() {
+    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    console.log(DEMO_TOKEN)
+    const header = {
+      'Authorization': DEMO_TOKEN
+    }
+    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+      method: 'GET',
+      headers: header
+    })
+      .then((res) => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(resJson => {
+        switch (resStatus) {
+          case 200:
+            let list = JSON.stringify(resJson.data)
+            let json = JSON.parse(list)
+            this.setState({
+              loading: false,
+              paylist: json
+            })
+            break
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+  async _DeletePaylist(id) {
+    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    console.log(' demo ' + DEMO_TOKEN)
+    const header = {
+      'Authorization': DEMO_TOKEN
+    }
+    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
+      method: 'DELETE',
+      headers: header
+    })
+      .then(res => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(res => {
+        console.log(res)
+        switch (resStatus) {
+          case 200:
+            console.log('success')
+            alert('Delete Success.')
+            break
+          case 404:
+            console.log('no paylist found')
+            alert('no paylist found')
+            break
+          case 400:
+            console.log('specify paylist id')
+            alert('specify paylist id')
+            break
+          case 500:
+            alert('token expired')
+            this.props.navigation.navigate('Login')
+            break
+          default:
+            console.log('unhandled')
+            alert('Something wrong, please try again later!')
+            break
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
+      .done()
+  }
+
+  componentWillMount() {
+  }
+
+  async _UpdatePaylistStatus(id) {
+    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    console.log(' demo ' + DEMO_TOKEN)
+    const header = {
+      'Authorization': DEMO_TOKEN
+    }
+    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
+      method: 'PUT',
+      headers: header
+    })
+      .then(res => {
+        resStatus = res.status
+        return res.json()
+      })
+      .then(res => {
+        console.log(res.data)
+        this.setState({
+          checked: true
+        })
+      })
+  }
+
+  onRefresh() {
+    this.setState({
+      paylist: []
+    })
+    this._GetData()
+  }
+
+  render() {
+    if (this.state.loading) {
+      return (
+        <View style={{ padding: 20 }}>
+          <ActivityIndicator />
         </View>
+      )
+    }
+    const { checked } = this.state
+    console.log(this.state)
+    let pay = this.state.paylist.map((item) => {
+      return <Card key={item.ID} style={styles.Item}>
 
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
+        <List.Accordion
+          title={item.name}
+          left={props => <List.Icon {...props} icon="monetization-on" />}>
 
-          <Text style={styles.getStartedText}>Get started by opening</Text>
+          <List.Item style={{ right: 50 }} title={item.amount} />
+          <List.Item style={{ right: 50 }} title={JSON.stringify(item.completed)} />
+          <Card.Actions style={{ right: 50 }}>
+            <Button onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+            <Button icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
+              id: item.ID,
+              name: JSON.stringify(item.name),
+              amount: JSON.stringify(item.amount)
+            })}>edit</Button>
+            <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={() => this._UpdatePaylistStatus(item.ID)} />
+          </Card.Actions>
+        </List.Accordion>
+      </Card>
+    })
 
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
+    return (
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer} refreshControl={
+            <RefreshControl
+              //refresh control used for the Pull to Refresh
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh.bind(this)}
+            />
+          }>{pay}
+        </ScrollView>
 
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
-          </Text>
-        </View>
-
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
+        <View style={styles.tabBarInfoContainer}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => this.props.navigation.navigate('CreatePaylist')}
+            style={styles.TouchableOpacityStyle}>
+            <Image
+              source={
+                require('../assets/images/add-button.png')
+              }
+              style={styles.FloatingButtonStyle}
+            />
           </TouchableOpacity>
         </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
       </View>
-    </View>
-  );
-}
-
-HomeScreen.navigationOptions = {
-  header: null,
-};
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
+    )
   }
 }
 
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
+HomeScreen.navigationOptions = {
+  title: 'Home',
 }
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+    backgroundColor: '#78f0df',
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 10,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -156,26 +243,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     textAlign: 'center',
   },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
   tabBarInfoText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
@@ -195,4 +262,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
-});
+  TouchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+  },
+  FloatingButtonStyle: {
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
+  },
+  Item: {
+    margin: 1.5,
+    padding: 3.5
+  },
+  content: {
+    backgroundColor: '#fff',
+    margin: 0.5,
+  }
+})
