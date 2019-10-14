@@ -5,7 +5,6 @@ const deviceStorage = {
     try {
       await AsyncStorage.setItem(token, valueToSave)
     } catch (error) {
-      console.log('AsyncStorage Error: ' + error.message)
     }
   },
 
@@ -15,18 +14,16 @@ const deviceStorage = {
       let token = JSON.parse(payload)
       return token.value
     } catch (error) {
-      console.log('AsyncStorage error :' + error.message)
     }
   },
 
   async deleteJWT() {
-    try{
+    try {
       let payload = await AsyncStorage.getItem('token')
       let token = JSON.parse(payload)
       await AsyncStorage.removeItem(token.value)
       return token.value
-    } catch (error){
-      console.log('AsyncStorage Error: ' + error.message)
+    } catch (error) {
     }
   }
 }
