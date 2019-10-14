@@ -188,7 +188,7 @@ export default class HomeScreen extends React.Component {
             style={styles.TouchableOpacityStyle}>
             <Image
               source={
-                require('../assets/images/add-butt.png')
+                require('../assets/images/add-button.png')
               }
               style={styles.FloatingButtonStyle}
             />
