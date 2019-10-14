@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Paylist",
-    "slug": "paylist",
+    "slug": "Paylist",
     "privacy": "public",
     "sdkVersion": "34.0.0",
     "platforms": [
@@ -23,6 +23,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "package": "com.ritalin.paylist"
+    },
     "ios": {
       "supportsTablet": true
     }

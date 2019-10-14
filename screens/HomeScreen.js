@@ -11,13 +11,13 @@ import {
 import Config from '../config'
 import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
-import { List, Card, Checkbox, Button, ActivityIndicator} from 'react-native-paper'
+import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper'
 
-export default class HomeScreen extends React.Component{
-  constructor(props){
+export default class HomeScreen extends React.Component {
+  constructor(props) {
     super(props)
     this.state = {
-      paylist :[],
+      paylist: [],
       loading: true,
       checked: false
     }
@@ -25,13 +25,13 @@ export default class HomeScreen extends React.Component{
     this._GetData = this._GetData.bind(this)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this._GetData()
   }
-  async _GetData(){
+  async _GetData() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
     console.log(DEMO_TOKEN)
-    const header= {
+    const header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
@@ -44,26 +44,26 @@ export default class HomeScreen extends React.Component{
       })
       .then(resJson => {
         switch (resStatus) {
-        case 200:
-          let list = JSON.stringify(resJson.data)
-          let json = JSON.parse(list)
-          this.setState({
-            loading:false,
-            paylist: json
-          })
-          break
-        }      
+          case 200:
+            let list = JSON.stringify(resJson.data)
+            let json = JSON.parse(list)
+            this.setState({
+              loading: false,
+              paylist: json
+            })
+            break
+        }
       })
       .catch((error) => {
         console.log(error)
       })
   }
 
-  async _DeletePaylist(id){
+  async _DeletePaylist(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo '+ DEMO_TOKEN)
+    console.log(' demo ' + DEMO_TOKEN)
     const header = {
-      'Authorization' : DEMO_TOKEN
+      'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
       method: 'DELETE',
@@ -76,26 +76,26 @@ export default class HomeScreen extends React.Component{
       .then(res => {
         console.log(res)
         switch (resStatus) {
-        case 200:
-          console.log('success')
-          alert('Delete Success.')
-          break
-        case 404:
-          console.log('no paylist found')
-          alert('no paylist found')
-          break
-        case 400:
-          console.log('specify paylist id')
-          alert('specify paylist id')
-          break
-        case 500:
-          alert('token expired')
-          this.props.navigation.navigate('Login')
-          break
-        default:
-          console.log('unhandled')
-          alert('Something wrong, please try again later!')
-          break
+          case 200:
+            console.log('success')
+            alert('Delete Success.')
+            break
+          case 404:
+            console.log('no paylist found')
+            alert('no paylist found')
+            break
+          case 400:
+            console.log('specify paylist id')
+            alert('specify paylist id')
+            break
+          case 500:
+            alert('token expired')
+            this.props.navigation.navigate('Login')
+            break
+          default:
+            console.log('unhandled')
+            alert('Something wrong, please try again later!')
+            break
         }
       })
       .catch(err => {
@@ -107,13 +107,13 @@ export default class HomeScreen extends React.Component{
   componentWillMount() {
   }
 
-  async _UpdatePaylistStatus(id){
+  async _UpdatePaylistStatus(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo '+ DEMO_TOKEN)
+    console.log(' demo ' + DEMO_TOKEN)
     const header = {
-      'Authorization' : DEMO_TOKEN
+      'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/status/`+id, {
+    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
       method: 'PUT',
       headers: header
     })
@@ -123,24 +123,24 @@ export default class HomeScreen extends React.Component{
       })
       .then(res => {
         console.log(res.data)
-        this.setState({ 
+        this.setState({
           checked: true
         })
       })
   }
-    
+
   onRefresh() {
     this.setState({
-      paylist:[]
+      paylist: []
     })
     this._GetData()
   }
 
-  render(){
+  render() {
     if (this.state.loading) {
-      return(
-        <View style={{padding:20}}>
-          <ActivityIndicator/>
+      return (
+        <View style={{ padding: 20 }}>
+          <ActivityIndicator />
         </View>
       )
     }
@@ -148,39 +148,39 @@ export default class HomeScreen extends React.Component{
     console.log(this.state)
     let pay = this.state.paylist.map((item) => {
       return <Card key={item.ID} style={styles.Item}>
-        
+
         <List.Accordion
           title={item.name}
           left={props => <List.Icon {...props} icon="monetization-on" />}>
 
-          <List.Item style={{right: 50}} title={item.amount}/>
-          <List.Item style={{right: 50}} title={JSON.stringify(item.completed)}/>
-          <Card.Actions style={{right:50}}>
-            <Button onPress={ () => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
-            <Button icon="edit" onPress={() =>  this.props.navigation.navigate('UpdatePaylist',{
-              id : item.ID,
+          <List.Item style={{ right: 50 }} title={item.amount} />
+          <List.Item style={{ right: 50 }} title={JSON.stringify(item.completed)} />
+          <Card.Actions style={{ right: 50 }}>
+            <Button onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+            <Button icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
+              id: item.ID,
               name: JSON.stringify(item.name),
               amount: JSON.stringify(item.amount)
             })}>edit</Button>
-            <Checkbox status={checked ? 'checked' : 'unchecked' } onPress={ () => this._UpdatePaylistStatus(item.ID)}/>
+            <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={() => this._UpdatePaylistStatus(item.ID)} />
           </Card.Actions>
         </List.Accordion>
-      </Card>    
+      </Card>
     })
 
     return (
       <View style={styles.container}>
         <ScrollView
           style={styles.container}
-          contentContainerStyle={styles.contentContainer}  refreshControl={
+          contentContainerStyle={styles.contentContainer} refreshControl={
             <RefreshControl
-            //refresh control used for the Pull to Refresh
+              //refresh control used for the Pull to Refresh
               refreshing={this.state.loading}
               onRefresh={this.onRefresh.bind(this)}
             />
           }>{pay}
         </ScrollView>
-     
+
         <View style={styles.tabBarInfoContainer}>
           <TouchableOpacity
             activeOpacity={0.7}
@@ -188,7 +188,7 @@ export default class HomeScreen extends React.Component{
             style={styles.TouchableOpacityStyle}>
             <Image
               source={
-                require ('../assets/images/Add-butt.png')
+                require('../assets/images/add-button.png')
               }
               style={styles.FloatingButtonStyle}
             />
@@ -205,10 +205,10 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:  '#78f0df',
+    backgroundColor: '#78f0df',
   },
   contentContainer: {
-    paddingTop:10,
+    paddingTop: 10,
   },
   welcomeContainer: {
     alignItems: 'center',
@@ -277,8 +277,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
   Item: {
-    margin:1.5,
-    padding:3.5
+    margin: 1.5,
+    padding: 3.5
   },
   content: {
     backgroundColor: '#fff',
