@@ -24,6 +24,7 @@ const deviceStorage = {
       await AsyncStorage.removeItem(token.value)
       return token.value
     } catch (error) {
+      console.log('AsyncStorage Error: ' + error.message)
     }
   }
 }

@@ -96,9 +96,6 @@ export default class UpdatePaylist extends React.Component {
               break
           }
         })
-        .catch(err => {
-          console.error(err)
-        })
         .done()
     } else {
       //form validation error
