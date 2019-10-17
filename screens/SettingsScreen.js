@@ -90,16 +90,15 @@ export default class SettingsScreen extends React.Component {
     this._GetDataUser()
   }
   render(){
-    console.log(this.state)
     let user= this.state.data.map((val) => {
-      return (<Card key={val.ID} style={{margin: 0}}>
-        <Card>
-          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#eee', alignItems:'center', justifyContent:'center', left:90}}>
+      return (<Card key={val.ID} style={styles.container} >
+        <Card >
+          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#9d9e9e', alignItems:'center', justifyContent:'center', left:85}}>
             <Title>{val.name}</Title>
             <Paragraph>{val.email}</Paragraph>
           </Card.Content>
         </Card>
-        <Card style={{}}>
+        <Card>
           <Card.Content style={{paddingTop:10}}>
             <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
           </Card.Content>
@@ -144,7 +143,7 @@ export default class SettingsScreen extends React.Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
   },
   contentContainer: {
     paddingTop:0,

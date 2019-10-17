@@ -95,7 +95,7 @@ export default class UpdatePaylist extends React.Component {
         console.log(res)
         switch (res.status) {
           case 200:
-            alert('Success save paylist')
+            alert('Success Update paylist')
             this.props.navigation.navigate('Main')
             break
         }      

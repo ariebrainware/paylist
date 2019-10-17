@@ -28,9 +28,10 @@ export default class HomeScreen extends React.Component {
   componentDidMount() {
     this._GetData()
   }
+
   async _GetData() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(DEMO_TOKEN)
+    console.log('demo', DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -52,6 +53,11 @@ export default class HomeScreen extends React.Component {
               paylist: json
             })
             break
+            case 500:
+              alert('You have to login first')
+              setTimeout(()=> {
+              this.props.navigation.navigate('Login');}, 3000)
+     
         }
       })
       .catch((error) => {
@@ -78,7 +84,7 @@ export default class HomeScreen extends React.Component {
         switch (resStatus) {
           case 200:
             console.log('success')
-            alert('Delete Success.')
+            alert('Delete Success Paylist.')
             break
           case 404:
             console.log('no paylist found')
@@ -102,9 +108,6 @@ export default class HomeScreen extends React.Component {
         console.error(err)
       })
       .done()
-  }
-
-  componentWillMount() {
   }
 
   async _UpdatePaylistStatus(id) {
@@ -145,19 +148,17 @@ export default class HomeScreen extends React.Component {
       )
     }
     const { checked } = this.state
-    console.log(this.state)
     let pay = this.state.paylist.map((item) => {
       return <Card key={item.ID} style={styles.Item}>
-
+        <Card style={styles.content}>
         <List.Accordion
-          title={item.name}
+          title={item.name} 
           left={props => <List.Icon {...props} icon="monetization-on" />}>
-
-          <List.Item style={{ right: 50 }} title={item.amount} />
-          <List.Item style={{ right: 50 }} title={JSON.stringify(item.completed)} />
+          <List.Item titleStyle={{color:'black'}} style={{ right: 50 }} title={item.amount} />
+          <List.Item titleStyle={{color:'black'}} style={{ right: 50 }} title={JSON.stringify(item.completed)} />
           <Card.Actions style={{ right: 50 }}>
-            <Button onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
-            <Button icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
+            <Button color='red' onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+            <Button color='black' icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
               id: item.ID,
               name: JSON.stringify(item.name),
               amount: JSON.stringify(item.amount)
@@ -165,6 +166,7 @@ export default class HomeScreen extends React.Component {
             <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={() => this._UpdatePaylistStatus(item.ID)} />
           </Card.Actions>
         </List.Accordion>
+        </Card>
       </Card>
     })
 
@@ -201,11 +203,14 @@ export default class HomeScreen extends React.Component {
 
 HomeScreen.navigationOptions = {
   title: 'Home',
+  headerStyle:{
+    backgroundColor:'#a9b0ae'
+  }
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#78f0df',
+    backgroundColor: '#ffff',
   },
   contentContainer: {
     paddingTop: 10,
@@ -278,10 +283,10 @@ const styles = StyleSheet.create({
   },
   Item: {
     margin: 1.5,
-    padding: 3.5
+    padding: 3.5,
   },
   content: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
     margin: 0.5,
   }
 })

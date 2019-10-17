@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
+import {Alert,AsyncStorage, ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button } from 'react-native-paper'
+import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
+
+
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -30,17 +32,14 @@ const options = {
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       value: {
         username: '',
         password: '',
         error: '',
-        loading: false
-      }
+      },
     }
     this._handleLogin = this._handleLogin.bind(this)
-    this.onLoginFail = this.onLoginFail.bind(this)
   }
 
   componentWillUnmount() {
@@ -49,12 +48,20 @@ export default class LoginScreen extends React.Component {
         username: '',
         password: null,
         error: '',
-        loading: true
-
       }
     }
   }
 
+  componentDidMount(){
+    this.loadInitialState().done();
+  }
+
+  async loadInitialState (){
+    var token = await deviceStorage.loadJWT('token')
+    if (token !== null){
+      this.props.navigation.navigate('Main')
+    }
+  }
   _onChange = (value) => {
     this.setState({
       value
@@ -100,13 +107,16 @@ export default class LoginScreen extends React.Component {
         switch (resStatus) {
           case 200:
             let token = {"type": "sensitive", "value":res.data}
-            deviceStorage.saveKey("token", JSON.stringify(token))
-            this.props.navigation.navigate('Main')
+            deviceStorage.saveKey('token', JSON.stringify(token))
+            this.setState({ loading: true })
+            setTimeout(()=> {
+            this.props.navigation.navigate('Main');}, 3000)
             this.clearForm()
             break
           case 404:
             console.log('wrong username or password')
             alert('wrong username or password')
+            this.clearForm()
             break
           case 202:
             console.log('already login')
@@ -133,13 +143,6 @@ export default class LoginScreen extends React.Component {
       alert('please provide username or password')
     }
   }
-
-  onLoginFail() {
-    this.setState({
-      error: 'Login Failed',
-      loading: false
-    })
-  }
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -150,14 +153,17 @@ export default class LoginScreen extends React.Component {
           value={this.state.value}
           onChange={this._onChange}
         />
-        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN
-            </Button>
-
+        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN</Button>
         <View style={styles.signupTextCont}>
           <Text style={styles.signupText}>Don't have an account yet?</Text>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
             <Text style={styles.signupButton}> Sign Up</Text>
           </TouchableOpacity>
+        </View>
+        <View>
+        {this.state.loading &&  <View>
+      <ActivityIndicator size='large' />
+    </View>}
         </View>
       </ScrollView>
     )
@@ -199,5 +205,5 @@ var styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '500',
-  }
+  },
 })

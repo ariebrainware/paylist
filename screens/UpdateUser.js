@@ -127,7 +127,10 @@ export default class UpdateUser extends React.Component {
         console.log(res)
         switch (res.status) {
           case 200:
-            alert('Success save paylist')
+            alert('Success Edit Data')
+            break
+          case 400:
+            alert('field can\'t be negative or zero')
             break
         }      
     })

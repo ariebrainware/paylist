@@ -20,6 +20,12 @@ const HomeStack = createStackNavigator(
 )
 
 HomeStack.navigationOptions = {
+  tabBarOptions: {
+    activeTintColor: 'green',
+    inactiveTintColor: 'white',
+    inactiveBackgroundColor:'#a9b0ae',
+    activeBackgroundColor: '#828282'
+  },
   tabBarLabel: 'Home',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -43,6 +49,12 @@ const LinksStack = createStackNavigator(
 )
 
 LinksStack.navigationOptions = {
+  tabBarOptions: {
+    activeTintColor: 'green',
+    inactiveTintColor: 'white',
+    inactiveBackgroundColor:'#a9b0ae',
+    activeBackgroundColor: '#828282'
+  },
   tabBarLabel: 'About',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
@@ -59,6 +71,12 @@ const SettingsStack = createStackNavigator(
 )
 
 SettingsStack.navigationOptions = {
+  tabBarOptions: {
+    activeTintColor: 'green',
+    inactiveTintColor: 'white',
+    inactiveBackgroundColor:'#a9b0ae',
+    activeBackgroundColor: '#828282'
+  },
   tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-person'} />
@@ -71,6 +89,7 @@ const tabNavigator = createBottomTabNavigator({
   HomeStack,
   LinksStack,
   SettingsStack,
+ 
 })
 
 tabNavigator.path = ''
