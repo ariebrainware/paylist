@@ -64,7 +64,6 @@ export default class CreatePaylist extends React.Component {
 
   async _CreatePaylist() {
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -78,7 +77,6 @@ export default class CreatePaylist extends React.Component {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
-      // console.log(payload)
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       const header = {
@@ -88,7 +86,7 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist/`, {
+      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'POST',
         headers: header,
         body: payload

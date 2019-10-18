@@ -44,7 +44,7 @@ export default class UpdatePaylist extends React.Component {
         this._UpdatePaylist = this._UpdatePaylist.bind(this)
     }
 
-    componentWillMount() {
+componentWillMount() {
       const { navigation } = this.props
       {
             this.setState({
@@ -56,13 +56,12 @@ export default class UpdatePaylist extends React.Component {
       }
     }
     
-    _onChange = (value) => {
+_onChange = (value) => {
     this.setState({ value })
-    }
+}
 
-    async _UpdatePaylist(id){
+async _UpdatePaylist(id){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -76,7 +75,6 @@ export default class UpdatePaylist extends React.Component {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
-      // console.log(payload)
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       const header= {
@@ -92,11 +90,14 @@ export default class UpdatePaylist extends React.Component {
         body: payload
       })
       .then(res => {
-        console.log(res)
         switch (res.status) {
           case 200:
             alert('Success Update paylist')
             this.props.navigation.navigate('Main')
+            break
+          case 500:
+                alert('token expired')
+                this.props.navigation.navigate('Login')
             break
         }      
     })
@@ -113,7 +114,6 @@ export default class UpdatePaylist extends React.Component {
 render() {
   const { navigation } = this.props
   const data = JSON.parse(navigation.getParam('id',''))
-  console.log(this.state)
     return (
       <View>
         <ScrollView style={styles.container}> 

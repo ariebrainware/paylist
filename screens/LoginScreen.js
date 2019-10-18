@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import {Alert,AsyncStorage, ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
+import {ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
-
-
+import Initial from '../State.js'
+import {observer} from 'mobx-react'
+import { AsyncStorage} from 'react-native'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -28,7 +29,7 @@ const options = {
     }
   }
 }
-
+@observer
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -38,6 +39,7 @@ export default class LoginScreen extends React.Component {
         password: '',
         error: '',
       },
+      loading: false
     }
     this._handleLogin = this._handleLogin.bind(this)
   }
@@ -57,9 +59,11 @@ export default class LoginScreen extends React.Component {
   }
 
   async loadInitialState (){
-    var token = await deviceStorage.loadJWT('token')
-    if (token !== null){
+   var token = await deviceStorage.loadJWT('token')
+    if (token != null){
       this.props.navigation.navigate('Main')
+    } else {
+      this.props.navigation.navigate('Login')
     }
   }
   _onChange = (value) => {
@@ -99,38 +103,34 @@ export default class LoginScreen extends React.Component {
         body: payload
        })
        .then(res => {
+        Initial.setState()
         resStatus = res.status
         return res.json()
       })
       .then(res => {
-        console.log('saat login :' + res.data)
         switch (resStatus) {
           case 200:
             let token = {"type": "sensitive", "value":res.data}
             deviceStorage.saveKey('token', JSON.stringify(token))
-            this.setState({ loading: true })
-            setTimeout(()=> {
-            this.props.navigation.navigate('Main');}, 3000)
+            setTimeout(()=>{
+              this.props.navigation.navigate('Main')
+             }, 2000)
             this.clearForm()
+            alert('Login Success')
             break
           case 404:
-            console.log('wrong username or password')
             alert('wrong username or password')
+            Initial.getState()
             this.clearForm()
             break
           case 202:
-            console.log('already login')
+            Initial.getState()
             alert('already login')
             this.props.navigation.navigate('Main')
             this.clearForm()
             break
-          case 500:
-              console.log('token expired')
-              alert('token expired, please sign in again')
-              this.clearForm()
-            break
           default:
-            console.log('unhandled')
+            alert('Something wrong, please try again later!')
             break
         }
       })
@@ -143,6 +143,7 @@ export default class LoginScreen extends React.Component {
       alert('please provide username or password')
     }
   }
+  
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -161,9 +162,9 @@ export default class LoginScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View>
-        {this.state.loading &&  <View>
-      <ActivityIndicator size='large' />
-    </View>}
+            {Initial.loading && <View>
+              <ActivityIndicator size='small'/>
+              </View>}
         </View>
       </ScrollView>
     )

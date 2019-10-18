@@ -85,13 +85,12 @@ export default class UpdateUser extends React.Component {
       }
     }
     
-    _onChange = (value) => {
+  _onChange = (value) => {
     this.setState({ value })
     }
 
-    async _UpdateUser(id){
+  async _UpdateUser(id){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -108,7 +107,6 @@ export default class UpdateUser extends React.Component {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
-      // console.log(payload)
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       const header= {
@@ -124,7 +122,6 @@ export default class UpdateUser extends React.Component {
         body: payload
       })
       .then(res => {
-        console.log(res)
         switch (res.status) {
           case 200:
             alert('Success Edit Data')
