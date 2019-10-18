@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser'
 import React from 'react'
 import {
   Image,
@@ -12,7 +11,10 @@ import Config from '../config'
 import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
 import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper'
+import Initial from '../State.js'
+import {observer} from 'mobx-react'
 
+@observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -25,13 +27,13 @@ export default class HomeScreen extends React.Component {
     this._GetData = this._GetData.bind(this)
   }
 
-  componentDidMount() {
+componentDidMount() {
     this._GetData()
+    Initial.getState()
   }
 
-  async _GetData() {
+async _GetData() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log('demo', DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -53,11 +55,16 @@ export default class HomeScreen extends React.Component {
               paylist: json
             })
             break
-            case 500:
-              alert('You have to login first')
+          case 500:
+              alert('Token Expired')
               setTimeout(()=> {
-              this.props.navigation.navigate('Login');}, 3000)
-     
+              this.props.navigation.navigate('Login');}, 2000)
+              break
+          case 401:
+              alert('Unauthorized')
+              setTimeout(()=> {
+              this.props.navigation.navigate('Login');}, 2000)
+              break
         }
       })
       .catch((error) => {
@@ -65,9 +72,8 @@ export default class HomeScreen extends React.Component {
       })
   }
 
-  async _DeletePaylist(id) {
+async _DeletePaylist(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo ' + DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -80,18 +86,14 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(res => {
-        console.log(res)
         switch (resStatus) {
           case 200:
-            console.log('success')
             alert('Delete Success Paylist.')
             break
           case 404:
-            console.log('no paylist found')
             alert('no paylist found')
             break
           case 400:
-            console.log('specify paylist id')
             alert('specify paylist id')
             break
           case 500:
@@ -99,7 +101,6 @@ export default class HomeScreen extends React.Component {
             this.props.navigation.navigate('Login')
             break
           default:
-            console.log('unhandled')
             alert('Something wrong, please try again later!')
             break
         }
@@ -110,9 +111,8 @@ export default class HomeScreen extends React.Component {
       .done()
   }
 
-  async _UpdatePaylistStatus(id) {
+async _UpdatePaylistStatus(id) {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(' demo ' + DEMO_TOKEN)
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -125,9 +125,8 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(res => {
-        console.log(res.data)
         this.setState({
-          checked: true
+          checked: this.state[id]
         })
       })
   }
@@ -147,9 +146,14 @@ export default class HomeScreen extends React.Component {
         </View>
       )
     }
-    const { checked } = this.state
+    let {checked }= this.state
     let pay = this.state.paylist.map((item) => {
-      return <Card key={item.ID} style={styles.Item}>
+      if (item.completed == true){
+        checked = true
+      }else{
+        checked=false
+      }
+      return  <Card key={item.ID} style={styles.Item}>
         <Card style={styles.content}>
         <List.Accordion
           title={item.name} 
@@ -163,7 +167,8 @@ export default class HomeScreen extends React.Component {
               name: JSON.stringify(item.name),
               amount: JSON.stringify(item.amount)
             })}>edit</Button>
-            <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={() => this._UpdatePaylistStatus(item.ID)} />
+            <Checkbox status={checked ? 'checked': 'unchecked'} 
+            onPress={() => this._UpdatePaylistStatus(item.ID)} />
           </Card.Actions>
         </List.Accordion>
         </Card>
