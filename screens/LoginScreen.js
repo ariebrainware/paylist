@@ -5,7 +5,6 @@ import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
 import {observer} from 'mobx-react'
-import { AsyncStorage} from 'react-native'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -39,7 +38,6 @@ export default class LoginScreen extends React.Component {
         password: '',
         error: '',
       },
-      loading: false
     }
     this._handleLogin = this._handleLogin.bind(this)
   }
@@ -130,6 +128,7 @@ export default class LoginScreen extends React.Component {
             this.clearForm()
             break
           default:
+            Initial.getState()
             alert('Something wrong, please try again later!')
             break
         }

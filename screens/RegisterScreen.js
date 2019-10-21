@@ -3,7 +3,7 @@ import {
     ScrollView,
     StyleSheet, 
     Text,
-    View } 
+    TouchableOpacity, Image} 
     from 'react-native'
 import { Button } from 'react-native-paper'
 import Config from '../config'
@@ -55,25 +55,52 @@ class RegisterScreen extends React.Component {
             }
         }
         this._handleAdd = this._handleAdd.bind(this)
-        this.onRegistrationFail = this.onRegistrationFail.bind(this)
     }
 
-    componentWillUnmount() {
-        this.setState = {
-            value: {
-                name: '',
-                email: '',
-                username: '',
-                password: null,
-            }
+static navigationOptions = ({navigation}) => {
+        const params = navigation.state.params
+          return {
+            headerRight:
+              <TouchableOpacity style={{
+                  width: 50,
+                  height: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  right: 5,
+                  bottom: 3}}
+                  onPress={() =>params.handleSignUp()}>
+                <Image 
+                    source={
+                      require ('../assets/images/ceklis.png')
+                    }
+                    style={{resizeMode: 'contain',
+                    width: 20,
+                    height: 20,}}
+                />
+                </TouchableOpacity> 
+          };
+      }
+      
+componentWillMount(){
+    this.props.navigation.setParams({ handleSignUp: this._handleAdd})
+}    
+
+componentWillUnmount() {
+    this.setState = {
+        value: {
+            name: '',
+            email: '',
+            username: '',
+            password: null,
         }
     }
+}
 
-    _onChange = (value) => {
-        this.setState({
-            value
-        })
-    }
+_onChange = (value) => {
+    this.setState({
+        value
+    })
+}
 
 _handleAdd = () => {
     const value = this.refs.form.getValue()
@@ -92,59 +119,50 @@ _handleAdd = () => {
                 let encodedValue = encodeURIComponent(data[property])
                 payload.push(encodedKey + "=" + encodedValue)
             }
-    payload = payload.join("&")
-    console.log(`payload: ${payload}`)
-    //sent post request
-    fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Accept : 'application/x-www-form-urlencoded'
-    },
-    body: payload
-    })
-    .then(res => {
-    resStatus = res.status
-    return res.json()
-    })
-    .then(res => {
-        switch (resStatus) {
-          case 200:
-            alert('You may login now')
-            this.props.navigation.navigate('Login')
-            break
-          case 500:
-            alert('username exist')
-            break
-          default:
-            alert('Something wrong, please try again later!')
-            break
-        }
-      })
-        .done()
-        } else {
-            //form validation error
-            alert('Please fill the empty field')
-        }
-    }
-    onRegistrationFail() {
-        this.setState({
-            error: 'Registration Failed',
-            loading: false
+        payload = payload.join("&")
+        console.log(`payload: ${payload}`)
+        //sent post request
+        fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept : 'application/x-www-form-urlencoded'
+        },
+            body: payload
         })
-    }
+        .then(res => {
+        resStatus = res.status
+        return res.json()
+        })
+        .then(res => {
+            switch (resStatus) {
+            case 200:
+                alert('You may login now')
+                this.props.navigation.navigate('Login')
+                break
+            case 500:
+                alert('username exist')
+                break
+            default:
+                alert('Something wrong, please try again later!')
+                break
+            }
+        })
+            .done()
+            } else {
+                //form validation error
+                alert('Please fill the empty field')
+            }
+        }
 
-    render() {
-        return (
-            <ScrollView style={styles.container}>
-                <Form ref='form' 
+render() {
+    return (
+        <ScrollView style={styles.container}>
+            <Form ref='form' 
                 type={newUser} options={option}
                 value={this.state.value} 
                 onChange={this._onChange}/>
-                <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
-                    <Text style={{}}>Create Account</Text>
-                </Button>
-            </ScrollView>
+        </ScrollView>
         )
     }
 }
@@ -162,10 +180,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         backgroundColor: '#4CD964'
     },
-    centering: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
 })
 
 export default RegisterScreen

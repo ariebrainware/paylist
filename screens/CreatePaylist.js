@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
-  View,
   ScrollView,
-  Text,
+  Image, TouchableOpacity
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button } from 'react-native-paper'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
@@ -45,7 +43,36 @@ export default class CreatePaylist extends React.Component {
     this._CreatePaylist = this._CreatePaylist.bind(this)
   }
 
-  componentWillUnmount() {
+
+static navigationOptions = ({navigation}) => {
+  const params = navigation.state.params
+    return {
+      headerRight:
+        <TouchableOpacity style={{
+            width: 50,
+            height: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+            right: 5,
+            bottom: 3}}
+            onPress={() =>params.handleCreate()}>
+          <Image 
+              source={
+                require ('../assets/images/ceklis.png')
+              }
+              style={{resizeMode: 'contain',
+              width: 20,
+              height: 20,}}
+          />
+          </TouchableOpacity> 
+    };
+}
+
+componentWillMount(){
+  this.props.navigation.setParams({ handleCreate: this._CreatePaylist})
+}
+
+componentWillUnmount() {
     this.setState = {
       value: {
         name: '',
@@ -130,11 +157,6 @@ export default class CreatePaylist extends React.Component {
           value={this.state.value}
           onChange={this._onChange}
         />
-        <View>
-          <Button style={styles.button} mode="contained" onPress={this._CreatePaylist}>
-            <Text style={[styles.button, styles.greenButton]}>Create</Text>
-          </Button>
-        </View>
       </ScrollView>
     )
   }
@@ -146,18 +168,4 @@ var styles = StyleSheet.create({
     flex: 0,
     flexDirection: 'column',
   },
-  button: {
-    borderRadius: 4,
-    padding: 3,
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
-  greenButton: {
-    backgroundColor: '#4CD964'
-  },
-  centering: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 })

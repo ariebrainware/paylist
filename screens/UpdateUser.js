@@ -3,19 +3,20 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    Text,Image,TouchableOpacity 
+    Image,TouchableOpacity 
 } from 'react-native'
+import {ActivityIndicator} from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
-import { Button,} from 'react-native-paper'
+import Initial from '../State.js'
+import {observer} from 'mobx-react'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 const User = t.struct ({
+    username: t.String,
     email: t.String,
     name: t.String,
-    username: t.String,
-    password: t.String,
     balance: t.Number,
 })
 
@@ -34,12 +35,6 @@ const option = {
             autoCapitalize: 'none',
             autoCorrect: false,
         },
-        password: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-            secureTextEntry: true,
-            password: true,
-        },
         balance: {
             autoCapitalize: 'none',
             autoCorrect: false,
@@ -48,6 +43,7 @@ const option = {
     }
 }
 
+@observer
 export default class UpdateUser extends React.Component {
     constructor(props) {
         super(props)
@@ -56,18 +52,44 @@ export default class UpdateUser extends React.Component {
                 email:'',
                 name:'',
                 username:'',
-                password:'',
                 balance: '',
                 error:'',
                 loading: false
             }
         }
-        this._UpdateUser = this._UpdateUser.bind(this)
+      this._UpdateUser = this._UpdateUser.bind(this)
     }
 
-    componentWillMount() {
-      const { navigation } = this.props
-      const data = JSON.parse(navigation.getParam('name',[]))
+static navigationOptions = ({navigation}) => {
+  const params = navigation.state.params
+  const data = JSON.parse(navigation.getParam('name',[]))     
+    return {
+      headerRight: data.map((val)=> {
+        return <TouchableOpacity key={val.ID} style={{
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3}}
+          onPress={() =>params.handleUpdate(val.ID)}>
+        <Image 
+            source={
+              require ('../assets/images/ceklis.png')
+            }
+            style={{resizeMode: 'contain',
+            width: 20,
+            height: 20,}}
+        />
+        </TouchableOpacity>
+      })  
+    };
+}
+
+componentWillMount() {
+    const { navigation } = this.props
+    const data = JSON.parse(navigation.getParam('name',[]))
+    this.props.navigation.setParams({ handleUpdate: this._UpdateUser})
       {
         data.map((item)=> {
           return (
@@ -76,20 +98,19 @@ export default class UpdateUser extends React.Component {
                 email : item.email,
                 name: item.name,
                 username: item.username,
-                password: item.password,
                 balance: item.balance
-              }
-            })
-          )
-        })
-      }
-    }
+            }
+          })
+        )
+    })
+  }
+}
     
-  _onChange = (value) => {
-    this.setState({ value })
-    }
+_onChange = (value) => {
+  this.setState({ value })
+}
 
-  async _UpdateUser(id){
+async _UpdateUser(id){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
@@ -98,7 +119,6 @@ export default class UpdateUser extends React.Component {
         email: value.email,
         name: value.name,
         username: value.username,
-        password: value.password,
         balance: value.balance,
       }
       let payload = []
@@ -124,10 +144,15 @@ export default class UpdateUser extends React.Component {
       .then(res => {
         switch (res.status) {
           case 200:
+            Initial.setState()
             alert('Success Edit Data')
+            setTimeout(()=>{
+              this.props.navigation.navigate('SettingsStack')
+            }, 2000)
             break
-          case 400:
-            alert('field can\'t be negative or zero')
+          case 500:
+            alert('token expired')
+            this.props.navigation.navigate('Login')
             break
         }      
     })
@@ -140,10 +165,8 @@ export default class UpdateUser extends React.Component {
         alert('Please fill the empty field')
     }
 }
-  
+
 render() {
-  const { navigation } = this.props
-  const data = JSON.parse(navigation.getParam('name',[]))
     return (
       <View>
         <ScrollView style={styles.container}> 
@@ -153,64 +176,21 @@ render() {
                 value={this.state.value}
                 onChange={this._onChange}
           />          
-        </ScrollView> 
-          <View> 
-          {
-             data.map((item)=> {
-               return <View key={item.ID}>
-               <Button style={styles.button} mode="contained" onPress={ () => this._UpdateUser(item.ID)}>
-                      <Text style={[styles.button, styles.greenButton]}>Update</Text>
-                      </Button>
-                      </View>
-             })
-      }
-            
-          </View>  
+        </ScrollView>
+        <View>
+            {Initial.loading && <View>
+              <ActivityIndicator size='small'/>
+              </View>}
+        </View> 
       </View>
     )
   }
 }
 
-UpdateUser.navigationOptions = {
-  headerRight :(
-    <TouchableOpacity
-      style={{position: 'absolute',
-      width: 50,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 5,
-      bottom: 3}}
-        onPress={this._UpdateUser}>
-      <Image 
-      source={
-        require ('../assets/images/ceklis.png')
-      }
-        style={{resizeMode: 'contain',
-        width: 20,
-        height: 20,}}
-        />
-      </TouchableOpacity>
-  )
-}
 var styles = StyleSheet.create({
     container: {
       padding: 20,
       flex: 0,
       flexDirection: 'column',
     },
-    button: {
-      borderRadius: 4,
-      padding: 3,
-      textAlign: 'center',
-      marginBottom: 20,
-      backgroundColor: '#4CD964'
-    },
-    greenButton: {
-      backgroundColor: '#4CD964'
-    },
-    centering: {
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
 })

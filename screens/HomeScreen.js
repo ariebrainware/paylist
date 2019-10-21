@@ -10,17 +10,21 @@ import {
 import Config from '../config'
 import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
-import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper'
+import SearchInput, { createFilter } from 'react-native-search-filter'
+import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar,Provider, Portal, FAB} from 'react-native-paper'
 import Initial from '../State.js'
 import {observer} from 'mobx-react'
-
+const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
 @observer
+
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       paylist: [],
+      Search: '',
       loading: true,
+      open: false,
       checked: false
     }
     this._DeletePaylist = this._DeletePaylist.bind(this)
@@ -70,6 +74,10 @@ async _GetData() {
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  searchUpdated(term) {
+    this.setState({ Search: term })
   }
 
 async _DeletePaylist(id) {
@@ -146,8 +154,10 @@ async _UpdatePaylistStatus(id) {
         </View>
       )
     }
+    const filteredPaylist = this.state.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     let {checked }= this.state
-    let pay = this.state.paylist.map((item) => {
+    let pay = filteredPaylist.map((item) => {
+      var tgl = new Date(item.CreatedAt)
       if (item.completed == true){
         checked = true
       }else{
@@ -160,6 +170,7 @@ async _UpdatePaylistStatus(id) {
           left={props => <List.Icon {...props} icon="monetization-on" />}>
           <List.Item titleStyle={{color:'black'}} style={{ right: 50 }} title={item.amount} />
           <List.Item titleStyle={{color:'black'}} style={{ right: 50 }} title={JSON.stringify(item.completed)} />
+          <List.Item style={{right: 50}} title={tgl.toDateString()}/>
           <Card.Actions style={{ right: 50 }}>
             <Button color='red' onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
             <Button color='black' icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
@@ -176,7 +187,13 @@ async _UpdatePaylistStatus(id) {
     })
 
     return (
+      <Provider>
       <View style={styles.container}>
+      <Searchbar
+        style={{padding:0, margin:4}}
+        placeholder="Search"
+        onChangeText={(term) => { this.searchUpdated(term)}}       
+        />
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer} refreshControl={
@@ -187,21 +204,24 @@ async _UpdatePaylistStatus(id) {
             />
           }>{pay}
         </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.props.navigation.navigate('CreatePaylist')}
-            style={styles.TouchableOpacityStyle}>
-            <Image
-              source={
-                require('../assets/images/add-button.png')
+        <Portal>
+          <FAB.Group
+            open={this.state.open}
+            icon={this.state.open ? 'today' : 'add'}
+            actions={[
+              { icon: 'create', label: 'Saldo',onPress: () =>  this.props.navigation.navigate('AddBalance') },
+              { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
+            ]}
+            onStateChange={({ open }) => this.setState({ open })}
+            onPress={() => {
+              if (this.state.open) {
+                // do something if the speed dial is open
               }
-              style={styles.FloatingButtonStyle}
-            />
-          </TouchableOpacity>
-        </View>
+            }}
+          /> 
+          </Portal>
       </View>
+      </Provider>
     )
   }
 }
