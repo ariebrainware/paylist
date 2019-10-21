@@ -1,5 +1,5 @@
 import React from 'react'
-import { createAppContainer, createSwitchNavigator, createBottomTabNavigator } from 'react-navigation'
+import { createAppContainer, } from 'react-navigation'
 import MainTabNavigator from './MainTabNavigator'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
@@ -8,6 +8,7 @@ import { Platform, StatusBar } from 'react-native'
 import CreatePaylist from '../screens/CreatePaylist'
 import UpdateUser from '../screens/UpdateUser'
 import UpdatePaylist from '../screens/UpdatePaylist'
+import AddBalance from '../screens/AddBalance'
 
 const headerStyle = {
   marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
@@ -56,5 +57,12 @@ export default createAppContainer(
         headerStyle
       }
     },
+    AddBalance: {
+      screen: AddBalance,
+      navigationOptions:{
+        title: 'Add Balance',
+        headerStyle
+      }
+    }
   })
 )

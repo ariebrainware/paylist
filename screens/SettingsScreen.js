@@ -1,7 +1,7 @@
 import React from 'react'
 import {View, Text,StyleSheet, RefreshControl} from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
-import { Card, Button, Title, Paragraph} from 'react-native-paper'
+import { Card, Button, Title, Paragraph, Appbar} from 'react-native-paper'
 import { ScrollView } from 'react-native-gesture-handler'
 import Config from '../config'
 import Initial from '../State.js'
@@ -18,7 +18,8 @@ export default class SettingsScreen extends React.Component {
     this._handleLogOut = this._handleLogOut.bind(this)
     this._GetDataUser = this._GetDataUser.bind(this) 
   }
-  async _handleLogOut(){
+
+async _handleLogOut(){
     var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
     const header = {
       'Authorization' : DEMO_TOKEN
@@ -44,13 +45,26 @@ export default class SettingsScreen extends React.Component {
       })
       .done()
   }
-
-  componentDidMount(){
+  _onMore = () => console.log('Shown more');
+  static navigationOptions = ({navigation}) => {
+    const params = navigation.state.params
+      return {
+        headerRight: 
+        <Appbar.Action style={{backgroundColor:'#fff',
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3}} icon="more-vertical" onPress={this._onMore}></Appbar.Action>
+      };
+  }
+componentDidMount(){
     this._GetDataUser()
     Initial.getState()
   }
 
-  async _GetDataUser(){
+async _GetDataUser(){
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header= {
       'Authorization': DEMO_TOKEN
@@ -89,13 +103,14 @@ export default class SettingsScreen extends React.Component {
       })
   }
     
-  onRefresh() {
+onRefresh() {
     this.setState({
       data:[]
     })
     this._GetDataUser()
   }
-  render(){
+
+render(){
     let user= this.state.data.map((val) => {
       return (<Card key={val.ID} style={styles.container} >
         <Card >
@@ -111,7 +126,8 @@ export default class SettingsScreen extends React.Component {
           <Card>
             <Card.Actions>
               <Button onPress={() =>  this.props.navigation.navigate('UpdateUser',{
-                name: JSON.stringify(this.state.data)
+                name: JSON.stringify(this.state.data),
+                loading: Initial.getState()
               })}>Edit Data </Button>
             </Card.Actions>
           </Card>
@@ -119,7 +135,7 @@ export default class SettingsScreen extends React.Component {
       </Card>
       )
     })
-    return (
+  return(
       <View style={styles.container}>
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
           refreshControl={
