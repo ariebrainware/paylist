@@ -4,7 +4,10 @@ import deviceStorage  from '../service/deviceStorage'
 import { Card, Button, Title, Paragraph} from 'react-native-paper'
 import { ScrollView } from 'react-native-gesture-handler'
 import Config from '../config'
+import Initial from '../State.js'
+import {observer} from 'mobx-react'
 
+@observer
 export default class SettingsScreen extends React.Component {
   constructor(props){
     super(props)
@@ -17,7 +20,6 @@ export default class SettingsScreen extends React.Component {
   }
   async _handleLogOut(){
     var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
-    console.log(' demo '+ DEMO_TOKEN)
     const header = {
       'Authorization' : DEMO_TOKEN
     }
@@ -26,18 +28,13 @@ export default class SettingsScreen extends React.Component {
       headers: header
     })
       .then(res => {
+        Initial.getState()
         switch (res.status) {
         case 200:
-          console.log('success')
           this.props.navigation.navigate('Login')
           alert('You have been logged out.')
           break
-        case 500:
-          alert('token expired')
-          this.props.navigation.navigate('Login')
-          break
         default:
-          console.log('unhandled')
           alert('Something wrong, please try again later!')
           break
         }
@@ -50,11 +47,11 @@ export default class SettingsScreen extends React.Component {
 
   componentDidMount(){
     this._GetDataUser()
+    Initial.getState()
   }
 
   async _GetDataUser(){
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    console.log(DEMO_TOKEN)
     const header= {
       'Authorization': DEMO_TOKEN
     }
@@ -75,7 +72,16 @@ export default class SettingsScreen extends React.Component {
             data: dataParse,
             Loading:false
           })
-          break    
+          break
+        case 500:
+          alert('token expired')
+          this.props.navigation.navigate('Login')
+          break
+        case 401:
+          alert('Unauthorized')
+          setTimeout(()=> {
+          this.props.navigation.navigate('Login');}, 2000)
+          break
         } 
       })
       .catch((error) => {
@@ -90,16 +96,15 @@ export default class SettingsScreen extends React.Component {
     this._GetDataUser()
   }
   render(){
-    console.log(this.state)
     let user= this.state.data.map((val) => {
-      return (<Card key={val.ID} style={{margin: 0}}>
-        <Card>
-          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#eee', alignItems:'center', justifyContent:'center', left:90}}>
+      return (<Card key={val.ID} style={styles.container} >
+        <Card >
+          <Card.Content style={{flex:1,borderWidth:0, width:250, height:80,backgroundColor:'#9d9e9e', alignItems:'center', justifyContent:'center', left:85}}>
             <Title>{val.name}</Title>
             <Paragraph>{val.email}</Paragraph>
           </Card.Content>
         </Card>
-        <Card style={{}}>
+        <Card>
           <Card.Content style={{paddingTop:10}}>
             <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
           </Card.Content>
@@ -140,11 +145,16 @@ export default class SettingsScreen extends React.Component {
   }
 } 
 
-
+SettingsScreen.navigationOptions = {
+  title: 'My Account',
+  headerStyle:{
+    backgroundColor:'#a9b0ae'
+  }
+}
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
   },
   contentContainer: {
     paddingTop:0,

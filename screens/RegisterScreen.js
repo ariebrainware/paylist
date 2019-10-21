@@ -110,16 +110,14 @@ _handleAdd = () => {
     .then(res => {
         switch (resStatus) {
           case 200:
-            console.log('success')
             alert('You may login now')
             this.props.navigation.navigate('Login')
             break
           case 500:
-            console.log('username exist')
             alert('username exist')
             break
           default:
-            console.log('unhandled')
+            alert('Something wrong, please try again later!')
             break
         }
       })

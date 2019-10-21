@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
+import {ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button } from 'react-native-paper'
+import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
+import Initial from '../State.js'
+import {observer} from 'mobx-react'
+import { AsyncStorage} from 'react-native'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -26,21 +29,19 @@ const options = {
     }
   }
 }
-
+@observer
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       value: {
         username: '',
         password: '',
         error: '',
-        loading: false
-      }
+      },
+      loading: false
     }
     this._handleLogin = this._handleLogin.bind(this)
-    this.onLoginFail = this.onLoginFail.bind(this)
   }
 
   componentWillUnmount() {
@@ -49,12 +50,22 @@ export default class LoginScreen extends React.Component {
         username: '',
         password: null,
         error: '',
-        loading: true
-
       }
     }
   }
 
+  componentDidMount(){
+    this.loadInitialState().done();
+  }
+
+  async loadInitialState (){
+   var token = await deviceStorage.loadJWT('token')
+    if (token != null){
+      this.props.navigation.navigate('Main')
+    } else {
+      this.props.navigation.navigate('Login')
+    }
+  }
   _onChange = (value) => {
     this.setState({
       value
@@ -92,35 +103,34 @@ export default class LoginScreen extends React.Component {
         body: payload
        })
        .then(res => {
+        Initial.setState()
         resStatus = res.status
         return res.json()
       })
       .then(res => {
-        console.log('saat login :' + res.data)
         switch (resStatus) {
           case 200:
             let token = {"type": "sensitive", "value":res.data}
-            deviceStorage.saveKey("token", JSON.stringify(token))
-            this.props.navigation.navigate('Main')
+            deviceStorage.saveKey('token', JSON.stringify(token))
+            setTimeout(()=>{
+              this.props.navigation.navigate('Main')
+             }, 2000)
             this.clearForm()
+            alert('Login Success')
             break
           case 404:
-            console.log('wrong username or password')
             alert('wrong username or password')
+            Initial.getState()
+            this.clearForm()
             break
           case 202:
-            console.log('already login')
+            Initial.getState()
             alert('already login')
             this.props.navigation.navigate('Main')
             this.clearForm()
             break
-          case 500:
-              console.log('token expired')
-              alert('token expired, please sign in again')
-              this.clearForm()
-            break
           default:
-            console.log('unhandled')
+            alert('Something wrong, please try again later!')
             break
         }
       })
@@ -133,13 +143,7 @@ export default class LoginScreen extends React.Component {
       alert('please provide username or password')
     }
   }
-
-  onLoginFail() {
-    this.setState({
-      error: 'Login Failed',
-      loading: false
-    })
-  }
+  
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -150,14 +154,17 @@ export default class LoginScreen extends React.Component {
           value={this.state.value}
           onChange={this._onChange}
         />
-        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN
-            </Button>
-
+        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN</Button>
         <View style={styles.signupTextCont}>
           <Text style={styles.signupText}>Don't have an account yet?</Text>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
             <Text style={styles.signupButton}> Sign Up</Text>
           </TouchableOpacity>
+        </View>
+        <View>
+            {Initial.loading && <View>
+              <ActivityIndicator size='small'/>
+              </View>}
         </View>
       </ScrollView>
     )
@@ -199,5 +206,5 @@ var styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '500',
-  }
+  },
 })
