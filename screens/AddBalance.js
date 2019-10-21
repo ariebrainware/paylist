@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    Text,Image,TouchableOpacity 
+    Text,
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button,} from 'react-native-paper'
@@ -52,7 +52,6 @@ export default class AddBalance extends React.Component {
 
     async _AddBalance(){
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    console.log(DEMO_TOKEN)
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -65,9 +64,8 @@ export default class AddBalance extends React.Component {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
-      // console.log(payload)
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
+
       const header= {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -81,7 +79,6 @@ export default class AddBalance extends React.Component {
         body: payload
       })
       .then(res => {
-        console.log(res)
         switch (res.status) {
           case 200:
             alert('Success Add Balance')
