@@ -44,35 +44,38 @@ export default class CreatePaylist extends React.Component {
   }
 
 
-static navigationOptions = ({navigation}) => {
-  const params = navigation.state.params
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params
     return {
       headerRight:
         <TouchableOpacity style={{
-            width: 50,
-            height: 50,
-            alignItems: 'center',
-            justifyContent: 'center',
-            right: 5,
-            bottom: 3}}
-            onPress={() =>params.handleCreate()}>
-          <Image 
-              source={
-                require ('../assets/images/ceklis.png')
-              }
-              style={{resizeMode: 'contain',
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3
+        }}
+          onPress={() => params.handleCreate()}>
+          <Image
+            source={
+              require('../assets/images/ceklis.png')
+            }
+            style={{
+              resizeMode: 'contain',
               width: 20,
-              height: 20,}}
+              height: 20,
+            }}
           />
-          </TouchableOpacity> 
+        </TouchableOpacity>
     };
-}
+  }
 
-componentWillMount(){
-  this.props.navigation.setParams({ handleCreate: this._CreatePaylist})
-}
+  componentWillMount() {
+    this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
+  }
 
-componentWillUnmount() {
+  componentWillUnmount() {
     this.setState = {
       value: {
         name: '',
@@ -105,7 +108,6 @@ componentWillUnmount() {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
       const header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
