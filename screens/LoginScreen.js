@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import {ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
-import {observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -52,13 +52,13 @@ export default class LoginScreen extends React.Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.loadInitialState().done();
   }
 
-  async loadInitialState (){
-   var token = await deviceStorage.loadJWT('token')
-    if (token != null){
+  async loadInitialState() {
+    var token = await deviceStorage.loadJWT('token')
+    if (token != null) {
       this.props.navigation.navigate('Main')
     } else {
       this.props.navigation.navigate('Login')
@@ -90,7 +90,6 @@ export default class LoginScreen extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
       //sent post request
       fetch(`${Config.PaylistApiURL}/paylist/user/signin`, {
         method: 'POST',
@@ -99,40 +98,40 @@ export default class LoginScreen extends React.Component {
           Accept: 'application/x-www-form-urlencoded'
         },
         body: payload
-       })
-       .then(res => {
-        Initial.setState()
-        resStatus = res.status
-        return res.json()
       })
-      .then(res => {
-        switch (resStatus) {
-          case 200:
-            let token = {"type": "sensitive", "value":res.data}
-            deviceStorage.saveKey('token', JSON.stringify(token))
-            setTimeout(()=>{
+        .then(res => {
+          Initial.setState()
+          resStatus = res.status
+          return res.json()
+        })
+        .then(res => {
+          switch (resStatus) {
+            case 200:
+              let token = { "type": "sensitive", "value": res.data }
+              deviceStorage.saveKey('token', JSON.stringify(token))
+              setTimeout(() => {
+                this.props.navigation.navigate('Main')
+              }, 2000)
+              this.clearForm()
+              alert('Login Success')
+              break
+            case 404:
+              alert('wrong username or password')
+              Initial.getState()
+              this.clearForm()
+              break
+            case 202:
+              Initial.getState()
+              alert('already login')
               this.props.navigation.navigate('Main')
-             }, 2000)
-            this.clearForm()
-            alert('Login Success')
-            break
-          case 404:
-            alert('wrong username or password')
-            Initial.getState()
-            this.clearForm()
-            break
-          case 202:
-            Initial.getState()
-            alert('already login')
-            this.props.navigation.navigate('Main')
-            this.clearForm()
-            break
-          default:
-            Initial.getState()
-            alert('Something wrong, please try again later!')
-            break
-        }
-      })
+              this.clearForm()
+              break
+            default:
+              Initial.getState()
+              alert('Something wrong, please try again later!')
+              break
+          }
+        })
         .catch(err => {
           console.error(err)
         })
@@ -142,7 +141,7 @@ export default class LoginScreen extends React.Component {
       alert('please provide username or password')
     }
   }
-  
+
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -161,9 +160,9 @@ export default class LoginScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View>
-            {Initial.loading && <View>
-              <ActivityIndicator size='small'/>
-              </View>}
+          {Initial.loading && <View>
+            <ActivityIndicator size='small' />
+          </View>}
         </View>
       </ScrollView>
     )
