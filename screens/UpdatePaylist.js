@@ -38,7 +38,6 @@ export default class UpdatePaylist extends React.Component {
                 name:'',
                 amount:'',
                 error:'',
-                loading: false
             }
         }
         this._UpdatePaylist = this._UpdatePaylist.bind(this)

@@ -5,31 +5,25 @@ import {
     TouchableOpacity, Image} 
     from 'react-native'
 import Config from '../config'
+import deviceStorage from '../service/deviceStorage'
+
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 
-const newUser = t.struct({
-    name: t.String,
-    email: t.String,
-    username: t.String,
-    password: t.String
+const Password = t.struct({
+    OldPassword: t.String,
+    NewPassword: t.String,
 })
 
 const option = {
     fields: {
-        name: {
+        OldPassword: {
             autoCapitalize: 'none',
+            password: true,
             autoCorrect: false,
+            secureTextEntry: true,
         },
-        email: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        username: {
-            autoCapitalize: 'none',
-            autoCorrect: false,
-        },
-        password: {
+        NewPassword: {
             autoCapitalize: 'none',
             password: true,
             autoCorrect: false,
@@ -38,67 +32,62 @@ const option = {
     }
 }
 
-export default class RegisterScreen extends React.Component {
-
+export default class EditPassword extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             value: {
-                name: '',
-                email: '',
-                username: '',
-                password: '',
+                OldPassword: '',
+                NewPassword: '',
                 error: '',
                 loading: false
             }
         }
-        this._handleAdd = this._handleAdd.bind(this)
+        this._EditPassword = this._EditPassword.bind(this)
     }
 
 static navigationOptions = ({navigation}) => {
         const params = navigation.state.params
-          return {
-            headerRight:
-              <TouchableOpacity style={{
-                  width: 50,
-                  height: 50,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  right: 5,
-                  bottom: 3}}
-                  onPress={() =>params.handleSignUp()}>
-                <Image 
-                    source={
-                      require ('../assets/images/ceklis.png')
-                    }
-                    style={{resizeMode: 'contain',
-                    width: 20,
-                    height: 20,}}
-                />
-                </TouchableOpacity> 
-          };
+        const data = navigation.getParam('id','')
+        return {
+          headerRight: <TouchableOpacity style={{
+              width: 50,
+              height: 50,
+              alignItems: 'center',
+              justifyContent: 'center',
+              right: 5,
+              bottom: 3}}
+              onPress={() =>params.handleUpdate(data)}>
+            <Image 
+                source={
+                  require ('../assets/images/ceklis.png')
+                }
+                style={{resizeMode: 'contain',
+                width: 20,
+                height: 20,}}
+            />
+            </TouchableOpacity> 
+        }
       }
       
 componentWillMount(){
-    this.props.navigation.setParams({ handleSignUp: this._handleAdd})
+    this.props.navigation.setParams({ handleUpdate: this._EditPassword})
 }    
-
 _onChange = (value) => {
     this.setState({
         value
     })
 }
 
-_handleAdd = () => {
+async _EditPassword(id) {
+    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
      //IF the form valid ..
     this.setState({ error: '', loading: true })
         if (value) {
             const data = {
-                name: value.name,
-                email: value.email,
-                username: value.username,
-                password: value.password,
+                OldPassword: value.OldPassword,
+                NewPassword: value.NewPassword,
             }
             let payload = []
             for (let property in data) {
@@ -109,11 +98,12 @@ _handleAdd = () => {
         payload = payload.join("&")
         console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
-        method: 'POST',
+        fetch(`${Config.PaylistApiURL}/paylist/editpassword/` +3, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            Accept : 'application/x-www-form-urlencoded'
+            Accept : 'application/x-www-form-urlencoded',
+            'Authorization': DEMO_TOKEN
         },
             body: payload
         })
@@ -124,11 +114,11 @@ _handleAdd = () => {
         .then(res => {
             switch (resStatus) {
             case 200:
-                alert('You may login now')
-                this.props.navigation.navigate('Login')
+                alert('Success Update Password')
+                this.props.navigation.navigate('SettingsStack')
                 break
-            case 500:
-                alert('username exist')
+            case 404:
+                alert('Old password doesn\'t match')
                 break
             default:
                 alert('Something wrong, please try again later!')
@@ -146,7 +136,7 @@ render() {
     return (
         <ScrollView style={styles.container}>
             <Form ref='form' 
-                type={newUser} options={option}
+                type={Password} options={option}
                 value={this.state.value} 
                 onChange={this._onChange}/>
         </ScrollView>

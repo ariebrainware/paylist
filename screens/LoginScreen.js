@@ -4,7 +4,7 @@ import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
-import {observer} from 'mobx-react'
+import {observer, inject} from 'mobx-react'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -28,7 +28,7 @@ const options = {
     }
   }
 }
-@observer
+@inject('store') @observer
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -52,7 +52,7 @@ export default class LoginScreen extends React.Component {
     }
   }
 
-  componentDidMount(){
+componentDidMount(){
     this.loadInitialState().done();
   }
 
@@ -101,7 +101,7 @@ export default class LoginScreen extends React.Component {
         body: payload
        })
        .then(res => {
-        Initial.setState()
+        this.props.store.loading
         resStatus = res.status
         return res.json()
       })
@@ -110,6 +110,7 @@ export default class LoginScreen extends React.Component {
           case 200:
             let token = {"type": "sensitive", "value":res.data}
             deviceStorage.saveKey('token', JSON.stringify(token))
+            this.props.store.setLoadingHome()
             setTimeout(()=>{
               this.props.navigation.navigate('Main')
              }, 2000)
@@ -118,17 +119,17 @@ export default class LoginScreen extends React.Component {
             break
           case 404:
             alert('wrong username or password')
-            Initial.getState()
+            this.props.store.getLoadingHome()
             this.clearForm()
             break
-          case 202:
-            Initial.getState()
+          case 307:
+            this.props.store.getLoadingHome()
             alert('already login')
             this.props.navigation.navigate('Main')
             this.clearForm()
             break
           default:
-            Initial.getState()
+              this.props.store.getLoadingHome()
             alert('Something wrong, please try again later!')
             break
         }
@@ -161,7 +162,7 @@ export default class LoginScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View>
-            {Initial.loading && <View>
+            {this.props.store.loadingHome && <View>
               <ActivityIndicator size='small'/>
               </View>}
         </View>

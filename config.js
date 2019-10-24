@@ -1,7 +1,7 @@
 let data
 {
   data = {
-    PaylistApiURL : 'http://192.168.100.24:8000/v1'
+    PaylistApiURL : 'http://192.168.100.18:8000/v1'
   } 
 }
 

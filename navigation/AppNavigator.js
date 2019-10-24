@@ -1,5 +1,5 @@
-import React from 'react'
-import { createAppContainer, } from 'react-navigation'
+import { createAppContainer} from 'react-navigation'
+import { createDrawerNavigator} from 'react-navigation-drawer'
 import MainTabNavigator from './MainTabNavigator'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
@@ -9,13 +9,35 @@ import CreatePaylist from '../screens/CreatePaylist'
 import UpdateUser from '../screens/UpdateUser'
 import UpdatePaylist from '../screens/UpdatePaylist'
 import AddBalance from '../screens/AddBalance'
+import EditPassword from '../screens/EditPassword'
+import DrawerScreen from '../screens/Drawer'
 
 const headerStyle = {
   marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
 }
 
+ const Stack = createStackNavigator({
+    Main: {
+      screen: MainTabNavigator,
+      navigationOptions: {
+        header: null
+      }
+    },
+})
+
+const DrawerNavigator  = createDrawerNavigator({
+  Main: {
+    screen:Stack,
+    },
+  },{
+  gesturesEnabled: false,
+  contentComponent: DrawerScreen,
+  drawerPosition: "right",
+  drawerType:'slide',
+  })
+
 export default createAppContainer(
-  createStackNavigator({
+   createStackNavigator({
     Login: {
       screen: LoginScreen,
       navigationOptions: {
@@ -30,8 +52,8 @@ export default createAppContainer(
         headerStyle
       }
     },
-    Main: {
-      screen: MainTabNavigator,
+    Home: {
+      screen: DrawerNavigator,
       navigationOptions: {
         header: null
       }
@@ -63,6 +85,13 @@ export default createAppContainer(
         title: 'Add Balance',
         headerStyle
       }
+    },
+    EditPassword: {
+      screen: EditPassword,
+      navigationOptions:{
+        title: 'Edit Password',
+        headerStyle
+      }
     }
   })
-)
+)  

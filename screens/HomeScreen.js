@@ -1,29 +1,26 @@
 import React from 'react'
 import {
-  Image,
   ScrollView,
   StyleSheet,
   RefreshControl,
-  TouchableOpacity,
   View,
 } from 'react-native'
 import Config from '../config'
-import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
-import SearchInput, { createFilter } from 'react-native-search-filter'
+import { createFilter } from 'react-native-search-filter'
 import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar,Provider, Portal, FAB} from 'react-native-paper'
 import Initial from '../State.js'
-import {observer} from 'mobx-react'
-const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
-@observer
+import {observer, inject, disposeOnUnmount} from 'mobx-react'
+import { when } from 'mobx'
 
+const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
+
+@inject('store') @observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      paylist: [],
       Search: '',
-      loading: true,
       open: false,
       checked: false
     }
@@ -31,11 +28,18 @@ export default class HomeScreen extends React.Component {
     this._GetData = this._GetData.bind(this)
   }
 
-componentDidMount() {
-    this._GetData()
-    Initial.getState()
-  }
+componentDidMount(){
+  this._GetData()
+  when((_) => !this.props.store.loadingHome === false, () => {
+    console.info('Loading is true!')
+    this.props.navigation.dispatch('Main')
+ })
+}
 
+onRefresh() {
+    Initial.paylist
+    this._GetData()
+  }
 async _GetData() {
     var DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
@@ -54,10 +58,7 @@ async _GetData() {
           case 200:
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
-            this.setState({
-              loading: false,
-              paylist: json
-            })
+            Initial.paylist =  json
             break
           case 500:
               alert('Token Expired')
@@ -139,22 +140,15 @@ async _UpdatePaylistStatus(id) {
       })
   }
 
-  onRefresh() {
-    this.setState({
-      paylist: []
-    })
-    this._GetData()
-  }
-
   render() {
-    if (this.state.loading) {
+    if (this.props.store.loadingHome) {
       return (
         <View style={{ padding: 20 }}>
           <ActivityIndicator />
         </View>
       )
     }
-    const filteredPaylist = this.state.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
+    const filteredPaylist = Initial.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     let {checked }= this.state
     let pay = filteredPaylist.map((item) => {
       var tgl = new Date(item.CreatedAt)
@@ -199,7 +193,7 @@ async _UpdatePaylistStatus(id) {
           contentContainerStyle={styles.contentContainer} refreshControl={
             <RefreshControl
               //refresh control used for the Pull to Refresh
-              refreshing={this.state.loading}
+              refreshing={this.props.store.loadingHome}
               onRefresh={this.onRefresh.bind(this)}
             />
           }>{pay}
@@ -209,8 +203,8 @@ async _UpdatePaylistStatus(id) {
             open={this.state.open}
             icon={this.state.open ? 'today' : 'add'}
             actions={[
-              { icon: 'create', label: 'Saldo',onPress: () =>  this.props.navigation.navigate('AddBalance') },
-              { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
+              { icon: 'create', label: 'Balance',onPress: () =>  this.props.navigation.navigate('AddBalance') },
+              { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist')},
             ]}
             onStateChange={({ open }) => this.setState({ open })}
             onPress={() => {
