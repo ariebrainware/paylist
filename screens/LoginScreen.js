@@ -110,7 +110,7 @@ componentDidMount(){
           case 200:
             let token = {"type": "sensitive", "value":res.data}
             deviceStorage.saveKey('token', JSON.stringify(token))
-            this.props.store.setLoadingHome()
+            this.props.store.setLoading()
             setTimeout(()=>{
               this.props.navigation.navigate('Main')
              }, 2000)
@@ -119,11 +119,11 @@ componentDidMount(){
             break
           case 404:
             alert('wrong username or password')
-            this.props.store.getLoadingHome()
+            this.props.store.getLoading()
             this.clearForm()
             break
           case 307:
-            this.props.store.getLoadingHome()
+            this.props.store.getLoading()
             alert('already login')
             this.props.navigation.navigate('Main')
             this.clearForm()
@@ -162,7 +162,7 @@ componentDidMount(){
           </TouchableOpacity>
         </View>
         <View>
-            {this.props.store.loadingHome && <View>
+            {this.props.store.loading && <View>
               <ActivityIndicator size='small'/>
               </View>}
         </View>

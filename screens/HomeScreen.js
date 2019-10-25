@@ -3,15 +3,15 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View,
+  View,Text
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import { createFilter } from 'react-native-search-filter'
 import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar,Provider, Portal, FAB} from 'react-native-paper'
 import Initial from '../State.js'
-import {observer, inject, disposeOnUnmount} from 'mobx-react'
-import { when } from 'mobx'
+import {observer, inject} from 'mobx-react'
+import { when, observable, autorun } from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
 
@@ -28,12 +28,16 @@ export default class HomeScreen extends React.Component {
     this._GetData = this._GetData.bind(this)
   }
 
+user = new this._GetData() 
+
 componentDidMount(){
   this._GetData()
-  when((_) => !this.props.store.loadingHome === false, () => {
+  when(() => this.props.store.loadingHome == false, () => {
     console.info('Loading is true!')
+    this._GetData()
     this.props.navigation.dispatch('Main')
- })
+    console.log("lh",Initial.loadingHome)
+  })
 }
 
 onRefresh() {
@@ -59,6 +63,7 @@ async _GetData() {
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
             Initial.paylist =  json
+           
             break
           case 500:
               alert('Token Expired')
@@ -141,6 +146,7 @@ async _UpdatePaylistStatus(id) {
   }
 
   render() {
+    console.log("loading ",this.props.store.loadingHome)
     if (this.props.store.loadingHome) {
       return (
         <View style={{ padding: 20 }}>

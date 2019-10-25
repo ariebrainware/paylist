@@ -27,7 +27,7 @@ async _handleLogOut(){
         case 200:
           this.props.navigation.navigate('Login')
           alert('You have been logged out.')
-          this.props.store.getLoadingHome()
+          this.props.store.getLoading()
           break
         default:
           alert('Something wrong, please try again later!')
@@ -53,9 +53,7 @@ render() {
             <Drawer.Item
               icon='lock'
               label="Change Password"
-              onPress={() => this.props.navigation.navigate('EditPassword', {
-                Id: 3
-              })}/>
+              onPress={() => this.props.navigation.navigate('EditPassword')}/>
         </Card>
         <Card style={{margin:2, width:500, right:20}}>
           <Drawer.Item

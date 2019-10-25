@@ -6,6 +6,9 @@ import {
     from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
+import Initial from '../State.js'
+import {observer, inject} from 'mobx-react'
+
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -31,7 +34,7 @@ const option = {
         }
     }
 }
-
+@observer
 export default class EditPassword extends React.Component {
     constructor(props) {
         super(props)
@@ -50,23 +53,25 @@ static navigationOptions = ({navigation}) => {
         const params = navigation.state.params
         const data = navigation.getParam('id','')
         return {
-          headerRight: <TouchableOpacity style={{
-              width: 50,
-              height: 50,
-              alignItems: 'center',
-              justifyContent: 'center',
-              right: 5,
-              bottom: 3}}
-              onPress={() =>params.handleUpdate(data)}>
-            <Image 
-                source={
-                  require ('../assets/images/ceklis.png')
-                }
-                style={{resizeMode: 'contain',
-                width: 20,
-                height: 20,}}
-            />
-            </TouchableOpacity> 
+          headerRight: Initial.data.map((val)=>{
+            return <TouchableOpacity key={val.ID} style={{
+                width: 50,
+                height: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+                right: 5,
+                bottom: 3}}
+                onPress={() =>params.handleUpdate(val.ID)}>
+              <Image 
+                  source={
+                    require ('../assets/images/ceklis.png')
+                  }
+                  style={{resizeMode: 'contain',
+                  width: 20,
+                  height: 20,}}
+              />
+              </TouchableOpacity>
+          }) 
         }
       }
       
@@ -98,7 +103,7 @@ async _EditPassword(id) {
         payload = payload.join("&")
         console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/paylist/editpassword/` +3, {
+        fetch(`${Config.PaylistApiURL}/paylist/editpassword/` + id, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

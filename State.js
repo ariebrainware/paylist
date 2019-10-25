@@ -1,25 +1,32 @@
-import {observable, action} from 'mobx'
+import {observable, action, autorun} from 'mobx'
 
 class Initial{
-@observable loading = true
+@observable loading
 @observable loadingHome 
-@observable loadingSeting = true
+@observable loadingSetting
 @observable data = []
 @observable paylist = []
     @action setLoading(){
-    this.loading = true
+    this.loading = false
     }
     @action getLoading(){
         this.loading = false
     }
     @action setLoadingHome(){
-    this.loadingHome = true
+    this.loadingHome = false
     }
+    @action setLoadingHomee(){
+        this.loadingHome = null
+        }
     @action getLoadingHome(){
-        this.loadingHome = false
+        this.loadingHome = true
     }
     @action getLoadingSetting(){
-        this.loadingSeting = false
+        this.loadingSetting = false
     }
 }
 export default new Initial()
+
+autorun(() => {
+    console.log(this.loadingHome)
+})

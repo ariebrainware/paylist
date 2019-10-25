@@ -112,7 +112,7 @@ componentWillMount(){
           switch (res.status) {
             case 200:
               alert('Success save paylist')
-              this.props.navigation.navigate('Main', {loadingHome: this.props.store.getLoadingHome()})
+              this.props.navigation.navigate('Main', {loadingHome: this.props.store.setLoadingHome()})
               break
             case 403:
               alert('You have to login first.')
