@@ -44,33 +44,36 @@ export default class CreatePaylist extends React.Component {
     this._CreatePaylist = this._CreatePaylist.bind(this)
   }
 
-static navigationOptions = ({navigation}) => {
-  const params = navigation.state.params
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params
     return {
       headerRight:
         <TouchableOpacity style={{
-            width: 50,
-            height: 50,
-            alignItems: 'center',
-            justifyContent: 'center',
-            right: 5,
-            bottom: 3}}
-            onPress={() =>params.handleCreate()}>
-          <Image 
-              source={
-                require ('../assets/images/ceklis.png')
-              }
-              style={{resizeMode: 'contain',
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3
+        }}
+          onPress={() => params.handleCreate()}>
+          <Image
+            source={
+              require('../assets/images/ceklis.png')
+            }
+            style={{
+              resizeMode: 'contain',
               width: 20,
-              height: 20,}}
+              height: 20,
+            }}
           />
-          </TouchableOpacity> 
+        </TouchableOpacity>
     };
-}
+  }
 
-componentWillMount(){
-  this.props.navigation.setParams({ handleCreate: this._CreatePaylist})
-}
+  componentWillMount() {
+    this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
+  }
 
   _onChange = (value) => {
     this.setState({
@@ -110,14 +113,14 @@ componentWillMount(){
           switch (res.status) {
             case 200:
               alert('Success save paylist')
-              this.props.navigation.navigate('Main', {loadingHome: this.props.store.setLoadingHome()})
+              this.props.navigation.navigate('Main', { loadingHome: this.props.store.setLoadingHome() })
               break
             case 403:
               alert('You have to login first.')
               this.props.navigation.navigate('Login')
               break
             case 500:
-              alert('token expired')
+              alert('Token expired')
               this.props.navigation.navigate('Login')
               break
             default:

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import {ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
-import {observer, inject} from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -51,13 +51,13 @@ export default class LoginScreen extends React.Component {
     }
   }
 
-componentDidMount(){
+  componentDidMount() {
     this.loadInitialState().done();
   }
 
-  async loadInitialState (){
-   var token = await deviceStorage.loadJWT('token')
-    if (token != null){
+  async loadInitialState() {
+    var token = await deviceStorage.loadJWT('token')
+    if (token != null) {
       this.props.navigation.navigate('Main')
     } else {
       this.props.navigation.navigate('Login')
@@ -97,41 +97,41 @@ componentDidMount(){
           Accept: 'application/x-www-form-urlencoded'
         },
         body: payload
-       })
-       .then(res => {
-        this.props.store.loading
-        resStatus = res.status
-        return res.json()
       })
-      .then(res => {
-        switch (resStatus) {
-          case 200:
-            let token = {"type": "sensitive", "value":res.data}
-            deviceStorage.saveKey('token', JSON.stringify(token))
-            this.props.store.setLoading()
-            setTimeout(()=>{
+        .then(res => {
+          this.props.store.loading
+          resStatus = res.status
+          return res.json()
+        })
+        .then(res => {
+          switch (resStatus) {
+            case 200:
+              let token = { "type": "sensitive", "value": res.data }
+              deviceStorage.saveKey('token', JSON.stringify(token))
+              this.props.store.setLoading()
+              setTimeout(() => {
+                this.props.navigation.navigate('Main')
+              }, 2000)
+              this.clearForm()
+              alert('Login Success')
+              break
+            case 404:
+              alert('wrong username or password')
+              this.props.store.getLoading()
+              this.clearForm()
+              break
+            case 307:
+              this.props.store.getLoading()
+              alert('already login')
               this.props.navigation.navigate('Main')
-             }, 2000)
-            this.clearForm()
-            alert('Login Success')
-            break
-          case 404:
-            alert('wrong username or password')
-            this.props.store.getLoading()
-            this.clearForm()
-            break
-          case 307:
-            this.props.store.getLoading()
-            alert('already login')
-            this.props.navigation.navigate('Main')
-            this.clearForm()
-            break
-          default:
+              this.clearForm()
+              break
+            default:
               this.props.store.getLoadingHome()
-            alert('Something wrong, please try again later!')
-            break
-        }
-      })
+              alert('Something wrong, please try again later!')
+              break
+          }
+        })
         .catch(err => {
           console.error(err)
         })
@@ -141,7 +141,7 @@ componentDidMount(){
       alert('please provide username or password')
     }
   }
-  
+
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -160,9 +160,9 @@ componentDidMount(){
           </TouchableOpacity>
         </View>
         <View>
-            {this.props.store.loading && <View>
-              <ActivityIndicator size='small'/>
-              </View>}
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' />
+          </View>}
         </View>
       </ScrollView>
     )
