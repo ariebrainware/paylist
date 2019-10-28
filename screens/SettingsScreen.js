@@ -101,8 +101,9 @@ render(){
           </Card.Content>
         </Card>
         <Card>
-          <Card.Content style={{paddingTop:10}}>
-            <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
+          <Card.Content style={{flex:1, alignItems:'flex-start', flexDirection:'row' ,paddingTop:10}}>
+            <Paragraph style={{fontWeight:'bold'}}>Your Balance</Paragraph>
+            <Paragraph style={{left:240}}> Rp: {val.balance}</Paragraph>
           </Card.Content>
           <Card>
             <Card.Actions>

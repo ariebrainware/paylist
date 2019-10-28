@@ -6,9 +6,8 @@ import {
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
-import { when } from 'mobx'
+
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form

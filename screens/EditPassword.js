@@ -51,7 +51,6 @@ export default class EditPassword extends React.Component {
 
 static navigationOptions = ({navigation}) => {
         const params = navigation.state.params
-        const data = navigation.getParam('id','')
         return {
           headerRight: Initial.data.map((val)=>{
             return <TouchableOpacity key={val.ID} style={{

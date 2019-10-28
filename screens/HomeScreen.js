@@ -35,7 +35,6 @@ componentDidMount(){
     console.info('Loading is true!')
     this._GetData()
     this.props.navigation.dispatch('Main')
-    console.log("lh",Initial.loadingHome)
   })
 }
 
@@ -145,7 +144,6 @@ async _UpdatePaylistStatus(id) {
   }
 
   render() {
-    console.log("loading ",this.props.store.loadingHome)
     if (this.props.store.loadingHome) {
       return (
         <View style={{ padding: 20 }}>

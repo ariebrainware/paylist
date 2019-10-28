@@ -26,7 +26,3 @@ class Initial{
     }
 }
 export default new Initial()
-
-autorun(() => {
-    console.log(this.loadingHome)
-})
