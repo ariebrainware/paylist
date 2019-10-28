@@ -1,7 +1,6 @@
 import React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Card, Title, Paragraph } from 'react-native-paper'
-import { ExpoLinksView } from '@expo/samples'
 
 export default function LinksScreen() {
   return (

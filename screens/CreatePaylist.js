@@ -102,7 +102,7 @@ componentWillMount(){
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+      fetch(`${Config.PaylistApiURL}/paylist`, {
         method: 'POST',
         headers: header,
         body: payload

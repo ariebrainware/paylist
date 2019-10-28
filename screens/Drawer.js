@@ -3,7 +3,6 @@ import { StyleSheet, View} from 'react-native'
 import { Drawer, Card, Avatar, IconButton } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
 
 @inject('store') @observer
@@ -18,7 +17,7 @@ async _handleLogOut(){
     const header = {
       'Authorization' : DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
+    fetch(`${Config.PaylistApiURL}/users/signout`, {
       method: 'GET',
       headers: header
     })

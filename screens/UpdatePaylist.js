@@ -83,7 +83,7 @@ async _UpdatePaylist(id){
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist/`+ id, {
+      fetch(`${Config.PaylistApiURL}/paylist/`+ id, {
         method: 'PUT',
         headers: header,
         body: payload

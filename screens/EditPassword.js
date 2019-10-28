@@ -102,7 +102,7 @@ async _EditPassword(id) {
         payload = payload.join("&")
         console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/paylist/editpassword/` + id, {
+        fetch(`${Config.PaylistApiURL}/editpassword/` + id, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

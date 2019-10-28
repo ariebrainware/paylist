@@ -1,6 +1,6 @@
 import React from 'react'
 import { DrawerActions} from 'react-navigation-drawer'
-import {View, Text,StyleSheet, RefreshControl,ScrollView} from 'react-native'
+import {View,StyleSheet, RefreshControl,ScrollView} from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
 import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator} from 'react-native-paper'
 import Config from '../config'
@@ -47,7 +47,7 @@ async _GetDataUser(){
     const header= {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/users`, {
+    fetch(`${Config.PaylistApiURL}/users`, {
       method: 'GET',
       headers: header
     })

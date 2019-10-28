@@ -48,8 +48,6 @@ export default class RegisterScreen extends React.Component {
                 email: '',
                 username: '',
                 password: '',
-                error: '',
-                loading: false
             }
         }
         this._handleAdd = this._handleAdd.bind(this)
@@ -92,7 +90,6 @@ _onChange = (value) => {
 _handleAdd = () => {
     const value = this.refs.form.getValue()
      //IF the form valid ..
-    this.setState({ error: '', loading: true })
         if (value) {
             const data = {
                 name: value.name,
@@ -109,7 +106,7 @@ _handleAdd = () => {
         payload = payload.join("&")
         console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+        fetch(`${Config.PaylistApiURL}/user/signup`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

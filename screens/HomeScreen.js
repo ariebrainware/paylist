@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View,Text
+  View
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -11,7 +11,7 @@ import { createFilter } from 'react-native-search-filter'
 import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar,Provider, Portal, FAB} from 'react-native-paper'
 import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
-import { when, observable, autorun } from 'mobx'
+import { when} from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt','name', 'amount'];
 
@@ -47,7 +47,7 @@ async _GetData() {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+    fetch(`${Config.PaylistApiURL}/paylist`, {
       method: 'GET',
       headers: header
     })
@@ -89,7 +89,7 @@ async _DeletePaylist(id) {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/` + id, {
       method: 'DELETE',
       headers: header
     })
@@ -128,7 +128,7 @@ async _UpdatePaylistStatus(id) {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
+    fetch(`${Config.PaylistApiURL}/status/` + id, {
       method: 'PUT',
       headers: header
     })
@@ -236,11 +236,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 10,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
   },
   TouchableOpacityStyle: {
     position: 'absolute',

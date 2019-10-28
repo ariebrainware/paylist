@@ -3,7 +3,7 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    Text,TouchableOpacity, Image
+    TouchableOpacity, Image
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
@@ -91,7 +91,7 @@ static navigationOptions = ({navigation}) => {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/addbalance`, {
+      fetch(`${Config.PaylistApiURL}/addbalance`, {
         method: 'POST',
         headers: header,
         body: payload

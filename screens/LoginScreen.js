@@ -3,7 +3,6 @@ import {ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-nativ
 import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
-import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
 
 const t = require('tcomb-form-native')
@@ -92,7 +91,7 @@ componentDidMount(){
       payload = payload.join("&")
       console.log(`payload: ${payload}`)
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/signin`, {
+      fetch(`${Config.PaylistApiURL}/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
