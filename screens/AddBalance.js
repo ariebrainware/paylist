@@ -35,16 +35,37 @@ export default class AddBalance extends React.Component {
         loading: false
       }
     }
-    this._AddBalance = this._AddBalance.bind(this)
   }
-  componentWillUnmount() {
-    this.setState = {
-      value: {
-        balance: '',
-        error: '',
-        loading: true
-      }
-    }
+
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params
+    return {
+      headerRight:
+        <TouchableOpacity style={{
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3
+        }}
+          onPress={() => params.handleAdd()}>
+          <Image
+            source={
+              require('../assets/images/ceklis.png')
+            }
+            style={{
+              resizeMode: 'contain',
+              width: 20,
+              height: 20,
+            }}
+          />
+        </TouchableOpacity>
+    };
+  }
+
+  componentWillMount() {
+    this.props.navigation.setParams({ handleAdd: this._AddBalance })
   }
   _onChange = (value) => {
     this.setState({ value })
@@ -73,7 +94,7 @@ export default class AddBalance extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/addsaldo`, {
+      fetch(`${Config.PaylistApiURL}/paylist/addbalance`, {
         method: 'POST',
         headers: header,
         body: payload
@@ -110,12 +131,7 @@ export default class AddBalance extends React.Component {
             onChange={this._onChange}
           />
         </ScrollView>
-        <View>
-          <Button style={styles.button} mode="contained" onPress={this._AddBalance}>
-            <Text style={[styles.greenButton]}>Add</Text>
-          </Button>
-        </View>
-      </View>
+      </View >
     )
   }
 }
@@ -126,18 +142,4 @@ var styles = StyleSheet.create({
     flex: 0,
     flexDirection: 'column',
   },
-  button: {
-    borderRadius: 4,
-    padding: 3,
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
-  greenButton: {
-    backgroundColor: '#4CD964'
-  },
-  centering: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 })

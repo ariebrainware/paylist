@@ -6,6 +6,7 @@ import {
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
+import { observer, inject } from 'mobx-react'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -27,7 +28,7 @@ const option = {
     },
   }
 }
-
+@inject('store') @observer
 export default class CreatePaylist extends React.Component {
   constructor(props) {
     super(props)
@@ -37,12 +38,10 @@ export default class CreatePaylist extends React.Component {
         name: '',
         amount: '',
         error: '',
-        loading: false
       }
     }
     this._CreatePaylist = this._CreatePaylist.bind(this)
   }
-
 
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
@@ -73,17 +72,6 @@ export default class CreatePaylist extends React.Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
-  }
-
-  componentWillUnmount() {
-    this.setState = {
-      value: {
-        name: '',
-        amount: '',
-        error: '',
-        loading: true
-      }
-    }
   }
 
   _onChange = (value) => {
@@ -124,7 +112,7 @@ export default class CreatePaylist extends React.Component {
           switch (res.status) {
             case 200:
               alert('Success save paylist')
-              this.props.navigation.navigate('Main')
+              this.props.navigation.navigate('Main', { loadingHome: this.props.store.setLoadingHome() })
               break
             case 403:
               alert('You have to login first.')

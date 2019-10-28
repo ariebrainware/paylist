@@ -8,7 +8,7 @@ import {
 import { ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Initial from '../State.js'
-import { observer } from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
@@ -43,7 +43,7 @@ const option = {
   }
 }
 
-@observer
+@inject('store') @observer
 export default class UpdateUser extends React.Component {
   constructor(props) {
     super(props)
@@ -54,7 +54,6 @@ export default class UpdateUser extends React.Component {
         username: '',
         balance: '',
         error: '',
-        loading: false
       }
     }
     this._UpdateUser = this._UpdateUser.bind(this)
@@ -86,7 +85,7 @@ export default class UpdateUser extends React.Component {
           />
         </TouchableOpacity>
       })
-    };
+    }
   }
 
   componentWillMount() {
@@ -146,7 +145,7 @@ export default class UpdateUser extends React.Component {
         .then(res => {
           switch (res.status) {
             case 200:
-              Initial.setState()
+              this.props.store.loading = true
               alert('Success Edit Data')
               setTimeout(() => {
                 this.props.navigation.navigate('SettingsStack')
@@ -180,11 +179,11 @@ export default class UpdateUser extends React.Component {
           />
         </ScrollView>
         <View>
-          {Initial.loading && <View>
+          {this.props.store.loading && <View>
             <ActivityIndicator size='small' />
           </View>}
         </View>
-      </View>
+      </View >
     )
   }
 }

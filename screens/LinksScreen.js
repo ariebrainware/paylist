@@ -21,7 +21,7 @@ export default function LinksScreen() {
 }
 
 LinksScreen.navigationOptions = {
-  title: 'Links',
+  title: 'About',
   headerStyle:{
     backgroundColor:'#a9b0ae'
   }

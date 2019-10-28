@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity, Image
 }
   from 'react-native'
-import { Button } from 'react-native-paper'
 import Config from '../config'
+
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 
@@ -41,22 +40,7 @@ const option = {
   }
 }
 
-class RegisterScreen extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      value: {
-        name: '',
-        email: '',
-        username: '',
-        password: '',
-        error: '',
-        loading: false
-      }
-    }
-    this._handleAdd = this._handleAdd.bind(this)
-    this.onRegistrationFail = this.onRegistrationFail.bind(this)
-  }
+export default class RegisterScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
@@ -87,17 +71,6 @@ class RegisterScreen extends React.Component {
 
   componentWillMount() {
     this.props.navigation.setParams({ handleSignUp: this._handleAdd })
-  }
-
-  componentWillUnmount() {
-    this.setState = {
-      value: {
-        name: '',
-        email: '',
-        username: '',
-        password: null,
-      }
-    }
   }
 
   _onChange = (value) => {
@@ -177,13 +150,4 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'column',
   },
-  button: {
-    borderRadius: 4,
-    padding: 3,
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
 })
-
-export default RegisterScreen
