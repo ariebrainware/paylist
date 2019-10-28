@@ -7,7 +7,7 @@ class Initial{
 @observable data = []
 @observable paylist = []
     @action setLoading(){
-    this.loading = false
+    this.loading = true
     }
     @action getLoading(){
         this.loading = false

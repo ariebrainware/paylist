@@ -5,8 +5,8 @@ import { ExpoLinksView } from '@expo/samples'
 
 export default function LinksScreen() {
   return (
-    <ScrollView style={styles.container}>
-    <View>
+    <View style={styles.container}>
+    <ScrollView >
       <Card>
         <Card.Content style={{alignItems:'center', paddingTop:0}}>
           <Title>PAYLIST APP</Title>
@@ -15,8 +15,20 @@ export default function LinksScreen() {
           <Paragraph>Pay bill, set budget per month, and jot down some buy list easily with Paylist</Paragraph>
         </Card.Content>
       </Card>
-    </View>
     </ScrollView>
+    <View>
+    <Card>
+      <Card.Content style ={{alignContent:'space-around', position:'relative', left:0, right:0 }}>
+        <Title>
+          paylist teams :
+        </Title>
+        <Paragraph>
+          Arie Brainware, Offler
+        </Paragraph>
+      </Card.Content>
+    </Card>
+  </View>
+  </View>
   )
 }
 
