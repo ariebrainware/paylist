@@ -52,7 +52,6 @@ export default class UpdateUser extends React.Component {
         email: '',
         name: '',
         username: '',
-        password: '',
         balance: '',
         error: '',
         loading: false
@@ -61,27 +60,6 @@ export default class UpdateUser extends React.Component {
     this._UpdateUser = this._UpdateUser.bind(this)
   }
 
-  componentWillMount() {
-    const { navigation } = this.props
-    const data = JSON.parse(navigation.getParam('name', []))
-    {
-      data.map((item) => {
-        return (
-          this.setState({
-            value: {
-              email: '',
-              name: '',
-              username: '',
-              balance: '',
-              error: '',
-              loading: false,
-            }
-          })
-        )
-        this._UpdateUser = this._UpdateUser.bind(this)
-      })
-    }
-  }
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
     const data = JSON.parse(navigation.getParam('name', []))
