@@ -38,7 +38,6 @@ export default class UpdatePaylist extends React.Component {
         name: '',
         amount: '',
         error: '',
-        loading: false
       }
     }
     this._UpdatePaylist = this._UpdatePaylist.bind(this)
@@ -91,10 +90,17 @@ export default class UpdatePaylist extends React.Component {
         .then(res => {
           switch (res.status) {
             case 200:
-              alert('Success save paylist')
+              alert('Success Update paylist')
               this.props.navigation.navigate('Main')
               break
+            case 500:
+              alert('token expired')
+              this.props.navigation.navigate('Login')
+              break
           }
+        })
+        .catch(err => {
+          console.error(err)
         })
         .done()
     } else {

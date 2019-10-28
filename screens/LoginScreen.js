@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button } from 'react-native-paper'
+import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
+import { observer, inject } from 'mobx-react'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -26,21 +27,18 @@ const options = {
     }
   }
 }
-
+@inject('store') @observer
 export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       value: {
         username: '',
         password: '',
         error: '',
-        loading: false
-      }
+      },
     }
     this._handleLogin = this._handleLogin.bind(this)
-    this.onLoginFail = this.onLoginFail.bind(this)
   }
 
   componentWillUnmount() {
@@ -49,12 +47,22 @@ export default class LoginScreen extends React.Component {
         username: '',
         password: null,
         error: '',
-        loading: true
-
       }
     }
   }
 
+  componentDidMount() {
+    this.loadInitialState().done();
+  }
+
+  async loadInitialState() {
+    var token = await deviceStorage.loadJWT('token')
+    if (token != null) {
+      this.props.navigation.navigate('Main')
+    } else {
+      this.props.navigation.navigate('Login')
+    }
+  }
   _onChange = (value) => {
     this.setState({
       value
@@ -91,6 +99,7 @@ export default class LoginScreen extends React.Component {
         body: payload
       })
         .then(res => {
+          this.props.store.loading
           resStatus = res.status
           return res.json()
         })
@@ -98,23 +107,28 @@ export default class LoginScreen extends React.Component {
           switch (resStatus) {
             case 200:
               let token = { "type": "sensitive", "value": res.data }
-              deviceStorage.saveKey("token", JSON.stringify(token))
-              this.props.navigation.navigate('Main')
+              deviceStorage.saveKey('token', JSON.stringify(token))
+              this.props.store.setLoading()
+              setTimeout(() => {
+                this.props.navigation.navigate('Main')
+              }, 2000)
               this.clearForm()
+              alert('Login Success')
               break
             case 404:
               alert('wrong username or password')
+              this.props.store.getLoading()
+              this.clearForm()
               break
-            case 202:
+            case 307:
+              this.props.store.getLoading()
               alert('already login')
               this.props.navigation.navigate('Main')
               this.clearForm()
               break
-            case 500:
-              alert('token expired, please sign in again')
-              this.clearForm()
-              break
             default:
+              this.props.store.getLoadingHome()
+              alert('Something wrong, please try again later!')
               break
           }
         })
@@ -128,12 +142,6 @@ export default class LoginScreen extends React.Component {
     }
   }
 
-  onLoginFail() {
-    this.setState({
-      error: 'Login Failed',
-      loading: false
-    })
-  }
   render() {
     return (
       <ScrollView style={styles.container}>
@@ -144,14 +152,17 @@ export default class LoginScreen extends React.Component {
           value={this.state.value}
           onChange={this._onChange}
         />
-        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN
-            </Button>
-
+        <Button style={styles.button} mode="contained" onPress={this._handleLogin}>LOGIN</Button>
         <View style={styles.signupTextCont}>
           <Text style={styles.signupText}>Don't have an account yet?</Text>
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
             <Text style={styles.signupButton}> Sign Up</Text>
           </TouchableOpacity>
+        </View>
+        <View>
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' />
+          </View>}
         </View>
       </ScrollView>
     )
@@ -193,5 +204,5 @@ var styles = StyleSheet.create({
     color: 'black',
     fontSize: 16,
     fontWeight: '500',
-  }
+  },
 })

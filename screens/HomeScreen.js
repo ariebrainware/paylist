@@ -1,31 +1,47 @@
-import * as WebBrowser from 'expo-web-browser'
 import React from 'react'
 import {
-  Image,
   ScrollView,
   StyleSheet,
   RefreshControl,
-  TouchableOpacity,
-  View,
+  View
 } from 'react-native'
 import Config from '../config'
-import { MonoText } from '../components/StyledText'
 import deviceStorage from '../service/deviceStorage'
-import { List, Card, Checkbox, Button, ActivityIndicator } from 'react-native-paper'
+import { createFilter } from 'react-native-search-filter'
+import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB } from 'react-native-paper'
+import Initial from '../State.js'
+import { observer, inject } from 'mobx-react'
+import { when } from 'mobx'
 
+const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount'];
+
+@inject('store') @observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      paylist: [],
-      loading: true,
+      Search: '',
+      open: false,
       checked: false
     }
     this._DeletePaylist = this._DeletePaylist.bind(this)
     this._GetData = this._GetData.bind(this)
   }
 
+  user = new this._GetData()
+
   componentDidMount() {
+    this._GetData()
+    when(() => this.props.store.loadingHome == false, () => {
+      console.info('Loading is true!')
+      this._GetData()
+      this.props.navigation.dispatch('Main')
+      console.log("lh", Initial.loadingHome)
+    })
+  }
+
+  onRefresh() {
+    Initial.paylist
     this._GetData()
   }
   async _GetData() {
@@ -46,13 +62,26 @@ export default class HomeScreen extends React.Component {
           case 200:
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
-            this.setState({
-              loading: false,
-              paylist: json
-            })
+            Initial.paylist = json
+            break
+          case 500:
+            alert('Token Expired')
+            setTimeout(() => {
+              this.props.navigation.navigate('Login');
+            }, 2000)
+            break
+          case 401:
+            alert('Unauthorized')
+            setTimeout(() => {
+              this.props.navigation.navigate('Login');
+            }, 2000)
             break
         }
       })
+  }
+
+  searchUpdated(term) {
+    this.setState({ Search: term })
   }
 
   async _DeletePaylist(id) {
@@ -71,16 +100,16 @@ export default class HomeScreen extends React.Component {
       .then(res => {
         switch (resStatus) {
           case 200:
-            alert('Delete Success.')
+            alert('Delete Paylist Success')
             break
           case 404:
-            alert('no paylist found')
+            alert('No Paylist Found')
             break
           case 400:
-            alert('specify paylist id')
+            alert('Specify Paylist ID')
             break
           case 500:
-            alert('token expired')
+            alert('Token Expired')
             this.props.navigation.navigate('Login')
             break
           default:
@@ -89,9 +118,6 @@ export default class HomeScreen extends React.Component {
         }
       })
       .done()
-  }
-
-  componentWillMount() {
   }
 
   async _UpdatePaylistStatus(id) {
@@ -109,87 +135,102 @@ export default class HomeScreen extends React.Component {
       })
       .then(res => {
         this.setState({
-          checked: true
+          checked: this.state[id]
         })
       })
   }
 
-  onRefresh() {
-    this.setState({
-      paylist: []
-    })
-    this._GetData()
-  }
-
   render() {
-    if (this.state.loading) {
+    console.log("loading ", this.props.store.loadingHome)
+    if (this.props.store.loadingHome) {
       return (
         <View style={{ padding: 20 }}>
           <ActivityIndicator />
         </View>
       )
     }
-    const { checked } = this.state
-    let pay = this.state.paylist.map((item) => {
+    const filteredPaylist = Initial.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
+    let { checked } = this.state
+    let pay = filteredPaylist.map((item) => {
+      var tgl = new Date(item.CreatedAt)
+      if (item.completed == true) {
+        checked = true
+      } else {
+        checked = false
+      }
       return <Card key={item.ID} style={styles.Item}>
-
-        <List.Accordion
-          title={item.name}
-          left={props => <List.Icon {...props} icon="monetization-on" />}>
-
-          <List.Item style={{ right: 50 }} title={item.amount} />
-          <List.Item style={{ right: 50 }} title={JSON.stringify(item.completed)} />
-          <Card.Actions style={{ right: 50 }}>
-            <Button onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
-            <Button icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
-              id: item.ID,
-              name: JSON.stringify(item.name),
-              amount: JSON.stringify(item.amount)
-            })}>edit</Button>
-            <Checkbox status={checked ? 'checked' : 'unchecked'} onPress={() => this._UpdatePaylistStatus(item.ID)} />
-          </Card.Actions>
-        </List.Accordion>
+        <Card style={styles.content}>
+          <List.Accordion
+            title={item.name}
+            left={props => <List.Icon {...props} icon="monetization-on" />}>
+            <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={item.amount} />
+            <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={JSON.stringify(item.completed)} />
+            <List.Item style={{ right: 50 }} title={tgl.toDateString()} />
+            <Card.Actions style={{ right: 50 }}>
+              <Button color='red' onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+              <Button color='black' icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
+                id: item.ID,
+                name: JSON.stringify(item.name),
+                amount: JSON.stringify(item.amount)
+              })}>edit</Button>
+              <Checkbox status={checked ? 'checked' : 'unchecked'}
+                onPress={() => this._UpdatePaylistStatus(item.ID)} />
+            </Card.Actions>
+          </List.Accordion>
+        </Card>
       </Card>
     })
 
     return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer} refreshControl={
-            <RefreshControl
-              //refresh control used for the Pull to Refresh
-              refreshing={this.state.loading}
-              onRefresh={this.onRefresh.bind(this)}
+      <Provider>
+        <View style={styles.container}>
+          <Searchbar
+            style={{ padding: 0, margin: 4 }}
+            placeholder="Search"
+            onChangeText={(term) => { this.searchUpdated(term) }}
+          />
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer} refreshControl={
+              <RefreshControl
+                //refresh control used for the Pull to Refresh
+                refreshing={this.props.store.loadingHome}
+                onRefresh={this.onRefresh.bind(this)}
+              />
+            }>{pay}
+          </ScrollView>
+          <Portal>
+            <FAB.Group
+              open={this.state.open}
+              icon={this.state.open ? 'today' : 'add'}
+              actions={[
+                { icon: 'create', label: 'Balance', onPress: () => this.props.navigation.navigate('AddBalance') },
+                { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
+              ]}
+              onStateChange={({ open }) => this.setState({ open })}
+              onPress={() => {
+                if (this.state.open) {
+                  // do something if the speed dial is open
+                }
+              }}
             />
-          }>{pay}
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => this.props.navigation.navigate('CreatePaylist')}
-            style={styles.TouchableOpacityStyle}>
-            <Image
-              source={
-                require('../assets/images/add-button.png')
-              }
-              style={styles.FloatingButtonStyle}
-            />
-          </TouchableOpacity>
+          </Portal>
         </View>
-      </View>
+      </Provider>
     )
   }
 }
 
 HomeScreen.navigationOptions = {
   title: 'Home',
+  headerStyle: {
+    backgroundColor: '#a9b0ae'
+  }
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#78f0df',
+    backgroundColor: '#ffff',
   },
   contentContainer: {
     paddingTop: 10,
@@ -262,10 +303,10 @@ const styles = StyleSheet.create({
   },
   Item: {
     margin: 1.5,
-    padding: 3.5
+    padding: 3.5,
   },
   content: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
     margin: 0.5,
   }
 })

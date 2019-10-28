@@ -3,38 +3,18 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Image, TouchableOpacity
 } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
-import Initial from '../State.js'
-import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 const User = t.struct({
-  username: t.String,
-  email: t.String,
-  name: t.String,
   balance: t.Number,
 })
 
 const option = {
   fields: {
-    username: {
-      autoCapitalize: 'none',
-      autoCorrect: false,
-      editable: false
-    },
-    email: {
-      autoCapitalize: 'none',
-      autoCorrect: false,
-    },
-    name: {
-      autoCapitalize: 'none',
-      autoCorrect: false,
-    },
     balance: {
       autoCapitalize: 'none',
       autoCorrect: false,
@@ -43,28 +23,23 @@ const option = {
   }
 }
 
-@inject('store') @observer
-export default class UpdateUser extends React.Component {
+export default class AddBalance extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       value: {
-        email: '',
-        name: '',
-        username: '',
         balance: '',
         error: '',
+        loading: false
       }
     }
-    this._UpdateUser = this._UpdateUser.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
-    const data = JSON.parse(navigation.getParam('name', []))
     return {
-      headerRight: data.map((val) => {
-        return <TouchableOpacity key={val.ID} style={{
+      headerRight:
+        <TouchableOpacity style={{
           width: 50,
           height: 50,
           alignItems: 'center',
@@ -72,7 +47,7 @@ export default class UpdateUser extends React.Component {
           right: 5,
           bottom: 3
         }}
-          onPress={() => params.handleUpdate(val.ID)}>
+          onPress={() => params.handleAdd()}>
           <Image
             source={
               require('../assets/images/ceklis.png')
@@ -84,43 +59,22 @@ export default class UpdateUser extends React.Component {
             }}
           />
         </TouchableOpacity>
-      })
-    }
+    };
   }
 
   componentWillMount() {
-    const { navigation } = this.props
-    const data = JSON.parse(navigation.getParam('name', []))
-    this.props.navigation.setParams({ handleUpdate: this._UpdateUser })
-    {
-      data.map((item) => {
-        return (
-          this.setState({
-            value: {
-              email: item.email,
-              name: item.name,
-              username: item.username,
-              balance: item.balance
-            }
-          })
-        )
-      })
-    }
+    this.props.navigation.setParams({ handleAdd: this._AddBalance })
   }
-
   _onChange = (value) => {
     this.setState({ value })
   }
 
-  async _UpdateUser(id) {
+  async _AddBalance() {
     var DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
       const data = {
-        email: value.email,
-        name: value.name,
-        username: value.username,
         balance: value.balance,
       }
       let payload = []
@@ -130,6 +84,7 @@ export default class UpdateUser extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
+
       const header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -137,23 +92,19 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/` + id, {
-        method: 'PUT',
+      fetch(`${Config.PaylistApiURL}/paylist/addbalance`, {
+        method: 'POST',
         headers: header,
         body: payload
       })
         .then(res => {
           switch (res.status) {
             case 200:
-              this.props.store.loading = true
-              alert('Success Edit Data')
-              setTimeout(() => {
-                this.props.navigation.navigate('SettingsStack')
-              }, 2000)
+              alert('Success Add Balance')
+              this.props.navigation.navigate('Main')
               break
-            case 500:
-              alert('token expired')
-              this.props.navigation.navigate('Login')
+            case 400:
+              alert('Field can\'t be negative or zero')
               break
           }
         })
@@ -178,11 +129,6 @@ export default class UpdateUser extends React.Component {
             onChange={this._onChange}
           />
         </ScrollView>
-        <View>
-          {this.props.store.loading && <View>
-            <ActivityIndicator size='small' />
-          </View>}
-        </View>
       </View >
     )
   }

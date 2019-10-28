@@ -22,9 +22,10 @@ const deviceStorage = {
       let payload = await AsyncStorage.getItem('token')
       let token = JSON.parse(payload)
       await AsyncStorage.removeItem(token.value)
+      AsyncStorage.removeItem('token')
       return token.value
     } catch (error) {
-      console.log('AsyncStorage Error: ' + error.message)
+      console.log('AsyncStorage Error: ' + error)
     }
   }
 }

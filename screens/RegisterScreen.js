@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  Text,
-  View
+  TouchableOpacity, Image
 }
   from 'react-native'
-import { Button } from 'react-native-paper'
 import Config from '../config'
+
 const t = require('tcomb-form-native')
 const Form = t.form.Form
 
@@ -41,33 +40,37 @@ const option = {
   }
 }
 
-class RegisterScreen extends React.Component {
+export default class RegisterScreen extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      value: {
-        name: '',
-        email: '',
-        username: '',
-        password: '',
-        error: '',
-        loading: false
-      }
-    }
-    this._handleAdd = this._handleAdd.bind(this)
-    this.onRegistrationFail = this.onRegistrationFail.bind(this)
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params
+    return {
+      headerRight:
+        <TouchableOpacity style={{
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3
+        }}
+          onPress={() => params.handleSignUp()}>
+          <Image
+            source={
+              require('../assets/images/ceklis.png')
+            }
+            style={{
+              resizeMode: 'contain',
+              width: 20,
+              height: 20,
+            }}
+          />
+        </TouchableOpacity>
+    };
   }
 
-  componentWillUnmount() {
-    this.setState = {
-      value: {
-        name: '',
-        email: '',
-        username: '',
-        password: null,
-      }
-    }
+  componentWillMount() {
+    this.props.navigation.setParams({ handleSignUp: this._handleAdd })
   }
 
   _onChange = (value) => {
@@ -94,6 +97,7 @@ class RegisterScreen extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
+      console.log(`payload: ${payload}`)
       //sent post request
       fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
         method: 'POST',
@@ -117,6 +121,7 @@ class RegisterScreen extends React.Component {
               alert('username exist')
               break
             default:
+              alert('Something wrong, please try again later!')
               break
           }
         })
@@ -126,12 +131,6 @@ class RegisterScreen extends React.Component {
       alert('Please fill the empty field')
     }
   }
-  onRegistrationFail() {
-    this.setState({
-      error: 'Registration Failed',
-      loading: false
-    })
-  }
 
   render() {
     return (
@@ -140,9 +139,6 @@ class RegisterScreen extends React.Component {
           type={newUser} options={option}
           value={this.state.value}
           onChange={this._onChange} />
-        <Button style={styles.button} mode='contained' onPress={this._handleAdd}>
-          <Text style={{}}>Create Account</Text>
-        </Button>
       </ScrollView>
     )
   }
@@ -154,17 +150,4 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'column',
   },
-  button: {
-    borderRadius: 4,
-    padding: 3,
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
-  centering: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
 })
-
-export default RegisterScreen
