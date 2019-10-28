@@ -17,7 +17,7 @@ async _handleLogOut(){
     const header = {
       'Authorization' : DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/users/signout`, {
+    fetch(`${Config.PaylistApiURL}/paylist/users/signout`, {
       method: 'GET',
       headers: header
     })

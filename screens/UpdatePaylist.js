@@ -75,7 +75,6 @@ async _UpdatePaylist(id){
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
       const header= {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -83,7 +82,7 @@ async _UpdatePaylist(id){
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/`+ id, {
+      fetch(`${Config.PaylistApiURL}/paylist/paylist/`+ id, {
         method: 'PUT',
         headers: header,
         body: payload

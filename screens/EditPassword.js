@@ -100,9 +100,8 @@ async _EditPassword(id) {
                 payload.push(encodedKey + "=" + encodedValue)
             }
         payload = payload.join("&")
-        console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/editpassword/` + id, {
+        fetch(`${Config.PaylistApiURL}/paylist/editpassword/` + id, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

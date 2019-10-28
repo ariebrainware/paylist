@@ -91,7 +91,7 @@ static navigationOptions = ({navigation}) => {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/addbalance`, {
+      fetch(`${Config.PaylistApiURL}/paylist/addsaldo`, {
         method: 'POST',
         headers: header,
         body: payload

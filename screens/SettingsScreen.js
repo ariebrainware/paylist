@@ -47,7 +47,7 @@ async _GetDataUser(){
     const header= {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/users`, {
+    fetch(`${Config.PaylistApiURL}/paylist/users`, {
       method: 'GET',
       headers: header
     })

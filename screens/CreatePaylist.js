@@ -94,7 +94,6 @@ componentWillMount(){
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
       const header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -102,7 +101,7 @@ componentWillMount(){
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist`, {
+      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
         method: 'POST',
         headers: header,
         body: payload

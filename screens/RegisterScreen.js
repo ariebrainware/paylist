@@ -104,9 +104,8 @@ _handleAdd = () => {
                 payload.push(encodedKey + "=" + encodedValue)
             }
         payload = payload.join("&")
-        console.log(`payload: ${payload}`)
         //sent post request
-        fetch(`${Config.PaylistApiURL}/user/signup`, {
+        fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

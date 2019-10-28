@@ -47,7 +47,7 @@ async _GetData() {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist`, {
+    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
       method: 'GET',
       headers: header
     })
@@ -89,7 +89,7 @@ async _DeletePaylist(id) {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/` + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
       method: 'DELETE',
       headers: header
     })
@@ -128,7 +128,7 @@ async _UpdatePaylistStatus(id) {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/status/` + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
       method: 'PUT',
       headers: header
     })
