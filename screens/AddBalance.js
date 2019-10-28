@@ -3,10 +3,8 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Text,
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button, } from 'react-native-paper'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
