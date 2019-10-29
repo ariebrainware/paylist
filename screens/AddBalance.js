@@ -34,6 +34,7 @@ export default class AddBalance extends React.Component {
             }
         }
         this._AddBalance = this._AddBalance.bind(this)
+        this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -62,7 +63,16 @@ export default class AddBalance extends React.Component {
           </TouchableOpacity>
       };
     }
-  
+componentDidMount(){
+  BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+}
+componentWillUnmount(){
+  BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+}
+onBackButtonPressed() {
+  this.props.navigation.navigate('Main')
+  return true
+}
     componentWillMount() {
       this.props.navigation.setParams({ handleCreate: this._AddBalance })
     }

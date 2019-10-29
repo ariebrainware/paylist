@@ -3,7 +3,7 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Image, TouchableOpacity
+  Image, TouchableOpacity, BackHandler
 } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
@@ -56,6 +56,7 @@ export default class UpdateUser extends React.Component {
       }
     }
     this._UpdateUser = this._UpdateUser.bind(this)
+    this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -86,7 +87,16 @@ export default class UpdateUser extends React.Component {
       })
     }
   }
-
+  componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+  }
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  onBackButtonPressed() {
+    this.props.navigation.navigate('Main')
+    return true
+  }
   componentWillMount() {
     const { navigation } = this.props
     const data = JSON.parse(navigation.getParam('name', []))

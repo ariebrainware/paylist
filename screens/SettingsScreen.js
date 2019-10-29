@@ -1,6 +1,6 @@
 import React from 'react'
 import { DrawerActions} from 'react-navigation-drawer'
-import {View,StyleSheet, RefreshControl,ScrollView} from 'react-native'
+import {View,StyleSheet, RefreshControl,ScrollView, BackHandler} from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
 import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator} from 'react-native-paper'
 import Config from '../config'
@@ -33,7 +33,6 @@ export default class SettingsScreen extends React.Component {
       )
     };
   }
-
   componentWillMount() {
     this.props.navigation.setParams({ showMore: this._onMore.bind(this) })
   }

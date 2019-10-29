@@ -36,6 +36,18 @@ export default class HomeScreen extends React.Component {
     })
   }
 
+  componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  componentWillUnmount() {
+     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  
+  onBackButtonPressed() {
+    BackHandler.exitApp()
+    return true
+  }
+
   onRefresh() {
     Initial.paylist
     this._GetData()

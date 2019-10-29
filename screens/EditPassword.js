@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import {
     ScrollView,
     StyleSheet, 
-    TouchableOpacity, Image} 
-    from 'react-native'
+    TouchableOpacity, Image, BackHandler
+} from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import Initial from '../State.js'
@@ -47,6 +47,7 @@ export default class EditPassword extends React.Component {
             }
         }
         this._EditPassword = this._EditPassword.bind(this)
+        this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
     }
 
 static navigationOptions = ({navigation}) => {
@@ -73,7 +74,16 @@ static navigationOptions = ({navigation}) => {
           }) 
         }
       }
-      
+componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+}
+componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+}
+onBackButtonPressed() {
+    this.props.navigation.navigate('Main')
+    return true
+}      
 componentWillMount(){
     this.props.navigation.setParams({ handleUpdate: this._EditPassword})
 }    
