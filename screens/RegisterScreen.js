@@ -42,6 +42,17 @@ const option = {
 
 export default class RegisterScreen extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      value: {
+        name: '',
+        email: '',
+        username: '',
+        password: '',
+      }
+    }
+  }
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
     return {
@@ -82,7 +93,6 @@ export default class RegisterScreen extends React.Component {
   _handleAdd = () => {
     const value = this.refs.form.getValue()
     //IF the form valid ..
-    this.setState({ error: '', loading: true })
     if (value) {
       const data = {
         name: value.name,
@@ -97,9 +107,9 @@ export default class RegisterScreen extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      console.log(`payload: ${payload}`)
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+      fetch(`${Config.PaylistApiURL}/user/signup`, {
+        //IF the form valid ..
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

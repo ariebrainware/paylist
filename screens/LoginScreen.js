@@ -90,7 +90,7 @@ export default class LoginScreen extends React.Component {
       }
       payload = payload.join("&")
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/signin`, {
+      fetch(`${Config.PaylistApiURL}/user/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

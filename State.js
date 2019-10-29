@@ -7,7 +7,7 @@ class Initial{
 @observable data = []
 @observable paylist = []
     @action setLoading(){
-    this.loading = false
+    this.loading = true
     }
     @action getLoading(){
         this.loading = false
@@ -26,7 +26,3 @@ class Initial{
     }
 }
 export default new Initial()
-
-autorun(() => {
-    console.log(this.loadingHome)
-})

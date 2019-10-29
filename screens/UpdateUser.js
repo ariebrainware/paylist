@@ -3,11 +3,10 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Image, TouchableOpacity
+  Image, TouchableOpacity, BackHandler
 } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
-import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
@@ -57,6 +56,7 @@ export default class UpdateUser extends React.Component {
       }
     }
     this._UpdateUser = this._UpdateUser.bind(this)
+    this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -87,7 +87,16 @@ export default class UpdateUser extends React.Component {
       })
     }
   }
-
+  componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+  }
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  onBackButtonPressed() {
+    this.props.navigation.navigate('Main')
+    return true
+  }
   componentWillMount() {
     const { navigation } = this.props
     const data = JSON.parse(navigation.getParam('name', []))
@@ -137,7 +146,7 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/` + id, {
+      fetch(`${Config.PaylistApiURL}/user/` + id, {
         method: 'PUT',
         headers: header,
         body: payload

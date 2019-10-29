@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View
+  View,BackHandler
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -14,7 +14,6 @@ import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount'];
-
 @inject('store') @observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -28,16 +27,25 @@ export default class HomeScreen extends React.Component {
     this._GetData = this._GetData.bind(this)
   }
 
-  user = new this._GetData()
-
   componentDidMount() {
     this._GetData()
     when(() => this.props.store.loadingHome == false, () => {
       console.info('Loading is true!')
       this._GetData()
       this.props.navigation.dispatch('Main')
-      console.log("lh", Initial.loadingHome)
     })
+  }
+
+  componentWillMount(){
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  componentWillUnmount() {
+     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  
+  onBackButtonPressed() {
+    BackHandler.exitApp()
+    return true
   }
 
   onRefresh() {
@@ -49,7 +57,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+    fetch(`${Config.PaylistApiURL}/paylist`, {
       method: 'GET',
       headers: header
     })
@@ -63,6 +71,7 @@ export default class HomeScreen extends React.Component {
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
             Initial.paylist = json
+            this.props.store.setLoadingHome()
             break
           case 500:
             alert('Token Expired')
@@ -89,7 +98,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/` + id, {
       method: 'DELETE',
       headers: header
     })
@@ -125,7 +134,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
+    fetch(`${Config.PaylistApiURL}/status/` + id, {
       method: 'PUT',
       headers: header
     })
@@ -141,7 +150,6 @@ export default class HomeScreen extends React.Component {
   }
 
   render() {
-    console.log("loading ", this.props.store.loadingHome)
     if (this.props.store.loadingHome) {
       return (
         <View style={{ padding: 20 }}>
@@ -234,58 +242,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 10,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
   },
   TouchableOpacityStyle: {
     position: 'absolute',

@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  Image, TouchableOpacity
+  Image, TouchableOpacity, BackHandler
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-import { observer, inject } from 'mobx-react'
+import {observer, inject} from 'mobx-react'
+
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -41,6 +42,7 @@ export default class CreatePaylist extends React.Component {
       }
     }
     this._CreatePaylist = this._CreatePaylist.bind(this)
+    this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -69,7 +71,16 @@ export default class CreatePaylist extends React.Component {
         </TouchableOpacity>
     };
   }
-
+  componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+  }
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  onBackButtonPressed() {
+    this.props.navigation.navigate('Main')
+    return true
+  }
   componentWillMount() {
     this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
   }
@@ -103,7 +114,7 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+      fetch(`${Config.PaylistApiURL}/paylist`, {
         method: 'POST',
         headers: header,
         body: payload

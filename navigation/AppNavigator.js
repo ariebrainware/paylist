@@ -17,7 +17,7 @@ const headerStyle = {
 }
 
  const Stack = createStackNavigator({
-    Main: {
+    MainScreen: {
       screen: MainTabNavigator,
       navigationOptions: {
         header: null

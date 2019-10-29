@@ -1,8 +1,8 @@
 import React from 'react'
-import { DrawerActions } from 'react-navigation-drawer'
-import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native'
-import deviceStorage from '../service/deviceStorage'
-import { Card, Button, Title, Paragraph, Appbar, ActivityIndicator } from 'react-native-paper'
+import { DrawerActions} from 'react-navigation-drawer'
+import {View,StyleSheet, RefreshControl,ScrollView, BackHandler} from 'react-native'
+import deviceStorage  from '../service/deviceStorage'
+import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator} from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
@@ -33,7 +33,6 @@ export default class SettingsScreen extends React.Component {
       )
     };
   }
-
   componentWillMount() {
     this.props.navigation.setParams({ showMore: this._onMore.bind(this) })
   }
@@ -47,7 +46,7 @@ export default class SettingsScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/users`, {
+    fetch(`${Config.PaylistApiURL}/users`, {
       method: 'GET',
       headers: header
     })
@@ -102,8 +101,9 @@ export default class SettingsScreen extends React.Component {
           </Card.Content>
         </Card>
         <Card>
-          <Card.Content style={{ paddingTop: 10 }}>
-            <Paragraph>Your Balance                                                                 Rp: {val.balance} </Paragraph>
+          <Card.Content style={{flex:1, alignItems:'flex-start', flexDirection:'row' ,paddingTop:10}}>
+            <Paragraph style={{fontWeight:'bold'}}>Your Balance</Paragraph>
+            <Paragraph style={{left:240}}> Rp: {val.balance}</Paragraph>
           </Card.Content>
           <Card>
             <Card.Actions>
