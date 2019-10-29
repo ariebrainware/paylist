@@ -7,7 +7,6 @@ import {
 } from 'react-native'
 import { ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
-import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
@@ -137,7 +136,7 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/` + id, {
+      fetch(`${Config.PaylistApiURL}/user/` + id, {
         method: 'PUT',
         headers: header,
         body: payload

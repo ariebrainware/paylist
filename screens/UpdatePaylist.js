@@ -3,10 +3,9 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Text,
+  TouchableOpacity, Image
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button, } from 'react-native-paper'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
@@ -42,9 +41,36 @@ export default class UpdatePaylist extends React.Component {
     }
     this._UpdatePaylist = this._UpdatePaylist.bind(this)
   }
-
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params
+    const data = JSON.parse(navigation.getParam('id', ''))
+    return {
+      headerRight: 
+        <TouchableOpacity style={{
+          width: 50,
+          height: 50,
+          alignItems: 'center',
+          justifyContent: 'center',
+          right: 5,
+          bottom: 3
+        }}
+          onPress={() => params.handleUpdate(data)}>
+          <Image
+            source={
+              require('../assets/images/ceklis.png')
+            }
+            style={{
+              resizeMode: 'contain',
+              width: 20,
+              height: 20,
+            }}
+          />
+        </TouchableOpacity>
+    }
+  }
   componentWillMount() {
     const { navigation } = this.props
+    this.props.navigation.setParams({ handleUpdate: this._UpdatePaylist })
     {
       this.setState({
         value: {
@@ -82,7 +108,7 @@ export default class UpdatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
+      fetch(`${Config.PaylistApiURL}/paylist/` + id, {
         method: 'PUT',
         headers: header,
         body: payload
@@ -110,8 +136,6 @@ export default class UpdatePaylist extends React.Component {
   }
 
   render() {
-    const { navigation } = this.props
-    const data = JSON.parse(navigation.getParam('id', ''))
     return (
       <View>
         <ScrollView style={styles.container}>
@@ -122,11 +146,6 @@ export default class UpdatePaylist extends React.Component {
             onChange={this._onChange}
           />
         </ScrollView>
-        <View>
-          <Button style={styles.button} mode="contained" onPress={() => this._UpdatePaylist(data)}>
-            <Text style={[styles.button, styles.greenButton]}>Update</Text>
-          </Button>
-        </View>
       </View>
     )
   }
@@ -140,18 +159,4 @@ var styles = StyleSheet.create({
     flex: 0,
     flexDirection: 'column',
   },
-  button: {
-    borderRadius: 4,
-    padding: 3,
-    textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
-  greenButton: {
-    backgroundColor: '#4CD964'
-  },
-  centering: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 })

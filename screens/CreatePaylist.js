@@ -6,7 +6,8 @@ import {
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-import { observer, inject } from 'mobx-react'
+import {observer, inject} from 'mobx-react'
+
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -103,7 +104,7 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+      fetch(`${Config.PaylistApiURL}/paylist`, {
         method: 'POST',
         headers: header,
         body: payload
