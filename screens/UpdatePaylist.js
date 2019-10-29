@@ -3,7 +3,7 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  TouchableOpacity, Image
+  TouchableOpacity, Image, BackHandler
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
@@ -40,6 +40,7 @@ export default class UpdatePaylist extends React.Component {
       }
     }
     this._UpdatePaylist = this._UpdatePaylist.bind(this)
+    this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
   static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params
@@ -67,6 +68,16 @@ export default class UpdatePaylist extends React.Component {
           />
         </TouchableOpacity>
     }
+  }
+  componentDidMount(){
+    BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
+  }
+  componentWillUnmount(){
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+  }
+  onBackButtonPressed() {
+    this.props.navigation.navigate('Main')
+    return true
   }
   componentWillMount() {
     const { navigation } = this.props
