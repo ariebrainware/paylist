@@ -33,17 +33,17 @@ export default function LinksScreen() {
                 Offler Dapit
               </Text>
             </Paragraph>
-      </Card.Content>
-    </Card>
-  </View>
-  </View>
+          </Card.Content>
+        </Card>
+      </View>
+    </View>
   )
 }
 
 LinksScreen.navigationOptions = {
   title: 'About',
-  headerStyle:{
-    backgroundColor:'#a9b0ae'
+  headerStyle: {
+    backgroundColor: '#a9b0ae'
   }
 }
 
@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     backgroundColor: '#fff',
   },
-  Content:{
-    fontWeight:'bold',
+  Content: {
+    fontWeight: 'bold',
     fontSize: 12,
-    fontStyle:"italic",
-    fontFamily:"sans-serif"
+    fontStyle: "italic",
+    fontFamily: "sans-serif"
   }
 })
