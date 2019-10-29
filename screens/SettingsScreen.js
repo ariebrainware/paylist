@@ -47,7 +47,7 @@ export default class SettingsScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/users`, {
+    fetch(`${Config.PaylistApiURL}/users`, {
       method: 'GET',
       headers: header
     })

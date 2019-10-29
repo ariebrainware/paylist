@@ -1,5 +1,5 @@
 import React from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View , Text, Linking} from 'react-native'
 import { Card, Title, Paragraph } from 'react-native-paper'
 
 export default function LinksScreen() {
@@ -18,12 +18,21 @@ export default function LinksScreen() {
     <View>
     <Card>
       <Card.Content style ={{alignContent:'space-around', position:'relative', left:0, right:0 }}>
-        <Title>
-          paylist teams :
-        </Title>
-        <Paragraph>
-          Arie Brainware, Offler
-        </Paragraph>
+      <Title>
+              Paylist Team :
+            </Title>
+            <Paragraph>
+              <Text style={{ color: 'blue' }}
+                onPress={() => Linking.openURL('https://twitter.com/_nobody404')}>
+                Arie Brainware
+              </Text>
+            </Paragraph>
+            <Paragraph>
+              <Text style={{ color: 'blue' }}
+                onPress={() => Linking.openURL('https://twitter.com/offler_7')}>
+                Offler Dapit
+              </Text>
+            </Paragraph>
       </Card.Content>
     </Card>
   </View>

@@ -108,7 +108,7 @@ export default class RegisterScreen extends React.Component {
       }
       payload = payload.join("&")
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/signup`, {
+      fetch(`${Config.PaylistApiURL}/user/signup`, {
         //IF the form valid ..
         method: 'POST',
         headers: {

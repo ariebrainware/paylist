@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View
+  View,BackHandler
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -14,7 +14,6 @@ import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount'];
-
 @inject('store') @observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -30,7 +29,6 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     this._GetData()
-
     when(() => this.props.store.loadingHome == false, () => {
       console.info('Loading is true!')
       this._GetData()
@@ -47,7 +45,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist`, {
+    fetch(`${Config.PaylistApiURL}/paylist`, {
       method: 'GET',
       headers: header
     })
@@ -88,7 +86,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/paylist/` + id, {
+    fetch(`${Config.PaylistApiURL}/paylist/` + id, {
       method: 'DELETE',
       headers: header
     })
@@ -124,7 +122,7 @@ export default class HomeScreen extends React.Component {
     const header = {
       'Authorization': DEMO_TOKEN
     }
-    fetch(`${Config.PaylistApiURL}/paylist/status/` + id, {
+    fetch(`${Config.PaylistApiURL}/status/` + id, {
       method: 'PUT',
       headers: header
     })

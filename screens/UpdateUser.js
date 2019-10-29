@@ -136,7 +136,7 @@ export default class UpdateUser extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
-      fetch(`${Config.PaylistApiURL}/paylist/user/` + id, {
+      fetch(`${Config.PaylistApiURL}/user/` + id, {
         method: 'PUT',
         headers: header,
         body: payload
