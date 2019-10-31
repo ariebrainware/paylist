@@ -11,6 +11,23 @@ import {observer, inject} from 'mobx-react'
 
 
 const t = require('tcomb-form-native')
+var _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 const Form = t.form.Form
 
 const Password = t.struct({
@@ -19,6 +36,7 @@ const Password = t.struct({
 })
 
 const option = {
+    stylesheet:stylesheet,
     fields: {
         OldPassword: {
             autoCapitalize: 'none',
@@ -159,8 +177,9 @@ render() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 10,
-        flexDirection: 'column',
+    flex: 1,
+    padding: 10,
+    flexDirection: 'column',
+    backgroundColor:'#eee'
     },
 })

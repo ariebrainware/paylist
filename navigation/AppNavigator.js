@@ -42,14 +42,20 @@ export default createAppContainer(
       screen: LoginScreen,
       navigationOptions: {
         title: 'Sign In',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     Register: {
       screen: RegisterScreen,
       navigationOptions: {
         title: 'Sign Up',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     Home: {

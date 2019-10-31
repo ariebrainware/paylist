@@ -13,7 +13,7 @@ import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
-const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount'];
+const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount']
 @inject('store') @observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -76,13 +76,13 @@ export default class HomeScreen extends React.Component {
           case 500:
             alert('Token Expired')
             setTimeout(() => {
-              this.props.navigation.navigate('Login');
+              this.props.navigation.navigate('Login')
             }, 2000)
             break
           case 401:
             alert('Unauthorized')
             setTimeout(() => {
-              this.props.navigation.navigate('Login');
+              this.props.navigation.navigate('Login')
             }, 2000)
             break
         }
@@ -238,7 +238,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#eee',
   },
   contentContainer: {
     paddingTop: 10,

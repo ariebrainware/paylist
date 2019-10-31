@@ -1,11 +1,28 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, } from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import { Button, ActivityIndicator } from 'react-native-paper'
 import Config from '../config'
 import { observer, inject } from 'mobx-react'
 
 const t = require('tcomb-form-native')
+var _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 const Form = t.form.Form
 
 const User = t.struct({
@@ -14,6 +31,7 @@ const User = t.struct({
 })
 
 const options = {
+  stylesheet:stylesheet,
   fields: {
     username: {
       autoCapitalize: 'none',
@@ -52,7 +70,7 @@ export default class LoginScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.loadInitialState().done();
+    this.loadInitialState().done()
   }
 
   async loadInitialState() {
@@ -90,51 +108,51 @@ export default class LoginScreen extends React.Component {
       }
       payload = payload.join("&")
       //sent post request
-      fetch(`${Config.PaylistApiURL}/user/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/x-www-form-urlencoded'
-        },
-        body: payload
+          fetch(`${Config.PaylistApiURL}/user/signin`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Accept: 'application/x-www-form-urlencoded'
+            },
+            body: payload
+          })
+            .then(res => {
+              this.props.store.loading
+              resStatus = res.status
+              return res.json()
+            })
+            .then(res => {
+              switch (resStatus) {
+                case 200:
+                  let token = { "type": "sensitive", "value": res.data }
+                  deviceStorage.saveKey('token', JSON.stringify(token))
+                  this.props.store.setLoading()
+                  setTimeout(() => {
+                    this.props.navigation.navigate('Main')
+                  }, 2000)
+                  this.clearForm()
+                  alert('Login Success')
+                  break
+                case 404:
+                  alert('wrong username or password')
+                  this.props.store.getLoading()
+                  this.clearForm()
+                  break
+                case 307:
+                  this.props.store.getLoading()
+                  alert('already login')
+                  this.props.navigation.navigate('Main')
+                  this.clearForm()
+                  break
+                default:
+                  this.props.store.getLoadingHome()
+                  alert('Something wrong, please try again later!')
+                  break
+              }
+            })
+      .catch(err => {
+        console.error(err)
       })
-        .then(res => {
-          this.props.store.loading
-          resStatus = res.status
-          return res.json()
-        })
-        .then(res => {
-          switch (resStatus) {
-            case 200:
-              let token = { "type": "sensitive", "value": res.data }
-              deviceStorage.saveKey('token', JSON.stringify(token))
-              this.props.store.setLoading()
-              setTimeout(() => {
-                this.props.navigation.navigate('Main')
-              }, 2000)
-              this.clearForm()
-              alert('Login Success')
-              break
-            case 404:
-              alert('wrong username or password')
-              this.props.store.getLoading()
-              this.clearForm()
-              break
-            case 307:
-              this.props.store.getLoading()
-              alert('already login')
-              this.props.navigation.navigate('Main')
-              this.clearForm()
-              break
-            default:
-              this.props.store.getLoadingHome()
-              alert('Something wrong, please try again later!')
-              break
-          }
-        })
-        .catch(err => {
-          console.error(err)
-        })
         .done()
     } else {
       //form validation error
@@ -161,7 +179,7 @@ export default class LoginScreen extends React.Component {
         </View>
         <View>
           {this.props.store.loading && <View>
-            <ActivityIndicator size='small' />
+            <ActivityIndicator size='small' color='black'/>
           </View>}
         </View>
       </ScrollView>
@@ -171,9 +189,10 @@ export default class LoginScreen extends React.Component {
 
 var styles = StyleSheet.create({
   container: {
+    flex:1,
     padding: 20,
-    flex: 0,
     flexDirection: 'column',
+    backgroundColor:'#fefefe'
   },
   button: {
     borderRadius: 4,
@@ -190,7 +209,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   signupTextCont: {
-    flex: 0,
+    flex: 2,
     alignItems: 'flex-end',
     justifyContent: 'center',
     paddingVertical: 3,

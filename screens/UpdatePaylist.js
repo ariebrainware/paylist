@@ -9,6 +9,23 @@ import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
+var _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 const Form = t.form.Form
 const paylist = t.struct({
   name: t.String,
@@ -17,6 +34,7 @@ const paylist = t.struct({
 
 const option = {
   fields: {
+    stylesheet:stylesheet,
     name: {
       autoCapitalize: 'none',
       autoCorrect: false,
@@ -24,7 +42,7 @@ const option = {
     amount: {
       autoCapitalize: 'none',
       autoCorrect: false,
-      keyboardType: 'phone-pad'
+      keyboardType: 'number-pad'
     },
   }
 }
@@ -148,8 +166,7 @@ export default class UpdatePaylist extends React.Component {
 
   render() {
     return (
-      <View>
-        <ScrollView style={styles.container}>
+        <ScrollView  style={styles.container}>
           <Form ref='form'
             options={option}
             type={paylist}
@@ -157,7 +174,6 @@ export default class UpdatePaylist extends React.Component {
             onChange={this._onChange}
           />
         </ScrollView>
-      </View>
     )
   }
 }
@@ -167,7 +183,8 @@ export default class UpdatePaylist extends React.Component {
 var styles = StyleSheet.create({
   container: {
     padding: 20,
-    flex: 0,
+    flex:1,
     flexDirection: 'column',
+    backgroundColor:'#eee'
   },
 })

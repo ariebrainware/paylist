@@ -1,11 +1,17 @@
 import React from 'react'
 import { DrawerActions} from 'react-navigation-drawer'
-import {View,StyleSheet, RefreshControl,ScrollView, BackHandler} from 'react-native'
+import {View,StyleSheet, RefreshControl,ScrollView} from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
 import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator} from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  listenOrientationChange as loc,
+  removeOrientationListener as rol
+} from 'react-native-responsive-screen'
 
 @inject('store') @observer
 export default class SettingsScreen extends React.Component {
@@ -31,7 +37,7 @@ export default class SettingsScreen extends React.Component {
           onPress={() => params.showMore()}
         ></Appbar.Action>
       )
-    };
+    }
   }
   componentWillMount() {
     this.props.navigation.setParams({ showMore: this._onMore.bind(this) })
@@ -39,6 +45,7 @@ export default class SettingsScreen extends React.Component {
 
   componentDidMount() {
     this._GetDataUser()
+    loc(this)
   }
 
   async _GetDataUser() {
@@ -69,7 +76,7 @@ export default class SettingsScreen extends React.Component {
           case 401:
             alert('Unauthorized')
             setTimeout(() => {
-              this.props.navigation.navigate('Login');
+              this.props.navigation.navigate('Login')
             }, 2000)
             break
         }
@@ -78,7 +85,9 @@ export default class SettingsScreen extends React.Component {
         console.log(error)
       })
   }
-
+  componentWillUnMount() {
+    rol()
+  }
   onRefresh() {
     Initial.data
     this._GetDataUser()
@@ -93,17 +102,17 @@ export default class SettingsScreen extends React.Component {
       )
     }
     let user = Initial.data.map((val) => {
-      return (<Card key={val.ID} style={styles.container} >
-        <Card >
-          <Card.Content style={{ flex: 1, borderWidth: 0, width: 250, height: 80, backgroundColor: '#9d9e9e', alignItems: 'center', justifyContent: 'center', left: 85 }}>
+      return (<Card key={val.ID}>
+        <Card  style={styles.username}>
+          <Card.Content style={styles.content}>
             <Title>{val.name}</Title>
             <Paragraph>{val.email}</Paragraph>
           </Card.Content>
         </Card>
-        <Card>
-          <Card.Content style={{flex:1, alignItems:'flex-start', flexDirection:'row' ,paddingTop:10}}>
-            <Paragraph style={{fontWeight:'bold'}}>Your Balance</Paragraph>
-            <Paragraph style={{left:240}}> Rp: {val.balance}</Paragraph>
+        <Card >
+          <Card.Content style={styles.balance}>
+            <Paragraph>Your Balance</Paragraph>
+            <Paragraph> Rp: {val.balance}</Paragraph>
           </Card.Content>
           <Card>
             <Card.Actions>
@@ -119,7 +128,7 @@ export default class SettingsScreen extends React.Component {
     })
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}
+        <ScrollView  contentContainerStyle={styles.contentContainer}
           refreshControl={
             <RefreshControl
               //refresh control used for the Pull to Refresh
@@ -129,7 +138,7 @@ export default class SettingsScreen extends React.Component {
           }>
           {user}
         </ScrollView>
-      </View>
+        </View>
     )
   }
 }
@@ -137,9 +146,27 @@ export default class SettingsScreen extends React.Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#eee',
   },
   contentContainer: {
     paddingTop: 0,
   },
+  username:{
+    flex:2,
+    alignSelf:'center',
+    width: wp('55%'), 
+    height: hp('11%'), 
+    backgroundColor: '#9d9e9e',
+  },
+  content:{
+    flex:4,
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  balance:{
+    flex:3,
+    flexDirection:'row' ,
+    paddingTop:10,
+    justifyContent: 'space-between',
+  }
 })
