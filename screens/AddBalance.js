@@ -36,7 +36,8 @@ const option = {
         balance: {
             autoCapitalize: 'none',
             autoCorrect: false,
-            keyboardType: 'number-pad'
+            keyboardType: 'number-pad',
+            maxLength:10
         },
     }
 }
