@@ -44,7 +44,10 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._GetDataUser()
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+      this._GetDataUser()
+    })
     loc(this)
   }
 

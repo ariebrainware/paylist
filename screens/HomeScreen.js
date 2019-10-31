@@ -28,12 +28,13 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._GetData()
-    when(() => this.props.store.loadingHome == false, () => {
-      console.info('Loading is true!')
-      this._GetData()
-      this.props.navigation.dispatch('Main')
-    })
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
+     this._GetData()
+     this.onRefresh()
+    });
+    
+    
   }
 
   componentWillMount(){
