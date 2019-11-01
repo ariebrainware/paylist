@@ -31,10 +31,7 @@ export default class HomeScreen extends React.Component {
     const {navigation} = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
      this._GetData()
-     this.onRefresh()
     });
-    
-    
   }
 
   componentWillMount(){
@@ -42,6 +39,7 @@ export default class HomeScreen extends React.Component {
   }
   componentWillUnmount() {
      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+     this.focusListener.remove()
   }
   
   onBackButtonPressed() {
@@ -67,6 +65,7 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(resJson => {
+        console.log(resJson.data)
         switch (resStatus) {
           case 200:
             let list = JSON.stringify(resJson.data)

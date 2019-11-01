@@ -45,7 +45,7 @@ export default class SettingsScreen extends React.Component {
 
   componentDidMount() {
     const {navigation} = this.props;
-    this.focusListener = navigation.addListener('didFocus', () => {
+    this.focusListener = navigation.addListener('willFocus', () => {
       this._GetDataUser()
     })
     loc(this)
@@ -90,6 +90,7 @@ export default class SettingsScreen extends React.Component {
   }
   componentWillUnMount() {
     rol()
+    this.focusListener.remove()
   }
   onRefresh() {
     Initial.data
