@@ -14,7 +14,8 @@ import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount']
-@inject('store') @observer
+@inject('store')
+@observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -52,7 +53,7 @@ export default class HomeScreen extends React.Component {
     this._GetData()
   }
   async _GetData() {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -94,7 +95,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async _DeletePaylist(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -130,7 +131,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async _UpdatePaylistStatus(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -160,7 +161,7 @@ export default class HomeScreen extends React.Component {
     const filteredPaylist = Initial.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     let { checked } = this.state
     let pay = filteredPaylist.map((item) => {
-      var tgl = new Date(item.CreatedAt)
+      let tgl = new Date(item.CreatedAt)
       if (item.completed == true) {
         checked = true
       } else {

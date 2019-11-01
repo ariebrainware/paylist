@@ -10,7 +10,7 @@ import {observer, inject} from 'mobx-react'
 
 
 const t = require('tcomb-form-native')
-var _ = require('lodash')
+let _ = require('lodash')
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
 
@@ -110,7 +110,7 @@ export default class CreatePaylist extends React.Component {
   }
 
   async _CreatePaylist() {
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -181,7 +181,7 @@ export default class CreatePaylist extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,

@@ -9,7 +9,7 @@ import Config from '../config'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
-var _ = require('lodash')
+let _ = require('lodash')
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
 

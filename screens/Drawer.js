@@ -33,7 +33,7 @@ componentWillUnmount(){
   rol()
 }
 async _handleLogOut(){
-    var DEMO_TOKEN = await deviceStorage.deleteJWT('token')
+    let DEMO_TOKEN = await deviceStorage.deleteJWT('token')
     const header = {
       'Authorization' : DEMO_TOKEN
     }

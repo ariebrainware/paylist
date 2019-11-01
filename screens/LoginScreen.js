@@ -6,7 +6,7 @@ import Config from '../config'
 import { observer, inject } from 'mobx-react'
 
 const t = require('tcomb-form-native')
-var _ = require('lodash')
+let _ = require('lodash')
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
 
@@ -74,7 +74,7 @@ export default class LoginScreen extends React.Component {
   }
 
   async loadInitialState() {
-    var token = await deviceStorage.loadJWT('token')
+    let token = await deviceStorage.loadJWT('token')
     if (token != null) {
       this.props.navigation.navigate('Main')
     } else {
@@ -187,7 +187,7 @@ export default class LoginScreen extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex:1,
     padding: 20,

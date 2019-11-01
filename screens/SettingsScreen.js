@@ -52,7 +52,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   async _GetDataUser() {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -147,7 +147,7 @@ export default class SettingsScreen extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#eee',

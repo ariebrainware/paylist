@@ -11,7 +11,7 @@ import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
-var _ = require('lodash')
+let _ = require('lodash')
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
 
@@ -142,7 +142,7 @@ export default class UpdateUser extends React.Component {
   }
 
   async _UpdateUser(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -215,7 +215,7 @@ export default class UpdateUser extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     padding: 20,
     flex:1,

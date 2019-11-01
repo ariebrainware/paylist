@@ -8,7 +8,7 @@ import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
-var _ = require('lodash') 
+let _ = require('lodash') 
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet) 
 
@@ -101,7 +101,7 @@ onBackButtonPressed() {
     }
 
     async _AddBalance(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -165,7 +165,7 @@ render() {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
       padding: 20,
       flex: 1,
