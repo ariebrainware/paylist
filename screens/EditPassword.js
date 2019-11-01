@@ -11,7 +11,7 @@ import {observer, inject} from 'mobx-react'
 
 
 const t = require('tcomb-form-native')
-var _ = require('lodash')
+let _ = require('lodash')
 
 const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
 
@@ -33,6 +33,7 @@ const Form = t.form.Form
 const Password = t.struct({
     OldPassword: t.String,
     NewPassword: t.String,
+    ConfirmPassword: t.String,
 })
 
 const option = {
@@ -49,6 +50,12 @@ const option = {
             password: true,
             autoCorrect: false,
             secureTextEntry: true,
+        },
+        ConfirmPassword: {
+            autoCapitalize: 'none',
+            password: true,
+            autoCorrect: false,
+            secureTextEntry: true,
         }
     }
 }
@@ -60,6 +67,7 @@ export default class EditPassword extends React.Component {
             value: {
                 OldPassword: '',
                 NewPassword: '',
+                ConfirmPassword: '',
                 error: '',
                 loading: false
             }
@@ -112,56 +120,60 @@ _onChange = (value) => {
 }
 
 async _EditPassword(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
      //IF the form valid ..
     this.setState({ error: '', loading: true })
-        if (value) {
-            const data = {
-                OldPassword: value.OldPassword,
-                NewPassword: value.NewPassword,
-            }
-            let payload = []
-            for (let property in data) {
-                let encodedKey = encodeURIComponent(property)
-                let encodedValue = encodeURIComponent(data[property])
-                payload.push(encodedKey + "=" + encodedValue)
-            }
+    if (value) {
+        const data = {
+            OldPassword: value.OldPassword,
+            NewPassword: value.NewPassword,
+            ConfirmPassword: value.ConfirmPassword
+        }
+        let payload = []
+        for (let property in data) {
+            let encodedKey = encodeURIComponent(property)
+            let encodedValue = encodeURIComponent(data[property])
+            payload.push(encodedKey + "=" + encodedValue)
+        }
         payload = payload.join("&")
         //sent post request
-        fetch(`${Config.PaylistApiURL}/editpassword/` + id, {
-        method: 'PUT',
-        headers: {
+        if (data.ConfirmPassword !== data.NewPassword){
+            alert('confirm password does\'n match with new password')
+        } else {
+            fetch(`${Config.PaylistApiURL}/editpassword/` + id, {
+            method: 'PUT',
+            headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Accept : 'application/x-www-form-urlencoded',
             'Authorization': DEMO_TOKEN
-        },
-            body: payload
-        })
-        .then(res => {
-        resStatus = res.status
-        return res.json()
-        })
-        .then(res => {
-            switch (resStatus) {
-            case 200:
-                alert('Success Update Password')
-                this.props.navigation.navigate('SettingsStack')
-                break
-            case 404:
-                alert('Old password doesn\'t match')
-                break
-            default:
+            },
+                body: payload
+            })
+            .then(res => {
+            resStatus = res.status
+            return res.json()
+            })
+            .then(res => {
+                switch (resStatus) {
+                case 200:
+                    alert('Success Update Password')
+                    this.props.navigation.navigate('SettingsStack')
+                    break
+                case 404:
+                    alert('Old password doesn\'t match')
+                    break
+                default:
                 alert('Something wrong, please try again later!')
-                break
-            }
-        })
-            .done()
-            } else {
-                //form validation error
-                alert('Please fill the empty field')
-            }
+                    break
+                }
+            })
         }
+        } else {
+                //form validation error
+            alert('Please fill the empty field')
+        }
+}
 
 render() {
     return (
