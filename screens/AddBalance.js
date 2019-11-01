@@ -8,17 +8,36 @@ import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
+let _ = require('lodash') 
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet) 
+
+stylesheet.textbox.normal.borderWidth = 0 
+stylesheet.textbox.error.borderWidth = 0 
+stylesheet.textbox.normal.marginBottom = 0 
+stylesheet.textbox.error.marginBottom = 0 
+
+stylesheet.textboxView.normal.borderWidth = 0 
+stylesheet.textboxView.error.borderWidth = 0 
+stylesheet.textboxView.normal.borderRadius = 0 
+stylesheet.textboxView.error.borderRadius = 0 
+stylesheet.textboxView.normal.borderBottomWidth = 0.5 
+stylesheet.textboxView.error.borderBottomWidth = 0.5 
+stylesheet.textboxView.normal.marginBottom = 5 
+stylesheet.textboxView.error.marginBottom = 5 
 const Form = t.form.Form
 const User = t.struct ({
     balance: t.Number,
 })
 
 const option = {
+  stylesheet:stylesheet,
     fields: {
         balance: {
             autoCapitalize: 'none',
             autoCorrect: false,
-            keyboardType: 'phone-pad'
+            keyboardType: 'number-pad',
+            maxLength:10
         },
     }
 }
@@ -61,7 +80,7 @@ export default class AddBalance extends React.Component {
               }}
             />
           </TouchableOpacity>
-      };
+      } 
     }
 componentDidMount(){
   BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
@@ -82,7 +101,7 @@ onBackButtonPressed() {
     }
 
     async _AddBalance(){
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -132,8 +151,8 @@ onBackButtonPressed() {
   
 render() {
     return (
-      <View>
-        <ScrollView style={styles.container}> 
+      <View style={styles.container}>
+        <ScrollView > 
          <Form ref='form'
                 options={option}
                 type={User}
@@ -146,10 +165,11 @@ render() {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
     container: {
       padding: 20,
-      flex: 0,
-      flexDirection: 'column',
+      flex: 1,
+      alignItems:'flex-start',
+      flexDirection: 'row',
     }
 })

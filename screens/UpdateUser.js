@@ -11,6 +11,23 @@ import { observer, inject } from 'mobx-react'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
+let _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 const Form = t.form.Form
 const User = t.struct({
   username: t.String,
@@ -20,15 +37,17 @@ const User = t.struct({
 })
 
 const option = {
+  stylesheet:stylesheet,
   fields: {
     username: {
       autoCapitalize: 'none',
       autoCorrect: false,
-      editable: false
+      editable:false
     },
     email: {
       autoCapitalize: 'none',
       autoCorrect: false,
+      keyboardType:'email-address'
     },
     name: {
       autoCapitalize: 'none',
@@ -37,7 +56,8 @@ const option = {
     balance: {
       autoCapitalize: 'none',
       autoCorrect: false,
-      keyboardType: 'phone-pad'
+      keyboardType: 'number-pad',
+      maxLength:10,
     },
   }
 }
@@ -122,7 +142,7 @@ export default class UpdateUser extends React.Component {
   }
 
   async _UpdateUser(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -178,7 +198,6 @@ export default class UpdateUser extends React.Component {
 
   render() {
     return (
-      <View>
         <ScrollView style={styles.container}>
           <Form ref='form'
             options={option}
@@ -186,21 +205,21 @@ export default class UpdateUser extends React.Component {
             value={this.state.value}
             onChange={this._onChange}
           />
-        </ScrollView>
-        <View>
+        <View style={{backgroundColor:'#eee', flex:2}}>
           {this.props.store.loading && <View>
-            <ActivityIndicator size='small' />
-          </View>}
+            <ActivityIndicator size='small' color='black' style={{position:'relative'}} />
+        </View>}
         </View>
-      </View >
+      </ScrollView>
     )
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     padding: 20,
-    flex: 0,
+    flex:1,
     flexDirection: 'column',
+    backgroundColor:'#eee'
   },
 })

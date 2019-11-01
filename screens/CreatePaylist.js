@@ -10,6 +10,23 @@ import {observer, inject} from 'mobx-react'
 
 
 const t = require('tcomb-form-native')
+let _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 const Form = t.form.Form
 const createPaylist = t.struct({
   name: t.String,
@@ -17,6 +34,7 @@ const createPaylist = t.struct({
 })
 
 const option = {
+  stylesheet:stylesheet,
   fields: {
     name: {
       autoCapitalize: 'none',
@@ -25,7 +43,7 @@ const option = {
     amount: {
       autoCapitalize: 'none',
       autoCorrect: false,
-      keyboardType: 'phone-pad'
+      keyboardType: 'number-pad'
     },
   }
 }
@@ -69,7 +87,7 @@ export default class CreatePaylist extends React.Component {
             }}
           />
         </TouchableOpacity>
-    };
+    }
   }
   componentDidMount(){
     BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
@@ -92,7 +110,7 @@ export default class CreatePaylist extends React.Component {
   }
 
   async _CreatePaylist() {
-    var DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     const value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
@@ -163,10 +181,10 @@ export default class CreatePaylist extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     padding: 20,
-    flex: 0,
+    flex: 1,
     flexDirection: 'column',
   },
 })

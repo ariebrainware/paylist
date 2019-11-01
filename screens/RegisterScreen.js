@@ -2,13 +2,30 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  TouchableOpacity, Image
+  TouchableOpacity, Image,View, Text
 }
   from 'react-native'
 import Config from '../config'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
+let _ = require('lodash')
+
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
+
+stylesheet.textbox.normal.borderWidth = 0
+stylesheet.textbox.error.borderWidth = 0
+stylesheet.textbox.normal.marginBottom = 0
+stylesheet.textbox.error.marginBottom = 0
+
+stylesheet.textboxView.normal.borderWidth = 0
+stylesheet.textboxView.error.borderWidth = 0
+stylesheet.textboxView.normal.borderRadius = 0
+stylesheet.textboxView.error.borderRadius = 0
+stylesheet.textboxView.normal.borderBottomWidth = 0.5
+stylesheet.textboxView.error.borderBottomWidth = 0.5
+stylesheet.textboxView.normal.marginBottom = 5
+stylesheet.textboxView.error.marginBottom = 5
 
 const newUser = t.struct({
   name: t.String,
@@ -18,6 +35,7 @@ const newUser = t.struct({
 })
 
 const option = {
+  stylesheet:stylesheet,
   fields: {
     name: {
       autoCapitalize: 'none',
@@ -26,6 +44,7 @@ const option = {
     email: {
       autoCapitalize: 'none',
       autoCorrect: false,
+      keyboardType:'email-address'
     },
     username: {
       autoCapitalize: 'none',
@@ -77,7 +96,7 @@ export default class RegisterScreen extends React.Component {
             }}
           />
         </TouchableOpacity>
-    };
+    }
   }
 
   componentWillMount() {
@@ -149,6 +168,12 @@ export default class RegisterScreen extends React.Component {
           type={newUser} options={option}
           value={this.state.value}
           onChange={this._onChange} />
+        <View style={styles.signupTextCont}>
+          <Text style={styles.signupText}>Already have an account?</Text>
+          <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
+            <Text style={styles.signupButton}> Login</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     )
   }
@@ -159,5 +184,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     flexDirection: 'column',
+  },
+  signupTextCont: {
+    flex: 2,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingVertical: 3,
+    flexDirection: 'row',
+  },
+  signupText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  signupButton: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '500',
   },
 })
