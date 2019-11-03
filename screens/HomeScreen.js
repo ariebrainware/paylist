@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View,BackHandler
+  View, BackHandler
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -13,8 +13,9 @@ import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
-const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount'];
-@inject('store') @observer
+const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount']
+@inject('store')
+@observer
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -28,21 +29,20 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._GetData()
-    when(() => this.props.store.loadingHome == false, () => {
-      console.info('Loading is true!')
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('didFocus', () => {
       this._GetData()
-      this.props.navigation.dispatch('Main')
-    })
+    });
   }
 
-  componentWillMount(){
+  componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed)
   }
   componentWillUnmount() {
-     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+    this.focusListener.remove()
   }
-  
+
   onBackButtonPressed() {
     BackHandler.exitApp()
     return true
@@ -53,7 +53,7 @@ export default class HomeScreen extends React.Component {
     this._GetData()
   }
   async _GetData() {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -76,13 +76,13 @@ export default class HomeScreen extends React.Component {
           case 500:
             alert('Token Expired')
             setTimeout(() => {
-              this.props.navigation.navigate('Login');
+              this.props.navigation.navigate('Login')
             }, 2000)
             break
           case 401:
             alert('Unauthorized')
             setTimeout(() => {
-              this.props.navigation.navigate('Login');
+              this.props.navigation.navigate('Login')
             }, 2000)
             break
         }
@@ -94,7 +94,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async _DeletePaylist(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -130,7 +130,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async _UpdatePaylistStatus(id) {
-    var DEMO_TOKEN = await deviceStorage.loadJWT('token')
+    let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
       'Authorization': DEMO_TOKEN
     }
@@ -160,7 +160,7 @@ export default class HomeScreen extends React.Component {
     const filteredPaylist = Initial.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     let { checked } = this.state
     let pay = filteredPaylist.map((item) => {
-      var tgl = new Date(item.CreatedAt)
+      let tgl = new Date(item.CreatedAt)
       if (item.completed == true) {
         checked = true
       } else {
@@ -238,7 +238,7 @@ HomeScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffff',
+    backgroundColor: '#eee',
   },
   contentContainer: {
     paddingTop: 10,
