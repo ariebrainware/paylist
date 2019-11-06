@@ -13,7 +13,7 @@ import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import { when } from 'mobx'
 
-const KEYS_TO_FILTERS = ['CreatedAt', 'name', 'amount']
+const KEYS_TO_FILTERS = ['CreatedAt', 'name']
 @inject('store')
 @observer
 export default class HomeScreen extends React.Component {
