@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View,BackHandler
+  View,BackHandler, Alert
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -111,6 +111,7 @@ export default class HomeScreen extends React.Component {
         switch (resStatus) {
           case 200:
             alert('Delete Paylist Success')
+            this._GetData()
             break
           case 404:
             alert('No Paylist Found')
@@ -130,6 +131,18 @@ export default class HomeScreen extends React.Component {
       .done()
   }
 
+  Confirm(item){
+      Alert.alert(
+        'Confirm',
+        'Do you want to delete this paylist?',
+          [
+              {text: 'Delete', onPress:() => this._DeletePaylist(item)},
+              {text: 'Cancel',style:'cancel' }
+          ],
+          {cancelable: true}
+        )
+  }
+
   async _UpdatePaylistStatus(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
     const header = {
@@ -147,7 +160,26 @@ export default class HomeScreen extends React.Component {
         this.setState({
           checked: this.state[id]
         })
+        switch (resStatus) {
+          case 200:
+            this._GetData()
+            break
+          case 404:
+            alert('No Paylist Found')
+            break
+          case 400:
+            alert('Specify Paylist ID')
+            break
+          case 500:
+            alert('Token Expired')
+            this.props.navigation.navigate('Login')
+            break
+          default:
+            alert('Something wrong, please try again later!')
+            break
+        }
       })
+      .done()
   }
 
   render() {
@@ -173,10 +205,9 @@ export default class HomeScreen extends React.Component {
             title={item.name}
             left={props => <List.Icon {...props} icon="monetization-on" />}>
             <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={item.amount} />
-            <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={JSON.stringify(item.completed)} />
             <List.Item style={{ right: 50 }} title={tgl.toDateString()} />
             <Card.Actions style={{ right: 50 }}>
-              <Button color='red' onPress={() => this._DeletePaylist(item.ID)} icon="delete">delete</Button>
+              <Button color='red' onPress={this.Confirm.bind(this,item.ID)} icon="delete">Delete</Button>
               <Button color='black' icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
                 id: item.ID,
                 name: JSON.stringify(item.name),
