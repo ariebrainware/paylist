@@ -3,7 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   RefreshControl,
-  View,BackHandler, Alert
+  View, BackHandler, Alert
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
@@ -29,20 +29,20 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-     this._GetData()
+      this._GetData()
     });
   }
 
-  componentWillMount(){
+  componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed)
   }
   componentWillUnmount() {
-     BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
-     this.focusListener.remove()
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed)
+    this.focusListener.remove()
   }
-  
+
   onBackButtonPressed() {
     BackHandler.exitApp()
     return true
@@ -66,7 +66,6 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(resJson => {
-        console.log(resJson.data)
         switch (resStatus) {
           case 200:
             let list = JSON.stringify(resJson.data)
@@ -131,16 +130,16 @@ export default class HomeScreen extends React.Component {
       .done()
   }
 
-  Confirm(item){
-      Alert.alert(
-        'Confirm',
-        'Do you want to delete this paylist?',
-          [
-              {text: 'Delete', onPress:() => this._DeletePaylist(item)},
-              {text: 'Cancel',style:'cancel' }
-          ],
-          {cancelable: true}
-        )
+  Confirm(item) {
+    Alert.alert(
+      'Confirm',
+      'Do you want to delete this paylist?',
+      [
+        { text: 'Delete', onPress: () => this._DeletePaylist(item) },
+        { text: 'Cancel', style: 'cancel' }
+      ],
+      { cancelable: true }
+    )
   }
 
   async _UpdatePaylistStatus(id) {
@@ -207,7 +206,7 @@ export default class HomeScreen extends React.Component {
             <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={item.amount} />
             <List.Item style={{ right: 50 }} title={tgl.toDateString()} />
             <Card.Actions style={{ right: 50 }}>
-              <Button color='red' onPress={this.Confirm.bind(this,item.ID)} icon="delete">Delete</Button>
+              <Button color='red' onPress={this.Confirm.bind(this, item.ID)} icon="delete">Delete</Button>
               <Button color='black' icon="edit" onPress={() => this.props.navigation.navigate('UpdatePaylist', {
                 id: item.ID,
                 name: JSON.stringify(item.name),
