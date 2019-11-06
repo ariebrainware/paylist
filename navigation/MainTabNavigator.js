@@ -21,7 +21,7 @@ const HomeStack = createStackNavigator(
 
 HomeStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: 'green',
+    activeTintColor: 'black',
     inactiveTintColor: 'white',
     inactiveBackgroundColor:'#a9b0ae',
     activeBackgroundColor: '#828282'
@@ -48,7 +48,7 @@ const LinksStack = createStackNavigator(
 
 LinksStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: 'green',
+    activeTintColor: 'black',
     inactiveTintColor: 'white',
     inactiveBackgroundColor:'#a9b0ae',
     activeBackgroundColor: '#828282'
@@ -70,7 +70,7 @@ const SettingsStack = createStackNavigator(
 
 SettingsStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: 'green',
+    activeTintColor: 'black',
     inactiveTintColor: 'white',
     inactiveBackgroundColor:'#a9b0ae',
     activeBackgroundColor: '#828282'

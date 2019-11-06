@@ -128,10 +128,10 @@ export default class LoginScreen extends React.Component {
                   deviceStorage.saveKey('token', JSON.stringify(token))
                   this.props.store.setLoading()
                   setTimeout(() => {
+                    alert('Login Success')
                     this.props.navigation.navigate('Main')
                   }, 2000)
                   this.clearForm()
-                  alert('Login Success')
                   break
                 case 404:
                   alert('wrong username or password')
