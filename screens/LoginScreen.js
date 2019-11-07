@@ -134,14 +134,18 @@ export default class LoginScreen extends React.Component {
                   this.clearForm()
                   break
                 case 404:
+                  this.props.store.setLoading()
+                  setTimeout(()=>{
                   alert('wrong username or password')
                   this.props.store.getLoading()
+                  },2000)
                   this.clearForm()
                   break
                 case 307:
-                  this.props.store.getLoading()
+                  setTimeout(()=>{
                   alert('already login')
                   this.props.navigation.navigate('Main')
+                  })
                   this.clearForm()
                   break
                 default:
