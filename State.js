@@ -2,8 +2,8 @@ import {observable, action, autorun} from 'mobx'
 
 class Initial{
 @observable loading
-@observable loadingHome 
-@observable loadingSetting
+@observable loadingHome = true
+@observable loadingSetting = true
 @observable data = []
 @observable paylist = []
     @action setLoading(){
@@ -12,17 +12,17 @@ class Initial{
     @action getLoading(){
         this.loading = false
     }
-    @action setLoadingHome(){
+    @action getLoadingHome(){
     this.loadingHome = false
     }
-    @action setLoadingHomee(){
-        this.loadingHome = null
-        }
-    @action getLoadingHome(){
+    @action setLoadingHome(){
         this.loadingHome = true
     }
     @action getLoadingSetting(){
         this.loadingSetting = false
+    }
+    @action setLoadingSetting(){
+        this.loadingSetting = true
     }
 }
 export default new Initial()
