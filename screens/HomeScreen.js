@@ -11,7 +11,6 @@ import { createFilter } from 'react-native-search-filter'
 import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB } from 'react-native-paper'
 import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
-import { when } from 'mobx'
 
 const KEYS_TO_FILTERS = ['CreatedAt', 'name']
 @inject('store')
@@ -31,8 +30,10 @@ export default class HomeScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.focusListener = navigation.addListener('didFocus', () => {
-      this._GetData()
-    });
+      setTimeout(()=>{
+        this._GetData()
+      },2000) 
+    })
   }
 
   componentWillMount() {
@@ -50,7 +51,10 @@ export default class HomeScreen extends React.Component {
 
   onRefresh() {
     Initial.paylist
-    this._GetData()
+    this.props.store.setLoadingHome()
+    setTimeout(()=>{
+      this._GetData()
+    }, 1000)
   }
   async _GetData() {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
@@ -62,16 +66,18 @@ export default class HomeScreen extends React.Component {
       headers: header
     })
       .then((res) => {
+        this.props.store.getLoading()
         resStatus = res.status
         return res.json()
       })
       .then(resJson => {
+        console.log(resJson.data)
         switch (resStatus) {
           case 200:
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
             Initial.paylist = json
-            this.props.store.setLoadingHome()
+            this.props.store.getLoadingHome()
             break
           case 500:
             alert('Token Expired')
@@ -110,7 +116,9 @@ export default class HomeScreen extends React.Component {
         switch (resStatus) {
           case 200:
             alert('Delete Paylist Success')
-            this._GetData()
+            setTimeout(()=>{
+              this._GetData()
+            },1000) 
             break
           case 404:
             alert('No Paylist Found')
@@ -225,8 +233,8 @@ export default class HomeScreen extends React.Component {
         <View style={styles.container}>
           <Searchbar
             style={{ padding: 0, margin: 4 }}
-            placeholder="Search"
-            onChangeText={(term) => { this.searchUpdated(term) }}
+            placeholder="search"
+            onChangeText={(term) => {this.searchUpdated(term) }}
           />
           <ScrollView
             style={styles.container}
