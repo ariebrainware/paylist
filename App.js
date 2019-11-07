@@ -33,9 +33,9 @@ export default function App(props) {
 
 async function loadResourcesAsync() {
   await Promise.all([
-    Asset.loadAsync([
-      require('./assets/images/add-button.png'),
-    ]),
+    // Asset.loadAsync([
+    //   require('./assets/images/add-button.png'),
+    // ]),
     Font.loadAsync({
       // This is the font that we are using for our tab bar
       ...Ionicons.font,
