@@ -11,11 +11,36 @@ import UpdatePaylist from '../screens/UpdatePaylist'
 import AddBalance from '../screens/AddBalance'
 import EditPassword from '../screens/EditPassword'
 import DrawerScreen from '../screens/Drawer'
-
+import { Easing, Animated} from 'react-native'
 const headerStyle = {
   marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
 }
-
+const transitionConfig = () => {
+  return {
+    transitionSpec: {
+      duration: 500,
+      easing: Easing.out(Easing.poly(4)),
+      timing: Animated.timing,
+      useNativeDriver: true,
+    },
+    screenInterpolator: sceneProps => {
+      const { layout, position, scene } = sceneProps;
+ 
+      const thisSceneIndex = scene.index;
+      const width = layout.initWidth;
+ 
+      const translateX = position.interpolate({
+        inputRange: [thisSceneIndex - 1, thisSceneIndex],
+        outputRange: [-width, 0],
+        extrapolate: 'clamp'
+      });
+ 
+      return {
+        transform: [{ translateX }]
+      }
+    }
+  }
+}
  const Stack = createStackNavigator({
     MainScreen: {
       screen: MainTabNavigator,
@@ -68,36 +93,53 @@ export default createAppContainer(
       screen: CreatePaylist,
       navigationOptions: {
         title: 'Create Paylist',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     UpdateUser: {
       screen: UpdateUser,
       navigationOptions: {
         title: 'Edit Data',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     UpdatePaylist: {
       screen: UpdatePaylist,
       navigationOptions: {
         title: 'Edit Data',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     AddBalance: {
       screen: AddBalance,
       navigationOptions:{
         title: 'Add Balance',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     },
     EditPassword: {
       screen: EditPassword,
       navigationOptions:{
         title: 'Edit Password',
-        headerStyle
+        headerStyle,
+        headerStyle:{
+          backgroundColor: '#a9b0ae'
+        }
       }
     }
+  },{
+    transitionConfig
   })
 )  
