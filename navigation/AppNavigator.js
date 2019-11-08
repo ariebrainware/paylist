@@ -24,16 +24,16 @@ const transitionConfig = () => {
       useNativeDriver: true,
     },
     screenInterpolator: sceneProps => {
-      const { layout, position, scene } = sceneProps;
+      const { layout, position, scene } = sceneProps
  
-      const thisSceneIndex = scene.index;
-      const width = layout.initWidth;
+      const thisSceneIndex = scene.index
+      const width = layout.initWidth
  
       const translateX = position.interpolate({
         inputRange: [thisSceneIndex - 1, thisSceneIndex],
         outputRange: [-width, 0],
         extrapolate: 'clamp'
-      });
+      })
  
       return {
         transform: [{ translateX }]

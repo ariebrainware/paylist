@@ -28,7 +28,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
+    const { navigation } = this.props
     this.focusListener = navigation.addListener('didFocus', () => {
       setTimeout(()=>{
         this._GetData()
