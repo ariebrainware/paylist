@@ -141,7 +141,9 @@ export default class CreatePaylist extends React.Component {
           switch (res.status) {
             case 200:
               alert('Success save paylist')
-              this.props.navigation.navigate('Main', { loadingHome: this.props.store.setLoadingHome() })
+              setTimeout(()=>{
+              this.props.navigation.navigate('Main')
+              },2000)
               break
             case 403:
               alert('You have to login first.')

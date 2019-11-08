@@ -114,7 +114,6 @@ onBackButtonPressed() {
         let encodedValue = encodeURIComponent(data[property])
         payload.push(encodedKey + "=" + encodedValue)
       }
-      // console.log(payload)
       payload = payload.join("&")
       const header= {
         'Cache-Control': 'no-cache, no-store, must-revalidate',

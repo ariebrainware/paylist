@@ -5,6 +5,8 @@ import {
   TouchableOpacity, Image,View, Text, KeyboardAvoidingView
 } from 'react-native'
 import Config from '../config'
+import { inject, observer } from 'mobx-react'
+import { ActivityIndicator } from 'react-native-paper'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -64,7 +66,7 @@ const option = {
     }
   }
 }
-
+@inject('store') @observer
 export default class RegisterScreen extends React.Component {
 
   constructor(props) {
@@ -154,8 +156,12 @@ export default class RegisterScreen extends React.Component {
         .then(res => {
           switch (resStatus) {
             case 200:
-              alert('You may login now')
-              this.props.navigation.navigate('Login')
+              this.props.store.setLoading()
+              setTimeout(()=>{
+                alert('You may login now')
+                this.props.store.getLoading()
+                this.props.navigation.navigate('Login')
+              },2000)
               break
             case 500:
               alert('username exist')
@@ -188,8 +194,13 @@ export default class RegisterScreen extends React.Component {
             <Text style={styles.signupButton}> Login</Text>
           </TouchableOpacity>
         </View> 
-      </ScrollView></KeyboardAvoidingView>
-     
+        <View>
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' color='black'/>
+          </View>}
+        </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }

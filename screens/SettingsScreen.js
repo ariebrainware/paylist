@@ -1,8 +1,8 @@
 import React from 'react'
 import { DrawerActions} from 'react-navigation-drawer'
-import {View,StyleSheet, RefreshControl,ScrollView} from 'react-native'
+import {View,StyleSheet, RefreshControl,ScrollView, Text} from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
-import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator} from 'react-native-paper'
+import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator, TouchableRipple} from 'react-native-paper'
 import Config from '../config'
 import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
@@ -44,9 +44,11 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentDidMount() {
-    const {navigation} = this.props;
-    this.focusListener = navigation.addListener('willFocus', () => {
-      this._GetDataUser()
+    const {navigation} = this.props
+    this.focusListener = navigation.addListener('didFocus', () => {
+      setTimeout(()=>{
+        this._GetDataUser()
+      },2000)
     })
     loc(this)
   }
@@ -94,7 +96,10 @@ export default class SettingsScreen extends React.Component {
   }
   onRefresh() {
     Initial.data
-    this._GetDataUser()
+    this.props.store.setLoadingSetting()
+    setTimeout(()=>{
+      this._GetDataUser()
+    }, 1000)
   }
 
   render() {
@@ -115,15 +120,15 @@ export default class SettingsScreen extends React.Component {
         </Card>
         <Card >
           <Card.Content style={styles.balance}>
-            <Paragraph>Your Balance</Paragraph>
-            <Paragraph> Rp: {val.balance}</Paragraph>
+            <Paragraph style={{fontWeight:'bold', fontSize: 15}}>Your Balance</Paragraph>
+            <Paragraph style={{fontWeight:'bold'}}> Rp: {val.balance}</Paragraph>
           </Card.Content>
           <Card>
-            <Card.Actions>
-              <Button onPress={() => this.props.navigation.navigate('UpdateUser', {
+            <Card.Actions style={{borderBottomWidth:0.5, borderBottomColor:'grey'}}>
+              <Button color='black' onPress={() => this.props.navigation.navigate('UpdateUser', {
                 name: JSON.stringify(Initial.data),
                 loading: this.props.store.getLoading()
-              })}>Edit Data </Button>
+              })} icon="mode-edit">Edit Data</Button>
             </Card.Actions>
           </Card>
         </Card>
@@ -160,7 +165,8 @@ let styles = StyleSheet.create({
     alignSelf:'center',
     width: wp('55%'), 
     height: hp('11%'), 
-    backgroundColor: '#9d9e9e',
+    backgroundColor: '#d8e6e4',
+    borderRadius:5
   },
   content:{
     flex:4,
@@ -172,5 +178,9 @@ let styles = StyleSheet.create({
     flexDirection:'row' ,
     paddingTop:10,
     justifyContent: 'space-between',
+    borderBottomWidth:0.5,
+    borderBottomColor:'grey',
+    margin:1,
+    fontWeight: "400"
   }
 })
