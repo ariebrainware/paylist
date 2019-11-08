@@ -71,7 +71,6 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(resJson => {
-        console.log(resJson.data)
         switch (resStatus) {
           case 200:
             let list = JSON.stringify(resJson.data)
