@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  TouchableOpacity, Image,View, Text
-}
-  from 'react-native'
+  TouchableOpacity, Image,View, Text, KeyboardAvoidingView
+} from 'react-native'
 import Config from '../config'
+import { inject, observer } from 'mobx-react'
+import { ActivityIndicator } from 'react-native-paper'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -31,7 +32,8 @@ const newUser = t.struct({
   name: t.String,
   email: t.String,
   username: t.String,
-  password: t.String
+  password: t.String,
+  ConfirmPassword: t.String
 })
 
 const option = {
@@ -55,10 +57,16 @@ const option = {
       password: true,
       autoCorrect: false,
       secureTextEntry: true,
+    },
+    ConfirmPassword: {
+      autoCapitalize: 'none',
+      password: true,
+      autoCorrect: false,
+      secureTextEntry: true,
     }
   }
 }
-
+@inject('store') @observer
 export default class RegisterScreen extends React.Component {
 
   constructor(props) {
@@ -69,6 +77,7 @@ export default class RegisterScreen extends React.Component {
         email: '',
         username: '',
         password: '',
+        ConfirmPassword:''
       }
     }
   }
@@ -118,6 +127,7 @@ export default class RegisterScreen extends React.Component {
         email: value.email,
         username: value.username,
         password: value.password,
+        ConfirmPassword: value.ConfirmPassword
       }
       let payload = []
       for (let property in data) {
@@ -127,6 +137,9 @@ export default class RegisterScreen extends React.Component {
       }
       payload = payload.join("&")
       //sent post request
+      if (data.ConfirmPassword !== data.password){
+        alert("password doesn't match")
+      } else {
       fetch(`${Config.PaylistApiURL}/user/signup`, {
         //IF the form valid ..
         method: 'POST',
@@ -143,8 +156,12 @@ export default class RegisterScreen extends React.Component {
         .then(res => {
           switch (resStatus) {
             case 200:
-              alert('You may login now')
-              this.props.navigation.navigate('Login')
+              this.props.store.setLoading()
+              setTimeout(()=>{
+                alert('You may login now')
+                this.props.store.getLoading()
+                this.props.navigation.navigate('Login')
+              },2000)
               break
             case 500:
               alert('username exist')
@@ -155,6 +172,7 @@ export default class RegisterScreen extends React.Component {
           }
         })
         .done()
+      }
     } else {
       //form validation error
       alert('Please fill the empty field')
@@ -163,7 +181,9 @@ export default class RegisterScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}
+      keyboardVerticalOffset={100} behavior={"padding"}>
+      <ScrollView >
         <Form ref='form'
           type={newUser} options={option}
           value={this.state.value}
@@ -173,8 +193,14 @@ export default class RegisterScreen extends React.Component {
           <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
             <Text style={styles.signupButton}> Login</Text>
           </TouchableOpacity>
+        </View> 
+        <View>
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' color='black'/>
+          </View>}
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     )
   }
 }

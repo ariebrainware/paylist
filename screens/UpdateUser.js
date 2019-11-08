@@ -175,8 +175,8 @@ export default class UpdateUser extends React.Component {
           switch (res.status) {
             case 200:
               this.props.store.loading = true
-              alert('Success Edit Data')
               setTimeout(() => {
+                alert('Success Edit Data')
                 this.props.navigation.navigate('SettingsStack')
               }, 2000)
               break
