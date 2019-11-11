@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
-  View,
   ScrollView,
-  TouchableOpacity, Image, BackHandler
+  TouchableOpacity, BackHandler
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-
+import { IconButton } from 'react-native-paper'
 const t = require('tcomb-form-native')
 let _ = require('lodash')
 
@@ -74,16 +73,8 @@ export default class UpdatePaylist extends React.Component {
           bottom: 3
         }}
           onPress={() => params.handleUpdate(data)}>
-          <Image
-            source={
-              require('../assets/images/ceklis.png')
-            }
-            style={{
-              resizeMode: 'contain',
-              width: 20,
-              height: 20,
-            }}
-          />
+          <IconButton
+              icon='check' size={25}/>
         </TouchableOpacity>
     }
   }
