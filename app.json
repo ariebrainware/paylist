@@ -28,7 +28,7 @@
       "package": "com.ritalin.paylist"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.ritalin.paylist"
     }
   }
 }
