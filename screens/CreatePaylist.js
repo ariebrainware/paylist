@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity, BackHandler
+  TouchableOpacity,View, BackHandler
 } from 'react-native'
-import {IconButton} from 'react-native-paper'
+import {IconButton,  ActivityIndicator} from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import {observer, inject} from 'mobx-react'
@@ -132,8 +132,9 @@ export default class CreatePaylist extends React.Component {
         .then(res => {
           switch (res.status) {
             case 200:
-              alert('Success save paylist')
+              this.props.store.setLoading()
               setTimeout(()=>{
+              alert('Success save paylist')
               this.props.navigation.navigate('Main')
               },2000)
               break
@@ -170,7 +171,13 @@ export default class CreatePaylist extends React.Component {
           value={this.state.value}
           onChange={this._onChange}
         />
+         <View>
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' color='black'/>
+          </View>}
+        </View>
       </ScrollView>
+
     )
   }
 }

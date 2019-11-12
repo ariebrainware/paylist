@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import {
     ScrollView,
-    StyleSheet, 
+    StyleSheet, View,
     TouchableOpacity, BackHandler
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
-import {IconButton} from 'react-native-paper'
+import {IconButton, ActivityIndicator} from 'react-native-paper'
 
 
 const t = require('tcomb-form-native')
@@ -152,8 +152,11 @@ async _EditPassword(id) {
             .then(res => {
                 switch (resStatus) {
                 case 200:
-                    alert('Success Update Password')
-                    this.props.navigation.navigate('SettingsStack')
+                    this.props.store.setLoading()
+                    setTimeout(()=>{
+                        alert('Success Update Password')
+                        this.props.navigation.navigate('SettingsStack')
+                    }, 2000)
                     break
                 case 404:
                     alert('Old password doesn\'t match')
@@ -176,7 +179,13 @@ render() {
             <Form ref='form' 
                 type={Password} options={option}
                 value={this.state.value} 
-                onChange={this._onChange}/>
+                onChange={this._onChange}
+                />
+            <View>
+                {this.props.store.loading && <View>
+                <ActivityIndicator size='small' color='black'/>
+                </View>}
+            </View>
         </ScrollView>
         )
     }

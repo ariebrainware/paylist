@@ -4,7 +4,7 @@ import {
     View,
     ScrollView, TouchableOpacity, BackHandler
 } from 'react-native'
-import {IconButton } from 'react-native-paper'
+import {IconButton, ActivityIndicator } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import { inject, observer } from 'mobx-react'
@@ -122,8 +122,11 @@ onBackButtonPressed() {
       .then(res => {
         switch (res.status) {
           case 200:
-            alert('Success Add Balance')
-            this.props.navigation.navigate('Main')
+            this.props.store.setLoading()
+            setTimeout(()=>{
+              alert('Success Add Balance')
+              this.props.navigation.navigate('Main')
+            },2000)
             break
           case 400:
             alert('field can\'t be negative or zero')
@@ -149,7 +152,12 @@ render() {
                 type={User}
                 value={this.state.value}
                 onChange={this._onChange}
-          />          
+          />
+          <View>
+          {this.props.store.loading && <View>
+            <ActivityIndicator size='small' color='black'/>
+          </View>}
+        </View>
         </ScrollView> 
       </View>
     )

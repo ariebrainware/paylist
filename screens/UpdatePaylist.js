@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity, BackHandler
+  TouchableOpacity, BackHandler, View
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
-import { IconButton } from 'react-native-paper'
+import { IconButton, ActivityIndicator } from 'react-native-paper'
+import { inject, observer } from 'mobx-react'
+
 const t = require('tcomb-form-native')
 let _ = require('lodash')
 
@@ -45,7 +47,7 @@ const option = {
     },
   }
 }
-
+@inject('store') @observer
 export default class UpdatePaylist extends React.Component {
   constructor(props) {
     super(props)
@@ -136,8 +138,11 @@ export default class UpdatePaylist extends React.Component {
         .then(res => {
           switch (res.status) {
             case 200:
-              alert('Success Update paylist')
-              this.props.navigation.navigate('Main')
+              this.props.store.setLoading()
+              setTimeout(()=>{
+                alert('Success Update paylist')
+                this.props.navigation.navigate('Main')
+              }, 2000)
               break
             case 500:
               alert('token expired')
@@ -164,6 +169,11 @@ export default class UpdatePaylist extends React.Component {
             value={this.state.value}
             onChange={this._onChange}
           />
+          <View>
+            {this.props.store.loading && <View>
+            <ActivityIndicator size='small' color='black'/>
+            </View>}
+          </View>
         </ScrollView>
     )
   }

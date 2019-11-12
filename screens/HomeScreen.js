@@ -8,10 +8,17 @@ import {
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import { createFilter } from 'react-native-search-filter'
-import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB } from 'react-native-paper'
+import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB, Text, Title, Paragraph } from 'react-native-paper'
 import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
-
+const Total = ({}) => (
+  <Text style={{fontWeight:'bold'}}>
+   Pengeluaran : Rp 
+    {Initial.paylist.reduce((sum, i) => (
+      sum += i.amount
+    ), 0)}
+ </Text>
+)
 const KEYS_TO_FILTERS = ['CreatedAt', 'name']
 @inject('store')
 @observer
@@ -261,6 +268,15 @@ export default class HomeScreen extends React.Component {
               }}
             />
           </Portal>
+          <View>
+            <Card>
+              <Card.Content style={{backgroundColor:'#eee', borderTopWidth:0.5,}}>
+              <Paragraph>
+              <Total/>
+              </Paragraph>
+              </Card.Content>
+            </Card>
+          </View>
         </View>
       </Provider>
     )
