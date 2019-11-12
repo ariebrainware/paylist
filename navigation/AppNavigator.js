@@ -41,28 +41,28 @@ const transitionConfig = () => {
     }
   }
 }
- const Stack = createStackNavigator({
-    MainScreen: {
-      screen: MainTabNavigator,
-      navigationOptions: {
-        header: null
-      }
-    },
+const Stack = createStackNavigator({
+  MainScreen: {
+    screen: MainTabNavigator,
+    navigationOptions: {
+      header: null
+    }
+  },
 })
 
 const DrawerNavigator  = createDrawerNavigator({
   Main: {
     screen:Stack,
-    },
-  },{
+  },
+},{
   gesturesEnabled: false,
   contentComponent: DrawerScreen,
-  drawerPosition: "right",
+  drawerPosition: 'right',
   drawerType:'slide',
-  })
+})
 
 export default createAppContainer(
-   createStackNavigator({
+  createStackNavigator({
     Login: {
       screen: LoginScreen,
       navigationOptions: {

@@ -1,4 +1,4 @@
-import {observable, action, autorun} from 'mobx'
+import {observable, action} from 'mobx'
 
 class Initial{
 @observable loading

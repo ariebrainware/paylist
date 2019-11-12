@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Image} from 'react-native'
+import { StyleSheet, View} from 'react-native'
 import { Drawer, Card, Avatar, } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'

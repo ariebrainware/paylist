@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  TouchableOpacity, Image,View, Text, KeyboardAvoidingView
+  TouchableOpacity,View, Text, KeyboardAvoidingView
 } from 'react-native'
 import Config from '../config'
 import { inject, observer } from 'mobx-react'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator,IconButton } from 'react-native-paper'
 
 const t = require('tcomb-form-native')
 const Form = t.form.Form
@@ -94,16 +94,8 @@ export default class RegisterScreen extends React.Component {
           bottom: 3
         }}
           onPress={() => params.handleSignUp()}>
-          <Image
-            source={
-              require('../assets/images/ceklis.png')
-            }
-            style={{
-              resizeMode: 'contain',
-              width: 20,
-              height: 20,
-            }}
-          />
+           <IconButton
+              icon='check' size={25}/>
         </TouchableOpacity>
     }
   }

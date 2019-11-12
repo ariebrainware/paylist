@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { 
     StyleSheet,
     View,
-    ScrollView,Image,TouchableOpacity, BackHandler
+    ScrollView, TouchableOpacity, BackHandler
 } from 'react-native'
+import {IconButton } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
+import { inject, observer } from 'mobx-react'
 
 const t = require('tcomb-form-native')
 let _ = require('lodash') 
@@ -41,15 +43,14 @@ const option = {
         },
     }
 }
-
+@inject('store') @observer
 export default class AddBalance extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             value: {
+                loading:false,
                 balance: '',
-                error:'',
-                loading: false
             }
         }
         this._AddBalance = this._AddBalance.bind(this)
@@ -66,19 +67,10 @@ export default class AddBalance extends React.Component {
             alignItems: 'center',
             justifyContent: 'center',
             right: 5,
-            bottom: 3
           }}
             onPress={() => params.handleCreate()}>
-            <Image
-              source={
-                require('../assets/images/ceklis.png')
-              }
-              style={{
-                resizeMode: 'contain',
-                width: 20,
-                height: 20,
-              }}
-            />
+            <IconButton
+              icon='check' size={25}/>
           </TouchableOpacity>
       } 
     }

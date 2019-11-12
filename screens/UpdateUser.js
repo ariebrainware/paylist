@@ -3,9 +3,9 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  Image, TouchableOpacity, BackHandler
+  TouchableOpacity, BackHandler
 } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, IconButton } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import { observer, inject } from 'mobx-react'
 import Config from '../config'
@@ -93,16 +93,8 @@ export default class UpdateUser extends React.Component {
           bottom: 3
         }}
           onPress={() => params.handleUpdate(val.ID)}>
-          <Image
-            source={
-              require('../assets/images/ceklis.png')
-            }
-            style={{
-              resizeMode: 'contain',
-              width: 20,
-              height: 20,
-            }}
-          />
+          <IconButton
+              icon='check' size={25}/>
         </TouchableOpacity>
       })
     }

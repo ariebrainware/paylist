@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import {
     ScrollView,
     StyleSheet, 
-    TouchableOpacity, Image, BackHandler
+    TouchableOpacity, BackHandler
 } from 'react-native'
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import Initial from '../State.js'
 import {observer, inject} from 'mobx-react'
+import {IconButton} from 'react-native-paper'
 
 
 const t = require('tcomb-form-native')
@@ -59,7 +60,7 @@ const option = {
         }
     }
 }
-@observer
+@inject('store') @observer
 export default class EditPassword extends React.Component {
     constructor(props) {
         super(props)
@@ -88,14 +89,8 @@ static navigationOptions = ({navigation}) => {
                 right: 5,
                 bottom: 3}}
                 onPress={() =>params.handleUpdate(val.ID)}>
-              <Image 
-                  source={
-                    require ('../assets/images/ceklis.png')
-                  }
-                  style={{resizeMode: 'contain',
-                  width: 20,
-                  height: 20,}}
-              />
+              <IconButton
+              icon='check' size={25}/>
               </TouchableOpacity>
           }) 
         }

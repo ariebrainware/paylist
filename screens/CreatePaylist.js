@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  Image, TouchableOpacity, BackHandler
+  TouchableOpacity, BackHandler
 } from 'react-native'
+import {IconButton} from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import {observer, inject} from 'mobx-react'
@@ -73,19 +74,10 @@ export default class CreatePaylist extends React.Component {
           alignItems: 'center',
           justifyContent: 'center',
           right: 5,
-          bottom: 3
         }}
           onPress={() => params.handleCreate()}>
-          <Image
-            source={
-              require('../assets/images/ceklis.png')
-            }
-            style={{
-              resizeMode: 'contain',
-              width: 20,
-              height: 20,
-            }}
-          />
+          <IconButton
+              icon='check' size={25}/>
         </TouchableOpacity>
     }
   }
