@@ -8,7 +8,7 @@ import { Provider } from 'mobx-react'
 import Initial from './State'
 
 export default function App(props) {
-  const [isLoadingComplete, setLoadingComplete] = useState(false)
+  let [isLoadingComplete, setLoadingComplete] = useState(false)
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -25,7 +25,7 @@ export default function App(props) {
         <Provider store={Initial}>
           <AppNavigator />
         </Provider>
-      </View>
+        </View>
     )
   }
 }
@@ -55,7 +55,7 @@ function handleFinishLoading(setLoadingComplete) {
   setLoadingComplete(true)
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ccc',
