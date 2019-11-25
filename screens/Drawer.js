@@ -34,7 +34,7 @@ componentWillUnmount(){
 }
 async _handleLogOut(){
     let DEMO_TOKEN = await deviceStorage.deleteJWT('token')
-    const header = {
+    let header = {
       'Authorization' : DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/users/signout`, {
@@ -63,18 +63,18 @@ render() {
   return (
     <View style={styles.container}>
       <Card style={styles.Drawer}>
-        <Card.Title
-        title='Settings'
+        <Card.Title style={{alignContent:'center'}}
+         title='Settings'
          left={(props) => <Avatar.Icon{...props} style={{width:40, height:40,backgroundColor:'#fff'}} size={50} icon="settings"/>}>
         </Card.Title>
         </Card>
-        <Card style={{margin:2, width:500, right:20}}>
+        <Card style={{margin:2, width:wp('70.7%'), right:20}}>
             <Drawer.Item
               icon='lock'
               label="Change Password"
               onPress={() => this.props.navigation.navigate('EditPassword')}/>
         </Card>
-        <Card style={{margin:2, width:500, right:20}}>
+        <Card style={{margin:2, width:wp('70.7%'), right:20,}}>
           <Drawer.Item
             icon='arrow-forward'
             label="Logout"
@@ -85,18 +85,20 @@ render() {
   }
 }
     
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignContent:'flex-end',
     backgroundColor: '#fefefe',
-    paddingTop:hp(2.7),
-    paddingHorizontal: 20
+    paddingTop:('8.2%'),
+    paddingHorizontal: 20,
+    left:1
   },
   Drawer:{
-    margin:2, 
-    width:wp(100),
-    height:60, 
+   
+    justifyContent:'center',
+    margin:1, 
+    width:'116.5%',
+    height:55,
     right:22,
     backgroundColor:'#a9b0ae'
   }
