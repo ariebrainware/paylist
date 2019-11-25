@@ -3,40 +3,24 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  TouchableOpacity, BackHandler
+  TouchableOpacity, BackHandler, Modal
 } from 'react-native'
 import { ActivityIndicator, IconButton } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import { observer, inject } from 'mobx-react'
 import Config from '../config'
+import stylesheet from '../style/formStyle'
 
-const t = require('tcomb-form-native')
-let _ = require('lodash')
-
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
-
-stylesheet.textbox.normal.borderWidth = 0
-stylesheet.textbox.error.borderWidth = 0
-stylesheet.textbox.normal.marginBottom = 0
-stylesheet.textbox.error.marginBottom = 0
-
-stylesheet.textboxView.normal.borderWidth = 0
-stylesheet.textboxView.error.borderWidth = 0
-stylesheet.textboxView.normal.borderRadius = 0
-stylesheet.textboxView.error.borderRadius = 0
-stylesheet.textboxView.normal.borderBottomWidth = 0.5
-stylesheet.textboxView.error.borderBottomWidth = 0.5
-stylesheet.textboxView.normal.marginBottom = 5
-stylesheet.textboxView.error.marginBottom = 5
-const Form = t.form.Form
-const User = t.struct({
+let t = require('tcomb-form-native')
+let Form = t.form.Form
+let User = t.struct({
   username: t.String,
   email: t.String,
   name: t.String,
   balance: t.Number,
 })
 
-const option = {
+let option = {
   stylesheet:stylesheet,
   fields: {
     username: {
@@ -80,8 +64,8 @@ export default class UpdateUser extends React.Component {
   }
 
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params
-    const data = JSON.parse(navigation.getParam('name', []))
+    let params = navigation.state.params
+    let data = JSON.parse(navigation.getParam('name', []))
     return {
       headerRight: data.map((val) => {
         return <TouchableOpacity key={val.ID} style={{
@@ -94,7 +78,7 @@ export default class UpdateUser extends React.Component {
         }}
           onPress={() => params.handleUpdate(val.ID)}>
           <IconButton
-              icon='check' size={25}/>
+              icon='check' size={28} color='#319e4c' activeOpacity={0.5}/>
         </TouchableOpacity>
       })
     }
@@ -110,8 +94,8 @@ export default class UpdateUser extends React.Component {
     return true
   }
   componentWillMount() {
-    const { navigation } = this.props
-    const data = JSON.parse(navigation.getParam('name', []))
+    let { navigation } = this.props
+    let data = JSON.parse(navigation.getParam('name', []))
     this.props.navigation.setParams({ handleUpdate: this._UpdateUser })
     {
       data.map((item) => {
@@ -135,10 +119,10 @@ export default class UpdateUser extends React.Component {
 
   async _UpdateUser(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    const value = this.refs.form.getValue()
+    let value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
-      const data = {
+      let data = {
         email: value.email,
         name: value.name,
         username: value.username,
@@ -151,7 +135,7 @@ export default class UpdateUser extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      const header = {
+      let header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/x-www-form-urlencoded',
@@ -170,11 +154,13 @@ export default class UpdateUser extends React.Component {
               setTimeout(() => {
                 alert('Success Edit Data')
                 this.props.navigation.navigate('SettingsStack')
+                this.props.store.getLoading()
               }, 2000)
               break
             case 500:
               alert('token expired')
               this.props.navigation.navigate('Login')
+              this.props.store.getLoading()
               break
           }
         })
@@ -190,7 +176,8 @@ export default class UpdateUser extends React.Component {
 
   render() {
     return (
-        <ScrollView style={styles.container}>
+      <View style={styles.container}>
+        <ScrollView>
           <Form ref='form'
             options={option}
             type={User}
@@ -203,6 +190,15 @@ export default class UpdateUser extends React.Component {
         </View>}
         </View>
       </ScrollView>
+       <Modal transparent={true} animationType="fade" visible={this.props.store.loading}>
+       <View style={{
+           flex: 1,
+           flexDirection: 'column',
+           justifyContent: 'center',
+           alignItems: 'center', backgroundColor:'rgba(0,0,0,0.1)'}}>
+         </View>
+       </Modal>
+       </View>
     )
   }
 }

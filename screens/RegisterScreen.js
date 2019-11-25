@@ -2,33 +2,17 @@ import React, { Component } from 'react'
 import {
   ScrollView,
   StyleSheet,
-  TouchableOpacity,View, Text, KeyboardAvoidingView
+  TouchableOpacity,View, Text, KeyboardAvoidingView, Modal
 } from 'react-native'
 import Config from '../config'
 import { inject, observer } from 'mobx-react'
-import { ActivityIndicator,IconButton } from 'react-native-paper'
+import { ActivityIndicator,IconButton} from 'react-native-paper'
+import stylesheet from '../style/formStyle'
 
-const t = require('tcomb-form-native')
-const Form = t.form.Form
-let _ = require('lodash')
+let t = require('tcomb-form-native')
+let Form = t.form.Form
 
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
-
-stylesheet.textbox.normal.borderWidth = 0
-stylesheet.textbox.error.borderWidth = 0
-stylesheet.textbox.normal.marginBottom = 0
-stylesheet.textbox.error.marginBottom = 0
-
-stylesheet.textboxView.normal.borderWidth = 0
-stylesheet.textboxView.error.borderWidth = 0
-stylesheet.textboxView.normal.borderRadius = 0
-stylesheet.textboxView.error.borderRadius = 0
-stylesheet.textboxView.normal.borderBottomWidth = 0.5
-stylesheet.textboxView.error.borderBottomWidth = 0.5
-stylesheet.textboxView.normal.marginBottom = 5
-stylesheet.textboxView.error.marginBottom = 5
-
-const newUser = t.struct({
+let newUser = t.struct({
   name: t.String,
   email: t.String,
   username: t.String,
@@ -36,7 +20,7 @@ const newUser = t.struct({
   ConfirmPassword: t.String
 })
 
-const option = {
+let option = {
   stylesheet:stylesheet,
   fields: {
     name: {
@@ -82,7 +66,7 @@ export default class RegisterScreen extends React.Component {
     }
   }
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params
+    let params = navigation.state.params
     return {
       headerRight:
         <TouchableOpacity style={{
@@ -95,7 +79,7 @@ export default class RegisterScreen extends React.Component {
         }}
           onPress={() => params.handleSignUp()}>
            <IconButton
-              icon='check' size={25}/>
+              icon='check' size={28} color='#319e4c' activeOpacity={0.5}/>
         </TouchableOpacity>
     }
   }
@@ -111,10 +95,10 @@ export default class RegisterScreen extends React.Component {
   }
 
   _handleAdd = () => {
-    const value = this.refs.form.getValue()
+    let value = this.refs.form.getValue()
     //IF the form valid ..
     if (value) {
-      const data = {
+      let data = {
         name: value.name,
         email: value.email,
         username: value.username,
@@ -157,9 +141,11 @@ export default class RegisterScreen extends React.Component {
               break
             case 500:
               alert('username exist')
+              this.props.store.getLoading()
               break
             default:
               alert('Something wrong, please try again later!')
+              this.props.store.getLoading()
               break
           }
         })
@@ -192,12 +178,20 @@ export default class RegisterScreen extends React.Component {
           </View>}
         </View>
       </ScrollView>
+      <Modal transparent={true} animationType="fade" visible={this.props.store.loading}>
+      <View style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center', backgroundColor:'rgba(0,0,0,0.1)'}}>
+        </View>
+      </Modal>
       </KeyboardAvoidingView>
     )
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
