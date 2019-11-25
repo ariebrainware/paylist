@@ -1,6 +1,6 @@
 import React from 'react'
 import { ScrollView, StyleSheet, View , Text, Linking} from 'react-native'
-import { Card, Title, Paragraph } from 'react-native-paper'
+import { Card, Title, Paragraph} from 'react-native-paper'
 
 export default function LinksScreen() {
   return (
@@ -22,13 +22,13 @@ export default function LinksScreen() {
               Paylist Team :
             </Title>
             <Paragraph>
-              <Text style={{ color: 'blue' }}
+              <Text style={{ color: '#396362', fontWeight:"400",}}
                 onPress={() => Linking.openURL('https://twitter.com/_nobody404')}>
                 Arie Brainware
               </Text>
             </Paragraph>
             <Paragraph>
-              <Text style={{ color: 'blue' }}
+              <Text style={{ color: '#396362', fontWeight:"400" }}
                 onPress={() => Linking.openURL('https://twitter.com/offler_7')}>
                 Offler Dapit
               </Text>
@@ -47,7 +47,7 @@ LinksScreen.navigationOptions = {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
