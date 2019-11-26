@@ -1,9 +1,9 @@
-import { createAppContainer} from 'react-navigation'
-import { createDrawerNavigator} from 'react-navigation-drawer'
+import { createAppContainer } from 'react-navigation'
+import { createDrawerNavigator } from 'react-navigation-drawer'
 import MainTabNavigator from './MainTabNavigator'
 import LoginScreen from '../screens/LoginScreen'
 import RegisterScreen from '../screens/RegisterScreen'
-import { createStackNavigator} from 'react-navigation-stack'
+import { createStackNavigator } from 'react-navigation-stack'
 import { Platform, StatusBar } from 'react-native'
 import CreatePaylist from '../screens/CreatePaylist'
 import UpdateUser from '../screens/UpdateUser'
@@ -11,7 +11,7 @@ import UpdatePaylist from '../screens/UpdatePaylist'
 import AddBalance from '../screens/AddBalance'
 import EditPassword from '../screens/EditPassword'
 import DrawerScreen from '../screens/Drawer'
-import { Easing, Animated} from 'react-native'
+import { Easing, Animated } from 'react-native'
 import ReportDetails from '../screens/ReportDetails'
 let headerStyle = {
   marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
@@ -26,16 +26,16 @@ let transitionConfig = () => {
     },
     screenInterpolator: sceneProps => {
       let { layout, position, scene } = sceneProps
- 
+
       let thisSceneIndex = scene.index
       let width = layout.initWidth
- 
+
       let translateX = position.interpolate({
         inputRange: [thisSceneIndex - 1, thisSceneIndex],
         outputRange: [-width, 0],
         extrapolate: 'clamp'
       })
- 
+
       return {
         transform: [{ translateX }]
       }
@@ -43,15 +43,15 @@ let transitionConfig = () => {
   }
 }
 
-let DrawerNavigator  = createDrawerNavigator({
+let DrawerNavigator = createDrawerNavigator({
   Main: {
-    screen:MainTabNavigator
+    screen: MainTabNavigator
   },
-},{
+}, {
   gesturesEnabled: false,
   contentComponent: DrawerScreen,
   drawerPosition: 'right',
-  drawerType:'slide',
+  drawerType: 'slide',
   headerStyle,
 })
 
@@ -61,12 +61,12 @@ export default createAppContainer(
       screen: LoginScreen,
       navigationOptions: {
         title: 'Sign In',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
@@ -75,32 +75,32 @@ export default createAppContainer(
       screen: RegisterScreen,
       navigationOptions: {
         title: 'Sign Up',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
     },
     Home: {
       screen: DrawerNavigator,
-      navigationOptions:{
-        header:null,
+      navigationOptions: {
+        header: null,
       }
     },
     CreatePaylist: {
       screen: CreatePaylist,
       navigationOptions: {
         title: 'Create Paylist',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
@@ -109,12 +109,12 @@ export default createAppContainer(
       screen: UpdateUser,
       navigationOptions: {
         title: 'Edit Data',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
@@ -123,58 +123,58 @@ export default createAppContainer(
       screen: UpdatePaylist,
       navigationOptions: {
         title: 'Edit Data',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
     },
     AddBalance: {
       screen: AddBalance,
-      navigationOptions:{
+      navigationOptions: {
         title: 'Add Balance',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
     },
     EditPassword: {
       screen: EditPassword,
-      navigationOptions:{
+      navigationOptions: {
         title: 'Edit Password',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
         headerStyle,
-        headerStyle:{
+        headerStyle: {
           backgroundColor: '#a9b0ae'
         }
       }
     },
-    ReportDetail:{
+    ReportDetail: {
       screen: ReportDetails,
-      navigationOptions:{
-        title:'Report Detail',
-        headerTitleStyle:{
-          fontSize:19,
-          textAlign:'center'
+      navigationOptions: {
+        title: 'Report Detail',
+        headerTitleStyle: {
+          fontSize: 19,
+          textAlign: 'center'
         },
-        headerStyle:{
-          backgroundColor:'#a9b0ae'
+        headerStyle: {
+          backgroundColor: '#a9b0ae'
         }
       }
     }
-  },{
+  }, {
     transitionConfig
   })
 )  
