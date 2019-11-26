@@ -1,7 +1,7 @@
 import {observable, action} from 'mobx'
 
 class Initial{
-@observable loading
+@observable loading = false
 @observable loadingHome = true
 @observable loadingSetting = true
 @observable data = []

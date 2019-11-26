@@ -1,36 +1,20 @@
 import React, { Component } from 'react'
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity,} from 'react-native'
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Modal} from 'react-native'
 import deviceStorage from '../service/deviceStorage'
-import { Button, ActivityIndicator } from 'react-native-paper'
+import { Button, ActivityIndicator,} from 'react-native-paper'
 import Config from '../config'
 import { observer, inject } from 'mobx-react'
+import stylesheet from '../style/formStyle'
 
-const t = require('tcomb-form-native')
-let _ = require('lodash')
+let t = require('tcomb-form-native')
+let Form = t.form.Form
 
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
-
-stylesheet.textbox.normal.borderWidth = 0
-stylesheet.textbox.error.borderWidth = 0
-stylesheet.textbox.normal.marginBottom = 0
-stylesheet.textbox.error.marginBottom = 0
-
-stylesheet.textboxView.normal.borderWidth = 0
-stylesheet.textboxView.error.borderWidth = 0
-stylesheet.textboxView.normal.borderRadius = 0
-stylesheet.textboxView.error.borderRadius = 0
-stylesheet.textboxView.normal.borderBottomWidth = 0.5
-stylesheet.textboxView.error.borderBottomWidth = 0.5
-stylesheet.textboxView.normal.marginBottom = 5
-stylesheet.textboxView.error.marginBottom = 5
-const Form = t.form.Form
-
-const User = t.struct({
+let User = t.struct({
   username: t.String,
   password: t.String
 })
 
-const options = {
+let options = {
   stylesheet:stylesheet,
   fields: {
     username: {
@@ -71,6 +55,7 @@ export default class LoginScreen extends React.Component {
 
   componentDidMount() {
     this.loadInitialState().done()
+    this.props.store.getLoading()
   }
 
   async loadInitialState() {
@@ -93,10 +78,10 @@ export default class LoginScreen extends React.Component {
   }
 
   _handleLogin() {
-    const value = this.refs.form.getValue()
+    let value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
-      const data = {
+      let data = {
         username: value.username,
         password: value.password
       }
@@ -117,7 +102,6 @@ export default class LoginScreen extends React.Component {
             body: payload
           })
             .then(res => {
-              this.props.store.loading
               resStatus = res.status
               return res.json()
             })
@@ -130,6 +114,7 @@ export default class LoginScreen extends React.Component {
                   setTimeout(() => {
                     alert('Login Success')
                     this.props.navigation.navigate('Main')
+                    this.props.store.getLoading()
                   }, 2000)
                   this.clearForm()
                   break
@@ -145,11 +130,12 @@ export default class LoginScreen extends React.Component {
                   setTimeout(()=>{
                   alert('already login')
                   this.props.navigation.navigate('Main')
+                  this.props.store.getLoading()
                   })
                   this.clearForm()
                   break
                 default:
-                  this.props.store.getLoadingHome()
+                  this.props.store.getLoading()
                   alert('Something wrong, please try again later!')
                   break
               }
@@ -166,7 +152,8 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}> 
+      <ScrollView>
         <Form
           ref='form'
           options={options}
@@ -187,6 +174,15 @@ export default class LoginScreen extends React.Component {
           </View>}
         </View>
       </ScrollView>
+      <Modal transparent={true} animationType="fade" visible={this.props.store.loading}>
+      <View style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center', backgroundColor:'rgba(0,0,0,0.1)'}}>
+        </View>
+      </Modal>
+      </View>
     )
   }
 }
@@ -202,10 +198,7 @@ let styles = StyleSheet.create({
     borderRadius: 4,
     padding: 3,
     textAlign: 'center',
-    marginBottom: 20,
-    backgroundColor: '#4CD964'
-  },
-  greenButton: {
+    marginBottom: 10,
     backgroundColor: '#4CD964'
   },
   centering: {

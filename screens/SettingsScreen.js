@@ -1,10 +1,9 @@
 import React from 'react'
 import { DrawerActions} from 'react-navigation-drawer'
-import {View,StyleSheet, RefreshControl,ScrollView, Text} from 'react-native'
+import {View,StyleSheet, RefreshControl,ScrollView, Image, ImageBackground } from 'react-native'
 import deviceStorage  from '../service/deviceStorage'
 import { Card, Button, Title, Paragraph,Appbar, ActivityIndicator, TouchableRipple} from 'react-native-paper'
 import Config from '../config'
-import Initial from '../State.js'
 import { observer, inject } from 'mobx-react'
 import {
   widthPercentageToDP as wp,
@@ -13,6 +12,7 @@ import {
   removeOrientationListener as rol
 } from 'react-native-responsive-screen'
 
+
 @inject('store') @observer
 export default class SettingsScreen extends React.Component {
   constructor(props) {
@@ -20,12 +20,15 @@ export default class SettingsScreen extends React.Component {
     this._GetDataUser = this._GetDataUser.bind(this)
   }
 
+  currencyFormat(num) {
+    return 'Rp: ' + parseInt(num).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
   _onMore = () => {
     //Props to open/close the drawer
     this.props.navigation.dispatch(DrawerActions.openDrawer())
   }
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params
+    let params = navigation.state.params
     return {
       title: 'My Account',
       headerStyle: {
@@ -44,7 +47,7 @@ export default class SettingsScreen extends React.Component {
   }
 
   componentDidMount() {
-    const {navigation} = this.props
+    let {navigation} = this.props
     this.focusListener = navigation.addListener('didFocus', () => {
       setTimeout(()=>{
         this._GetDataUser()
@@ -55,7 +58,7 @@ export default class SettingsScreen extends React.Component {
 
   async _GetDataUser() {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    const header = {
+    let header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/users`, {
@@ -71,7 +74,7 @@ export default class SettingsScreen extends React.Component {
           case 200:
             let dataString = JSON.stringify(ress.data)
             let dataParse = JSON.parse(dataString)
-            Initial.data = dataParse
+            this.props.store.data = dataParse
             this.props.store.getLoadingSetting()
             break
           case 500:
@@ -95,7 +98,7 @@ export default class SettingsScreen extends React.Component {
     this.focusListener.remove()
   }
   onRefresh() {
-    Initial.data
+    this.props.store.data
     this.props.store.setLoadingSetting()
     setTimeout(()=>{
       this._GetDataUser()
@@ -110,27 +113,26 @@ export default class SettingsScreen extends React.Component {
         </View>
       )
     }
-    let user = Initial.data.map((val) => {
-      return (<Card key={val.ID}>
-        <Card  style={styles.username}>
+    let user = this.props.store.data.map((val) => {
+      return (<Card key={val.ID} style={{backgroundColor:'#eee'}}>
+        <Card></Card>
+        <Card style={styles.username}>
           <Card.Content style={styles.content}>
             <Title>{val.name}</Title>
             <Paragraph>{val.email}</Paragraph>
           </Card.Content>
         </Card>
-        <Card >
+        <Card style={{margin:1, width:wp('98%'), alignSelf:'center'}} >
           <Card.Content style={styles.balance}>
             <Paragraph style={{fontWeight:'bold', fontSize: 15}}>Your Balance</Paragraph>
-            <Paragraph style={{fontWeight:'bold'}}> Rp: {val.balance}</Paragraph>
+            <Paragraph style={{fontWeight:'bold'}}> {this.currencyFormat(val.balance)}</Paragraph>
           </Card.Content>
-          <Card>
             <Card.Actions style={{borderBottomWidth:0.5, borderBottomColor:'grey'}}>
               <Button color='black' onPress={() => this.props.navigation.navigate('UpdateUser', {
-                name: JSON.stringify(Initial.data),
+                name: JSON.stringify(this.props.store.data),
                 loading: this.props.store.getLoading()
               })} icon="mode-edit">Edit Data</Button>
             </Card.Actions>
-          </Card>
         </Card>
       </Card>
       )
@@ -148,6 +150,7 @@ export default class SettingsScreen extends React.Component {
           {user}
         </ScrollView>
         </View>
+        
     )
   }
 }
@@ -165,7 +168,7 @@ let styles = StyleSheet.create({
     alignSelf:'center',
     width: wp('55%'), 
     height: hp('11%'), 
-    backgroundColor: '#d8e6e4',
+    backgroundColor: '#ffff',
     borderRadius:5
   },
   content:{
@@ -180,7 +183,6 @@ let styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth:0.5,
     borderBottomColor:'grey',
-    margin:1,
     fontWeight: "400"
-  }
+  },
 })

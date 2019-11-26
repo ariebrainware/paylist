@@ -2,38 +2,22 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity, BackHandler, View
+  TouchableOpacity, BackHandler, View, Modal
 } from 'react-native'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import { IconButton, ActivityIndicator } from 'react-native-paper'
 import { inject, observer } from 'mobx-react'
+import stylesheet from '../style/formStyle'
 
-const t = require('tcomb-form-native')
-let _ = require('lodash')
-
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
-
-stylesheet.textbox.normal.borderWidth = 0
-stylesheet.textbox.error.borderWidth = 0
-stylesheet.textbox.normal.marginBottom = 0
-stylesheet.textbox.error.marginBottom = 0
-
-stylesheet.textboxView.normal.borderWidth = 0
-stylesheet.textboxView.error.borderWidth = 0
-stylesheet.textboxView.normal.borderRadius = 0
-stylesheet.textboxView.error.borderRadius = 0
-stylesheet.textboxView.normal.borderBottomWidth = 0.5
-stylesheet.textboxView.error.borderBottomWidth = 0.5
-stylesheet.textboxView.normal.marginBottom = 5
-stylesheet.textboxView.error.marginBottom = 5
-const Form = t.form.Form
-const paylist = t.struct({
+let t = require('tcomb-form-native')
+let Form = t.form.Form
+let paylist = t.struct({
   name: t.String,
   amount: t.Number,
 })
 
-const option = {
+let option = {
   fields: {
     stylesheet:stylesheet,
     name: {
@@ -62,8 +46,8 @@ export default class UpdatePaylist extends React.Component {
     this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params
-    const data = JSON.parse(navigation.getParam('id', ''))
+    let params = navigation.state.params
+    let data = JSON.parse(navigation.getParam('id', ''))
     return {
       headerRight: 
         <TouchableOpacity style={{
@@ -76,7 +60,7 @@ export default class UpdatePaylist extends React.Component {
         }}
           onPress={() => params.handleUpdate(data)}>
           <IconButton
-              icon='check' size={25}/>
+              icon='check' size={28} color='#319e4c' activeOpacity={0.5}/>
         </TouchableOpacity>
     }
   }
@@ -91,7 +75,7 @@ export default class UpdatePaylist extends React.Component {
     return true
   }
   componentWillMount() {
-    const { navigation } = this.props
+    let { navigation } = this.props
     this.props.navigation.setParams({ handleUpdate: this._UpdatePaylist })
     {
       this.setState({
@@ -109,10 +93,10 @@ export default class UpdatePaylist extends React.Component {
 
   async _UpdatePaylist(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    const value = this.refs.form.getValue()
+    let value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
-      const data = {
+      let data = {
         name: value.name,
         amount: value.amount,
       }
@@ -123,7 +107,7 @@ export default class UpdatePaylist extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      const header = {
+      let header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/x-www-form-urlencoded',
@@ -142,11 +126,13 @@ export default class UpdatePaylist extends React.Component {
               setTimeout(()=>{
                 alert('Success Update paylist')
                 this.props.navigation.navigate('Main')
+                this.props.store.getLoading()
               }, 2000)
               break
             case 500:
               alert('token expired')
               this.props.navigation.navigate('Login')
+              this.props.store.getLoading()
               break
           }
         })
@@ -162,7 +148,8 @@ export default class UpdatePaylist extends React.Component {
 
   render() {
     return (
-        <ScrollView  style={styles.container}>
+      <View style={styles.container}>
+        <ScrollView>
           <Form ref='form'
             options={option}
             type={paylist}
@@ -175,6 +162,15 @@ export default class UpdatePaylist extends React.Component {
             </View>}
           </View>
         </ScrollView>
+        <Modal transparent={true} animationType="fade" visible={this.props.store.loading}>
+        <View style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center', backgroundColor:'rgba(0,0,0,0.1)'}}>
+          </View>
+        </Modal>
+        </View>
     )
   }
 }

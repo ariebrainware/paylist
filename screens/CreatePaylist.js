@@ -2,39 +2,23 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity,View, BackHandler
+  TouchableOpacity,View, BackHandler, Modal
 } from 'react-native'
 import {IconButton,  ActivityIndicator} from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import {observer, inject} from 'mobx-react'
+import stylesheet from '../style/formStyle'
 
+let t = require('tcomb-form-native')
 
-const t = require('tcomb-form-native')
-let _ = require('lodash')
-
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet)
-
-stylesheet.textbox.normal.borderWidth = 0
-stylesheet.textbox.error.borderWidth = 0
-stylesheet.textbox.normal.marginBottom = 0
-stylesheet.textbox.error.marginBottom = 0
-
-stylesheet.textboxView.normal.borderWidth = 0
-stylesheet.textboxView.error.borderWidth = 0
-stylesheet.textboxView.normal.borderRadius = 0
-stylesheet.textboxView.error.borderRadius = 0
-stylesheet.textboxView.normal.borderBottomWidth = 0.5
-stylesheet.textboxView.error.borderBottomWidth = 0.5
-stylesheet.textboxView.normal.marginBottom = 5
-stylesheet.textboxView.error.marginBottom = 5
-const Form = t.form.Form
-const createPaylist = t.struct({
+let Form = t.form.Form
+let createPaylist = t.struct({
   name: t.String,
   amount: t.String,
 })
 
-const option = {
+let option = {
   stylesheet:stylesheet,
   fields: {
     name: {
@@ -65,7 +49,7 @@ export default class CreatePaylist extends React.Component {
   }
 
   static navigationOptions = ({ navigation }) => {
-    const params = navigation.state.params
+    let params = navigation.state.params
     return {
       headerRight:
         <TouchableOpacity style={{
@@ -77,7 +61,7 @@ export default class CreatePaylist extends React.Component {
         }}
           onPress={() => params.handleCreate()}>
           <IconButton
-              icon='check' size={25}/>
+              icon='check' size={28} color='#319e4c'/>
         </TouchableOpacity>
     }
   }
@@ -103,10 +87,10 @@ export default class CreatePaylist extends React.Component {
 
   async _CreatePaylist() {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    const value = this.refs.form.getValue()
+    let value = this.refs.form.getValue()
     // If the form is valid...
     if (value) {
-      const data = {
+      let data = {
         name: value.name,
         amount: value.amount,
       }
@@ -117,7 +101,7 @@ export default class CreatePaylist extends React.Component {
         payload.push(encodedKey + "=" + encodedValue)
       }
       payload = payload.join("&")
-      const header = {
+      let header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'application/x-www-form-urlencoded',
@@ -136,18 +120,22 @@ export default class CreatePaylist extends React.Component {
               setTimeout(()=>{
               alert('Success save paylist')
               this.props.navigation.navigate('Main')
+              this.props.store.getLoading()
               },2000)
               break
             case 403:
               alert('You have to login first.')
               this.props.navigation.navigate('Login')
+              this.props.store.getLoading()
               break
             case 500:
               alert('Token expired')
               this.props.navigation.navigate('Login')
+              this.props.store.getLoading()
               break
             default:
               alert('Something wrong, please try again later!')
+              this.props.store.getLoading()
               break
           }
         })
@@ -163,7 +151,8 @@ export default class CreatePaylist extends React.Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
+      <ScrollView >
         <Form
           ref='form'
           options={option}
@@ -177,7 +166,15 @@ export default class CreatePaylist extends React.Component {
           </View>}
         </View>
       </ScrollView>
-
+      <Modal transparent={true} animationType="fade" visible={this.props.store.loading}>
+      <View style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center', backgroundColor:'rgba(0,0,0,0.1)'}}>
+        </View>
+      </Modal>
+      </View>
     )
   }
 }
@@ -187,5 +184,6 @@ let styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     flexDirection: 'column',
+    backgroundColor:'#eee'
   },
 })

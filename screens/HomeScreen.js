@@ -8,18 +8,10 @@ import {
 import Config from '../config'
 import deviceStorage from '../service/deviceStorage'
 import { createFilter } from 'react-native-search-filter'
-import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB, Text, Title, Paragraph } from 'react-native-paper'
-import Initial from '../State.js'
+import { List, Card, Checkbox, Button, ActivityIndicator, Searchbar, Provider, Portal, FAB, Text } from 'react-native-paper'
 import { observer, inject } from 'mobx-react'
-const Total = ({}) => (
-  <Text style={{fontWeight:'bold'}}>
-   Pengeluaran : Rp 
-    {Initial.paylist.reduce((sum, i) => (
-      sum += i.amount
-    ), 0)}
- </Text>
-)
-const KEYS_TO_FILTERS = ['CreatedAt', 'name']
+
+let KEYS_TO_FILTERS = ['CreatedAt', 'name']
 @inject('store')
 @observer
 export default class HomeScreen extends React.Component {
@@ -35,14 +27,16 @@ export default class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    const { navigation } = this.props
+    let { navigation } = this.props
     this.focusListener = navigation.addListener('didFocus', () => {
       setTimeout(()=>{
         this._GetData()
       },2000) 
     })
   }
-
+  currencyFormat(num) {
+    return 'Rp ' + parseInt(num).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
   componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed)
   }
@@ -55,17 +49,17 @@ export default class HomeScreen extends React.Component {
     BackHandler.exitApp()
     return true
   }
-
   onRefresh() {
-    Initial.paylist
+    this.props.store.paylist
     this.props.store.setLoadingHome()
     setTimeout(()=>{
       this._GetData()
     }, 1000)
   }
+
   async _GetData() {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    const header = {
+    let header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist`, {
@@ -82,7 +76,7 @@ export default class HomeScreen extends React.Component {
           case 200:
             let list = JSON.stringify(resJson.data)
             let json = JSON.parse(list)
-            Initial.paylist = json
+            this.props.store.paylist = json
             this.props.store.getLoadingHome()
             break
           case 500:
@@ -107,7 +101,7 @@ export default class HomeScreen extends React.Component {
 
   async _DeletePaylist(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    const header = {
+    let header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/paylist/` + id, {
@@ -121,8 +115,8 @@ export default class HomeScreen extends React.Component {
       .then(res => {
         switch (resStatus) {
           case 200:
-            alert('Delete Paylist Success')
             setTimeout(()=>{
+              alert('Delete Paylist Success')
               this._GetData()
             },1000) 
             break
@@ -158,7 +152,7 @@ export default class HomeScreen extends React.Component {
 
   async _UpdatePaylistStatus(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT('token')
-    const header = {
+    let header = {
       'Authorization': DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/status/` + id, {
@@ -203,7 +197,7 @@ export default class HomeScreen extends React.Component {
         </View>
       )
     }
-    const filteredPaylist = Initial.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
+    let filteredPaylist =this.props.store.paylist.filter(createFilter(this.state.Search, KEYS_TO_FILTERS))
     let { checked } = this.state
     let pay = filteredPaylist.map((item) => {
       let tgl = new Date(item.CreatedAt)
@@ -213,11 +207,11 @@ export default class HomeScreen extends React.Component {
         checked = false
       }
       return <Card key={item.ID} style={styles.Item}>
-        <Card style={styles.content}>
-          <List.Accordion
+       
+          <List.Accordion titleStyle={{color:'black'}}
             title={item.name}
-            left={props => <List.Icon {...props} icon="monetization-on" />}>
-            <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={item.amount} />
+            left={props => <List.Icon {...props} icon="monetization-on"/>}>
+            <List.Item titleStyle={{ color: 'black' }} style={{ right: 50 }} title={this.currencyFormat(item.amount)} />
             <List.Item style={{ right: 50 }} title={tgl.toDateString()} />
             <Card.Actions style={{ right: 50 }}>
               <Button color='red' onPress={this.Confirm.bind(this, item.ID)} icon="delete">Delete</Button>
@@ -226,11 +220,11 @@ export default class HomeScreen extends React.Component {
                 name: JSON.stringify(item.name),
                 amount: JSON.stringify(item.amount)
               })}>edit</Button>
-              <Checkbox status={checked ? 'checked' : 'unchecked'}
+              <Checkbox status={checked ? 'checked' : 'unchecked'} color='#54c470' uncheckedColor='#54c470'
                 onPress={() => this._UpdatePaylistStatus(item.ID)} />
             </Card.Actions>
           </List.Accordion>
-        </Card>
+       
       </Card>
     })
 
@@ -238,7 +232,7 @@ export default class HomeScreen extends React.Component {
       <Provider>
         <View style={styles.container}>
           <Searchbar
-            style={{ padding: 0, margin: 4 }}
+            style={{ padding: 0, margin: 3}}
             placeholder="search"
             onChangeText={(term) => {this.searchUpdated(term) }}
           />
@@ -253,12 +247,12 @@ export default class HomeScreen extends React.Component {
             }>{pay}
           </ScrollView>
           <Portal>
-            <FAB.Group
+            <FAB.Group fabStyle={{backgroundColor:'#54c470'}}
               open={this.state.open}
-              icon={this.state.open ? 'today' : 'add'}
+              icon={this.state.open ? 'close' : 'add'}
               actions={[
-                { icon: 'create', label: 'Balance', onPress: () => this.props.navigation.navigate('AddBalance') },
-                { icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
+                {style:{backgroundColor:'#F9E48A'},color:'black', icon: 'create', label: 'Balance', onPress: () => this.props.navigation.navigate('AddBalance') },
+                {style:{backgroundColor:'#F9E48A'},color:'black', icon: 'playlist-add', label: 'Paylist', onPress: () => this.props.navigation.navigate('CreatePaylist') },
               ]}
               onStateChange={({ open }) => this.setState({ open })}
               onPress={() => {
@@ -271,9 +265,11 @@ export default class HomeScreen extends React.Component {
           <View>
             <Card>
               <Card.Content style={{backgroundColor:'#eee', borderTopWidth:0.5,}}>
-              <Paragraph>
-              <Total/>
-              </Paragraph>
+              <Text style={{fontWeight:'bold', fontSize:15}}>
+                Total:  
+              {this.currencyFormat(this.props.store.paylist.reduce((sum, i) => 
+               (total = sum + i.amount), 0))}
+              </Text>
               </Card.Content>
             </Card>
           </View>
@@ -289,7 +285,7 @@ HomeScreen.navigationOptions = {
     backgroundColor: '#a9b0ae'
   }
 }
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#eee',

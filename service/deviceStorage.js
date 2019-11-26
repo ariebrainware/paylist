@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native'
 
-const deviceStorage = {
+let deviceStorage = {
   async saveKey(token, valueToSave) {
     try {
       await AsyncStorage.setItem(token, valueToSave)
