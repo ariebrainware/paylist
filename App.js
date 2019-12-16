@@ -1,27 +1,45 @@
-import React, {} from 'react'
-import {StyleSheet, View, Image, Text } from 'react-native'
+import React,{} from 'react'
+import {StyleSheet, View, Image, Text, Dimensions } from 'react-native'
 
 import AppNavigator from './navigation/AppNavigator'
 import { Provider } from 'mobx-react'
 import Initial from './State'
+let width = Dimensions.get('window').width
+let height = Dimensions.get('window').height
 
 export default class App extends React.Component {
   constructor(props){
     super(props)
     this.state={
-      loading:false
+      loading: true
     }
   }
+
+componentDidMount() {
+  setTimeout(()=>{
+    this.setState({loading: false})
+  },2000)
+}
+
   render() {
-    return (
-      <View style={styles.container}>
-         <Provider store={Initial}>
+    if(this.state.loading){
+      return (
+        <View>
+          <Image source={require('./assets/images/splash.png')} style={{width: width, height:height}}>
+          </Image>
+        </View>
+      )
+    } else {
+      return (
+        <View style={styles.container}>
+          <Provider store={Initial}>
            <AppNavigator />
-        </Provider>
-      </View>
-    )
+          </Provider>
+        </View>
+      )
     }
   }
+}
 // export default function App(props) {
 //   let [isLoadingComplete, setLoadingComplete] = useState(false)
 
