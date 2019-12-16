@@ -89,17 +89,13 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fefefe',
-    paddingTop:('8.2%'),
     paddingHorizontal: 20,
-    left:1
   },
   Drawer:{
-   
     justifyContent:'center',
-    margin:1, 
     width:'116.5%',
     height:55,
-    right:22,
+    right:20,
     backgroundColor:'#a9b0ae'
   }
 })

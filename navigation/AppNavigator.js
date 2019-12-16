@@ -14,7 +14,7 @@ import DrawerScreen from '../screens/Drawer'
 import { Easing, Animated } from 'react-native'
 import ReportDetails from '../screens/ReportDetails'
 let headerStyle = {
-  marginTop: Platform.OS === 'ios' ? StatusBar.currentHeight : 0
+  marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
 }
 let transitionConfig = () => {
   return {

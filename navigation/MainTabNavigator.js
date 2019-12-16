@@ -47,23 +47,23 @@ let ReportStack = createStackNavigator(
   config
 )
 
-// ReportStack.navigationOptions = {
-//   tabBarOptions: {
-//     activeTintColor: '#54c470',
-//     inactiveTintColor: 'grey',
-//     inactiveBackgroundColor:'#eee',
-//     activeBackgroundColor: '#eee',
-//   },
-//   tabBarLabel: 'Report',
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={
-//         Platform.OS === 'ios' ? 'ios-archive' : 'md-archive'
-//       }
-//     />
-//   ),
-// }
+ReportStack.navigationOptions = {
+  tabBarOptions: {
+    activeTintColor: '#54c470',
+    inactiveTintColor: 'grey',
+    inactiveBackgroundColor:'#eee',
+    activeBackgroundColor: '#eee',
+  },
+  tabBarLabel: 'Report',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios' ? 'ios-archive' : 'md-archive'
+      }
+    />
+  ),
+}
 
 ReportStack.path = ''
 
@@ -113,7 +113,7 @@ SettingsStack.path = ''
 
 let tabNavigator = createBottomTabNavigator({
   HomeStack,
-  // ReportStack,
+  ReportStack,
   LinksStack,
   SettingsStack,
 })
