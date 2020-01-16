@@ -93,7 +93,7 @@ export default class UpdateUser extends React.Component {
     this.props.navigation.navigate('Main')
     return true
   }
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     let { navigation } = this.props
     let data = JSON.parse(navigation.getParam('name', []))
     this.props.navigation.setParams({ handleUpdate: this._UpdateUser })
@@ -208,6 +208,6 @@ let styles = StyleSheet.create({
     padding: 20,
     flex:1,
     flexDirection: 'column',
-    backgroundColor:'#eee'
+    backgroundColor:'#2e2d2d'
   },
 })

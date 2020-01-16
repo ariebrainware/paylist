@@ -2,47 +2,23 @@ import React, { Component } from 'react'
 import {
   StyleSheet,
   ScrollView,
-  TouchableOpacity,View, BackHandler, Modal
+  TouchableOpacity,View, BackHandler, Modal,TextInput
 } from 'react-native'
 import {IconButton,  ActivityIndicator} from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
 import {observer, inject} from 'mobx-react'
-import stylesheet from '../style/formStyle'
+import DatePicker from 'react-native-datepicker'
 
-let t = require('tcomb-form-native')
-
-let Form = t.form.Form
-let createPaylist = t.struct({
-  name: t.String,
-  amount: t.String,
-})
-
-let option = {
-  stylesheet:stylesheet,
-  fields: {
-    name: {
-      autoCapitalize: 'none',
-      autoCorrect: false,
-    },
-    amount: {
-      autoCapitalize: 'none',
-      autoCorrect: false,
-      keyboardType: 'number-pad'
-    },
-  }
-}
 @inject('store') @observer
 export default class CreatePaylist extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      value: {
-        name: '',
-        amount: '',
-        error: '',
-      }
+      name: '',
+      amount: '',
+      due_date: '',
     }
     this._CreatePaylist = this._CreatePaylist.bind(this)
     this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
@@ -75,8 +51,12 @@ export default class CreatePaylist extends React.Component {
     this.props.navigation.navigate('Main')
     return true
   }
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
+  }
+
+  setDate(newDate){
+      this.setState({ due_date: newDate})
   }
 
   _onChange = (value) => {
@@ -87,20 +67,31 @@ export default class CreatePaylist extends React.Component {
 
   async _CreatePaylist() {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
-    let value = this.refs.form.getValue()
     // If the form is valid...
-    if (value) {
-      let data = {
-        name: value.name,
-        amount: value.amount,
-      }
-      let payload = []
-      for (let property in data) {
-        let encodedKey = encodeURIComponent(property)
-        let encodedValue = encodeURIComponent(data[property])
-        payload.push(encodedKey + "=" + encodedValue)
-      }
-      payload = payload.join("&")
+    if (this.state.name && this.state.amount === ""){
+      alert("field name and amount can't be null")
+      return
+    }
+    if (this.state.name === ""){
+      alert("name can't be null")
+      return
+    }
+    if (this.state.amount === "" || this.state.amount === 0){
+      alert("amount can't be null or zero")
+      return
+    }
+    let data = {
+      name : this.state.name,
+      amount: this.state.amount,
+      due_date: this.state.due_date,
+    }
+    let payload = []
+    for (let property in data) {
+      let encodedKey = encodeURIComponent(property)
+      let encodedValue = encodeURIComponent(data[property])
+      payload.push(encodedKey + "=" + encodedValue)
+    }
+    payload = payload.join("&")
       let header = {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -143,26 +134,30 @@ export default class CreatePaylist extends React.Component {
           console.error(err)
         })
         .done()
-    } else {
-      //form validation error
-      alert('Please fill the empty field')
-    }
   }
 
   render() {
+    let dt = new Date()
+    let date = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate()
     return (
       <View style={styles.container}>
       <ScrollView >
-        <Form
-          ref='form'
-          options={option}
-          type={createPaylist}
-          value={this.state.value}
-          onChange={this._onChange}
-        />
-         <View>
+        <TextInput style={styles.textInput} placeholder="Name" placeholderTextColor='white' onChangeText={(text)=> this.setState({name:text})} />
+        <TextInput style={styles.textInput} placeholder="Amount" placeholderTextColor='white' keyboardType="numeric" onChangeText={(text)=> this.setState({amount:text})}/>
+        <DatePicker
+        style={styles.date} customStyles={{dateText:{color:'white'}}}
+        date={this.state.due_date}
+        mode="date"
+        format="YYYY-MM-DD"
+        placeholder="Due Date (Optional)"
+        minDate={date}
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        onDateChange={(newDate)=>this.setState({due_date:newDate})}
+      />
+        <View>
           {this.props.store.loading && <View>
-            <ActivityIndicator size='small' color='black'/>
+            <ActivityIndicator size='small' color='white' style={{marginTop:7}} />
           </View>}
         </View>
       </ScrollView>
@@ -184,6 +179,17 @@ let styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     flexDirection: 'column',
-    backgroundColor:'#eee'
+    backgroundColor:'#2e2d2d'
   },
+  date:{
+    paddingTop:10,
+    marginHorizontal: 14,
+    width: '96%',
+  },
+  textInput:{
+    backgroundColor:'transparent', 
+    color:'white', 
+    borderBottomWidth:0.5, 
+    borderBottomColor:'#8CAD81'
+  }
 })

@@ -5,30 +5,29 @@ import { Card, Title, Paragraph} from 'react-native-paper'
 export default function LinksScreen() {
   return (
     <View style={styles.container}>
-      <ScrollView >
+      <ScrollView>
         <Card>
-          <Card.Content style={{alignItems:'center', paddingTop:0}}>
-            <Title>PAYLIST APP</Title>
+          <Card.Content style={{alignItems:'center', paddingTop:0,backgroundColor:'#2e2d2d'}}>
+            <Title style={{color:'#8CAD81'}}>PAYLIST APP</Title>
           </Card.Content>
-          <Card.Content>
-            <Paragraph>Pay bill, set budget per month, and jot down some buy list easily with Paylist</Paragraph>
+          <Card.Content style={{backgroundColor:'#2e2d2d'}}>
+            <Paragraph style={{color:'#8CAD81'}}>Pay bill, set budget per month, and jot down some buy list easily with Paylist</Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>
-      <View>
         <Card>
-          <Card.Content style ={{alignContent:'space-around', position:'relative', left:0, right:0 }}>
-            <Title>
+          <Card.Content style ={{alignContent:'space-around', position:'relative', left:0, right:0,backgroundColor:'#2e2d2d'}}>
+            <Title style={{color:'#8CAD81'}}>
               Paylist Team :
             </Title>
             <Paragraph>
-              <Text style={{ color: '#396362', fontWeight:"400",}}
+              <Text style={{ color: '#ccbc58', fontWeight:"400",}}
                 onPress={() => Linking.openURL('https://twitter.com/_nobody404')}>
                 Arie Brainware
               </Text>
             </Paragraph>
             <Paragraph>
-              <Text style={{ color: '#396362', fontWeight:"400" }}
+              <Text style={{ color: '#ccbc58', fontWeight:"400" }}
                 onPress={() => Linking.openURL('https://twitter.com/offler_7')}>
                 Offler Dapit
               </Text>
@@ -36,22 +35,14 @@ export default function LinksScreen() {
           </Card.Content>
         </Card>
       </View>
-    </View>
-  )
-}
-
-LinksScreen.navigationOptions = {
-  title: 'About',
-  headerStyle: {
-    backgroundColor: '#a9b0ae'
-  }
+    )
 }
 
 let styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#2e2d2d',
   },
   Content: {
     fontWeight: 'bold',

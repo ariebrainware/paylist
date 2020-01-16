@@ -25,7 +25,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Allow Paylist to use your location</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -40,13 +40,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
 	<key>NSAppTransportSecurity</key>
-	<!--See http://ste.vn/2015/06/10/configuring-app-transport-security-ios-9-osx-10-11/ -->
 	<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -66,8 +63,6 @@
 	<string>Allow Paylist to use your location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Allow Paylist to use your location</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow Paylist to use your location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Paylist to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
@@ -78,5 +73,7 @@
 	<string>Give Paylist periences permission to access your photos</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Allow Paylist to access your reminders</string>
+	<key>UIAppFonts</key>
+	<array/>
 </dict>
 </plist>
