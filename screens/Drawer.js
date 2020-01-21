@@ -65,9 +65,9 @@ render() {
   return (
     <View style={styles.container}>
       <Card style={styles.Drawer}>
-        <Card.Title style={{alignContent:'center'}} titleStyle={{color:'#ccbc58'}}
+        <Card.Title style={{alignContent:'center'}} titleStyle={{color:'rgba(255,255,255,0.9)'}}
          title='Settings' 
-         left={(props) => <Avatar.Icon{...props} style={{width:40, height:40,backgroundColor:'#2e2d2d'}} size={50} icon="settings" color='#ccbc58' />}>
+         left={(props) => <Avatar.Icon{...props} style={{width:40, height:40,backgroundColor:'#2e2d2d'}} size={50} icon="settings" color='rgba(255,255,255,0.9)' />}>
         </Card.Title>
         </Card>
           <Drawer.Item style={styles.item}
@@ -92,6 +92,7 @@ let styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2e2d2d',
     paddingHorizontal: 20,
+    color:'red'
   },
   Drawer:{
     justifyContent:'center',
@@ -111,8 +112,8 @@ let styles = StyleSheet.create({
     backgroundColor:'#2e2d2d',
   },
   item:{
-    backgroundColor:'#ccbc58',
+    backgroundColor:'white',
     width:width/1.67, 
-    right:25
+    right:25,
   }
 })

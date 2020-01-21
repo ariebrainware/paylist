@@ -103,7 +103,7 @@ android {
 //     signingConfigs {
 //         release {
 //             storeFile file('paylist.keystore')
-//             storePassword System.console().readLine("\nKeystore password:") /* brainware,brainware,p4yl15t*/
+//             storePassword System.console().readLine("\nKeystore password:") /* brainware,brainware,brainware*/
 //             keyAlias System.console().readLine("\nAlias: ")
 //             keyPassword System.console().readLine("\nAlias password: ")
 //     }

@@ -37,7 +37,7 @@ export default class CreatePaylist extends React.Component {
         }}
           onPress={() => params.handleCreate()}>
           <IconButton
-              icon='check' size={28} color='#319e4c'/>
+              icon='check' size={28} color='#8CAD81'/>
         </TouchableOpacity>
     }
   }

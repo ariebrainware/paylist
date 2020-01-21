@@ -63,7 +63,7 @@ export default class SettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     let params = navigation.state.params
     return {
-      title: "My Account",
+      title: "PROFILE",
       headerTintColor: "#fff",
       headerStyle: {
         backgroundColor: "#2e2d2d",
@@ -75,7 +75,7 @@ export default class SettingsScreen extends React.Component {
       headerRight: (
         <Appbar.Action
           icon="menu"
-          color="#8CAD81"
+          color="#fefefe"
           onPress={() => params.showMore()}
         ></Appbar.Action>
       )
@@ -220,7 +220,7 @@ export default class SettingsScreen extends React.Component {
     if (this.props.store.loadingSetting) {
       return (
         <View style={{ padding: 20 }}>
-          <ActivityIndicator />
+          <ActivityIndicator color='black' />
         </View>
       )
     }
@@ -229,22 +229,21 @@ export default class SettingsScreen extends React.Component {
         <Card key={i} style={{ backgroundColor: "#2e2d2d" }}>
           <Card style={styles.username}>
             <Card.Content style={styles.content}>
-              <Title style={{color:'#ccbc58'}}>{val.name}</Title>
-              <Paragraph style={{color:'#ccbc58'}}>{val.email}</Paragraph>
+              <Title style={{color:'#fefefe', fontWeight:'bold'}}>{val.name}</Title>
+              <Paragraph style={{color:'#fefefe', fontWeight:'bold'}}>{val.email}</Paragraph>
             </Card.Content>
           </Card>
           <Card style={{ margin: 1, width: wp("98%"), alignSelf: "center",shadowColor:'transparent', elevation:0 }}>
             <Card.Content style={styles.balance}>
-              <Paragraph style={{ fontWeight: "bold", fontSize: 15, color:'#ccbc58', }}>
+              <Paragraph style={{ fontWeight: "bold", fontSize: 15, color:'#f2f5fa',alignSelf:'center' }}>
                 Your Balance
-              </Paragraph>
-              <Paragraph style={{ fontWeight: "bold", color:'#8CAD81' }}>
+              </Paragraph></Card.Content>
+              <Card.Content style={{backgroundColor:'#ccbc58',height:50,justifyContent:'center'}}>
+              <Paragraph style={{ fontWeight: "bold", color:'rgba(0,0,0,0.7)',alignSelf:'center', fontSize:21}}>
                 {this.currencyFormat(val.balance)}
-              </Paragraph>
-            </Card.Content>
-            <Card.Actions style={{ backgroundColor: '#2e2d2d',shadowColor:'transparent', 
-    elevation:0, }}>
-              <Button
+              </Paragraph></Card.Content>
+            <Card.Actions style={{ backgroundColor: '#2e2d2d', shadowColor:'transparent', elevation:0}}>
+              <Button 
                 color="#ccbc58"
                 onPress={() => this.LoadState()}
                 icon="mode-edit"
@@ -344,14 +343,11 @@ let styles = StyleSheet.create({
     flex: 4,
     alignItems: "center",
     justifyContent: "center",
-    borderBottomWidth:1,
-    borderBottomColor:'#bfbfbf'
+    backgroundColor:'#8CAD81'
   },
   balance: {
     flex: 3,
-    flexDirection: "row",
     paddingTop: 10,
-    justifyContent: "space-between",
     fontWeight: "400",
     backgroundColor: "#2e2d2d",
     shadowColor:'transparent', 

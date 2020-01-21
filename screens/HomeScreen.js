@@ -7,25 +7,16 @@ import {
   BackHandler, Text,
   Alert, Dimensions, Modal, TextInput,
 } from "react-native"
+import { DrawerActions } from "react-navigation-drawer"
 import Config from "../config"
 import deviceStorage from "../service/deviceStorage"
-import { createFilter } from "react-native-search-filter"
-import {
-  List,
-  Card,
-  Checkbox,
-  Button,
-  ActivityIndicator,
-  Provider,
-  Portal,
-  FAB, IconButton
-} from "react-native-paper"
+import {List,Card,Checkbox,Button,ActivityIndicator,Provider,Portal,FAB,Appbar, IconButton} from "react-native-paper"
 import { observer, inject } from "mobx-react"
 import { widthPercentageToDP } from "react-native-responsive-screen"
+
 let width = Dimensions.get('window').width
 let height = Dimensions.get('window').height
 
-let KEYS_TO_FILTERS = ["CreatedAt", "name"]
 @inject("store")
 @observer
 export default class HomeScreen extends React.Component {
@@ -43,12 +34,38 @@ export default class HomeScreen extends React.Component {
     this._GetData = this._GetData.bind(this)
     this._AddBalance = this._AddBalance.bind(this)
     this._GetDataUser = this._GetDataUser.bind(this)
+    this.BalanceLess = this.BalanceLess.bind(this)
   }
 
+  _onMore = () => {
+    //Props to open/close the drawer
+    this.props.navigation.dispatch(DrawerActions.openDrawer())
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    let params = navigation.state.params
+    return {
+      headerStyle: {
+        backgroundColor: "#8CAD81",
+        shadowColor:'transparent', 
+        elevation:0,
+        // borderBottomWidth:0.5,
+        // borderBottomColor: '#70706e'
+      },
+      headerRight: (
+        <Appbar.Action
+          icon="menu"
+          color="white"
+          onPress={() => params.showMore()}
+        ></Appbar.Action>
+      )
+    }
+  }
   componentDidMount() {
     const temp = []
     let { navigation } = this.props
     this.focusListener = navigation.addListener("didFocus", () => {
+      this.BalanceLess()
       setTimeout(() => {
         this._GetData()
         this._GetDataUser()
@@ -64,7 +81,8 @@ export default class HomeScreen extends React.Component {
     )
   }
   UNSAFE_componentWillMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressed)  
+    BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressed) 
+    this.props.navigation.setParams({ showMore: this._onMore.bind(this) }) 
   }
   componentWillUnmount() {
     BackHandler.removeEventListener(
@@ -133,10 +151,6 @@ export default class HomeScreen extends React.Component {
       })
   }
 
-  // searchUpdated(term) {
-  //   this.setState({ Search: term })
-  // }
-
   async _AddBalance(){
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     
@@ -202,6 +216,7 @@ export default class HomeScreen extends React.Component {
             setTimeout(() => {
               alert("Delete Paylist Success")
               this._GetData()
+              this._GetDataUser()
             }, 1000)
             break
           case 404:
@@ -266,7 +281,13 @@ export default class HomeScreen extends React.Component {
               this.setState({
                 checked: this.state[id]
               })
-              alert("Your data has been move to report as PAID Paylist")
+              this.props.store.data.map(item=>{
+                if (item.balance > 0){
+                  alert("Your data has been move to report as PAID Paylist")
+                } else {
+                  alert("Insufficient balance")
+                }
+              })
               this._GetData()
             },2000)
             break
@@ -325,9 +346,14 @@ export default class HomeScreen extends React.Component {
         console.log(error)
       })
   }
-
+  BalanceLess(){
+    this.props.store.data.map((item)=>{
+      if (item.balance < 0){
+        alert('your balance is minus, top up your balance')
+      }
+    })
+  }
   render() {
-    console.log(this.state.data)
     if (this.props.store.loadingHome){
       return (
         <View style={{flex:1, paddingTop:10}}>
@@ -335,20 +361,8 @@ export default class HomeScreen extends React.Component {
           </View>
       )                                                           
     } 
-    // else if (this.state.data == ""){
-    //     return (
-    //       <View style={{backgroundColor:'transparent', justifyContent:'center', alignItems:'center',backfaceVisibility:'visible'}}>
-    //         <IconButton icon="playlist-add" size={30}></IconButton>
-    //         <Text style={{fontSize:14}}>No Data</Text>
-    //       </View>
-    //     )
-    //   }
-    // let filteredPaylist = this.props.store.paylist.filter(
-    //   createFilter(this.state.Search, KEYS_TO_FILTERS)
-    // )
     let { checked } = this.state
-    let paid = <Text style={{flex:1, flexWrap:'wrap', color:'#8CAD81'}}>PAID</Text>
-    let unpaid = <Text style={{color:'#8CAD81'}}>UNPAID</Text>
+    let unpaid = <Text style={{color:'#ccbc58'}}>UNPAID</Text>
     let message
     let pay = this.props.store.paylist.map(item => {
       if (item.completed == false && item.DueDate != '0001-01-01T00:00:00Z') {
@@ -359,7 +373,9 @@ export default class HomeScreen extends React.Component {
         message = unpaid
       }
       return (
-        <Card key={item.ID} style={styles.Item}>
+        <View key={item.ID} >
+        <Text style={{color:'#fefefe', flex:1, left:10, marginBottom:5, marginTop:5}}>{tgl.toDateString()}</Text>
+        <Card style={styles.Item}>
           <List.Accordion style={{backgroundColor:'#f2f2f0'}}
             titleStyle={{ color: "#8CAD81" }}
             title={item.name}
@@ -369,11 +385,11 @@ export default class HomeScreen extends React.Component {
             <Checkbox
                 status={checked ? "checked" : "unchecked"}
                 color="#8CAD81"
-                uncheckedColor="#8CAD81"
+                uncheckedColor="#ccbc58"
                 onPress={this.ConfirmCheck.bind(this, item.ID)}
               />{message}
             <List.Item
-              titleStyle={{color: "black", fontSize:20, fontWeight:'bold',alignSelf:'flex-end' }}
+              titleStyle={{color: "rgba(0,0,0,0.7)", fontSize:20, fontWeight:'bold',alignSelf:'flex-end' }}
               style={{flex:1}}
               title={this.currencyFormat(item.amount)}
             /></View>
@@ -384,12 +400,9 @@ export default class HomeScreen extends React.Component {
               style={{flex:1}}
               title={due_date.toDateString()}
             /></View>
-            <View style={{flexDirection:'row', alignItems:'center', right:45}}>
-            <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e'}}>Created At :</Text>
-            <List.Item style={{ flex:1 }} title={tgl.toDateString()} /></View>
             <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
               <Button
-                color="red"
+                color='rgba(255, 16, 0,0.8)'
                 onPress={this.Confirm.bind(this, item.ID)}
                 icon="delete"
               >
@@ -411,18 +424,20 @@ export default class HomeScreen extends React.Component {
               </Button>
             </Card.Actions>
           </List.Accordion>
-        </Card>
+        </Card></View>
       )
     } else if (item.completed == false && item.DueDate == '0001-01-01T00:00:00Z'){
       let tgl = new Date(item.CreatedAt)
-      let unpaid = <Text style={{color:'#8CAD81'}}>UNPAID</Text>
+      let unpaid = <Text style={{color:'#ccbc58'}}>UNPAID</Text>
       let message
       if (item.completed == false) {
         checked = false
         message = unpaid
       }
       return (
-        <Card key={item.ID} style={styles.Item}>
+        <View key={item.ID}>
+        <Text style={{color:'#fefefe', flex:1, left:10, marginBottom:5, marginTop:5}}>{tgl.toDateString()}</Text>
+        <Card style={styles.Item}>
           <List.Accordion style={{backgroundColor:'#f2f2f0'}}
             titleStyle={{ color: "#8CAD81" }}
             title={item.name}
@@ -432,11 +447,11 @@ export default class HomeScreen extends React.Component {
             <Checkbox
                 status={checked ? "checked" : "unchecked"}
                 color="#8CAD81"
-                uncheckedColor="#8CAD81"
+                uncheckedColor="#ccbc58"
                 onPress={this.ConfirmCheck.bind(this, item.ID)}
               />{message}
             <List.Item
-              titleStyle={{color: "black", fontSize:20, fontWeight:'bold',alignSelf:'flex-end'}}
+              titleStyle={{color: 'rgba(0,0,0,0.7)', fontSize:20, fontWeight:'bold',alignSelf:'flex-end'}}
               style={{flex:1}}
               title={this.currencyFormat(item.amount)}
             /></View>
@@ -447,12 +462,9 @@ export default class HomeScreen extends React.Component {
               style={{flex:1}}
               title={'-'}
             /></View>
-            <View style={{flexDirection:'row', alignItems:'center', right:45}}>
-            <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e'}}>Created At :</Text>
-            <List.Item style={{ flex:1 }} title={tgl.toDateString()} /></View>
             <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
               <Button
-                color="red"
+                color="rgba(255, 16, 0,0.8)"
                 onPress={this.Confirm.bind(this, item.ID)}
                 icon="delete"
               >
@@ -474,44 +486,71 @@ export default class HomeScreen extends React.Component {
               </Button>
             </Card.Actions>
           </List.Accordion>
-        </Card>
+        </Card></View>
       )
     }
   })
     return (
-      <Provider>
+    <Provider>
         <View style={styles.container}>
-          <View>
-            <Card style={{ backgroundColor: "#2e2d2d",shadowColor:'transparent',elevation:0}}>
-              <Card.Content
-                style={{ backgroundColor: "#2e2d2d", alignSelf:'center' }}
-              >
-                <Text style={{ fontWeight: "bold", fontSize: 15, color:'#8CAD81'}}>
-                  Total Expense :
-                  {this.currencyFormat(
-                  this.props.store.paylist.filter(({completed})=> completed === false)
-                  .reduce(
+            <Card style={{shadowColor:'transparent',elevation:0, backgroundColor:'#8CAD81', borderRadius:0}}>
+              <View style={{flexDirection:'row'}}>
+            <Text style={{color:'white', fontSize:24}}> Hi, </Text>
+            <Text style={{fontSize:24,color:'white',fontWeight:'700'}}>
+                  {
+                  this.props.store.data.map(data=>{
+                    return(data.name)
+                    })
+                  }
+                </Text></View>
+              <Card style={{backgroundColor:'#8CAD81',shadowColor:'transparent',elevation:0}}>
+                <Card.Content style={styles.card}>
+                  <Text style={styles.textNumber}>
+                    Your Balance : </Text>
+                    <Text style={styles.text}>{this.currencyFormat(
+                      this.props.store.data.map(item=> {
+                        return (item.balance)
+                      })
+                    )}
+                  </Text>
+                </Card.Content>
+                </Card>
+                <Card style={{backgroundColor:'#8CAD81'}}>
+                <Card.Content style={styles.card1}>
+                  <Text style={styles.textNumber}>
+                    Total Expense : </Text>
+                    <Text style={styles.text}>
+                    {this.currencyFormat(
+                    this.props.store.paylist.filter(({completed})=> completed === false)
+                    .reduce(
                     (sum, i) => (total = sum + i.amount),0
-                  )
-                  )}
-                </Text>
-              </Card.Content>
+                      )
+                    )}
+                  </Text>
+                </Card.Content>
+                </Card>
             </Card>
-          </View> 
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-            refreshControl={
-              <RefreshControl
-                //refresh control used for the Pull to Refresh
-                refreshing={this.props.store.loadingHome}
-                onRefresh={this.onRefresh.bind(this)}
-              />
-            }
-          >
-          {pay}
-          </ScrollView>
-          <Modal visible={this.state.isLoad} animationType="slide" animated={true} transparent={true}>
+           
+            {
+            this.props.store.paylist.filter(({completed})=> completed === false) == "" ? <View style={{paddingTop:25,backgroundColor:'transparent', alignItems:'center',backfaceVisibility:'visible'}}>
+            <IconButton style={{width:50, height:50}} icon="playlist-add" color='gray' size={50}></IconButton>
+            <Text style={{fontSize:16,color:'gray'}}>Opps! You have no paylist</Text>
+            <Text style={{fontSize:16,color:'gray'}}>Go and make one!</Text>
+          </View> : <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          refreshControl={
+            <RefreshControl
+              //refresh control used for the Pull to Refresh
+              refreshing={this.props.store.loadingHome}
+              onRefresh={this.onRefresh.bind(this)}
+            />
+          }
+        >{pay}
+         </ScrollView>
+          }
+          
+          <Modal visible={this.state.isLoad} animationType="slide" animated={true} transparent={true} >
             <View style={{flex:1, width:300, height:100, alignSelf:'center', justifyContent:'center'}}>
              <View style={{backgroundColor:'#454545', borderRadius:5}}> 
             <Text style={{alignSelf:'center', fontSize:20, color:'#ccbc58', marginBottom:10, marginTop:10}}>Add Balance</Text>
@@ -540,16 +579,16 @@ export default class HomeScreen extends React.Component {
               actions={[
                 {
                   style: { backgroundColor: "#F9E48A" },
-                  color: "black",
-                  icon: "create",
-                  label: "Balance",
+                  color: "#333333",
+                  icon: "attach-money",
+                  label: "Add Balance",
                   onPress: () => this.LoadState()
                 },
                 {
                   style: { backgroundColor: "#F9E48A" },
-                  color: "black",
+                  color: "#333333",
                   icon: "playlist-add",
-                  label: "Paylist",
+                  label: "Create Paylist",
                   onPress: () => this.props.navigation.navigate("CreatePaylist")
                 }
               ]}
@@ -570,17 +609,17 @@ export default class HomeScreen extends React.Component {
   }
 }
 
-HomeScreen.navigationOptions = {
-  title: "Home",
-  headerTintColor: '#fff',
-  headerStyle: {
-    backgroundColor: "#2e2d2d",
-    shadowColor:'transparent', 
-    elevation:0,
-    borderBottomWidth:0.5,
-    borderBottomColor: '#70706e'
-  }
-}
+// HomeScreen.navigationOptions = {
+//   //title: "HOME",
+//   //headerTintColor: '#fff',
+//   headerStyle: {
+//     backgroundColor: "#8CAD81",
+//     shadowColor:'transparent', 
+//     //elevation:0,
+//     // borderBottomWidth:0.5,
+//     // borderBottomColor: '#70706e'
+//   }
+// }
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -625,7 +664,7 @@ let styles = StyleSheet.create({
       marginBottom: 10,
       backgroundColor: "#8CAD81",
       width:widthPercentageToDP(33),
-      justifyContent:'space-between'
+      margin:5
     },
     textInput:{
       fontSize:17,
@@ -637,5 +676,35 @@ let styles = StyleSheet.create({
       height: 55, 
       color:'white', 
       alignSelf:'center'
+    },
+    card:{
+      justifyContent:'center',
+      backgroundColor:'#fefefe',
+      marginTop:6, 
+      marginBottom:3,
+      width:width/1.2,
+      alignSelf:'center',
+      borderRadius:8,
+      flexDirection:'row',
+    },
+    card1:{
+      justifyContent:'center',
+      backgroundColor:'#fefefe',
+      marginTop:3, 
+      marginBottom:6,
+      width:width/1.2,
+      alignSelf:'center',
+      borderRadius:8,
+      flexDirection:'row'
+    },
+    textNumber:{
+      alignItems:'center',
+      fontWeight: "700", 
+      fontSize: 16,
+    },
+    text:{
+      fontSize:17,
+      color:'rgba(0,0,0,0.7)',
+      fontWeight:'700',
     }
 })

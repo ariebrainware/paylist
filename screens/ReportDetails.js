@@ -8,44 +8,10 @@ import {
   TouchableOpacity,
   Dimensions
 } from "react-native"
-import { Card, Appbar, Menu, Divider, Button, List } from "react-native-paper"
+import { Card, Appbar, Menu, Divider, Button, List,Checkbox } from "react-native-paper"
 import { inject, observer } from "mobx-react"
 import { PieChart } from "react-native-chart-kit"
 import { widthPercentageToDP } from "react-native-responsive-screen"
-
-// const data = [
-//   {
-//     name: "Seoul",
-//     population: 2150000,
-//     color: "rgba(131, 167, 234, 1)",
-//     legendFontColor: "#7F7F7F",
-//     legendFontSize: 12
-//   },
-//   {
-//     name: "Toronto",
-//     population: 2800000,
-//     color: "gray",
-//     legendFontColor: "#7F7F7F",
-//     legendFontSize: 12
-//   },
-//   {
-//     name: "Beijing",
-//     population: 5276120,
-//     color: "red",
-//     legendFontColor: "#7F7F7F",
-//     legendFontSize: 12
-//   },
-// ]
-
-// const chartConfig = {
-//     backgroundGradientFrom: "#1E2923",
-//     backgroundGradientFromOpacity: 0,
-//     backgroundGradientTo: "#08130D",
-//     backgroundGradientToOpacity: 0.5,
-//     color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-//     strokeWidth: 2, // optional, default 3
-//     barPercentage: 0.5
-//   }
 
 //   let width = Dimensions.get('window').width
 //   let height = Dimensions.get('window').height
@@ -57,7 +23,8 @@ export default class ReportDetails extends React.Component {
     super(props)
     this.state = {
       visible: false,
-      tes: []
+      tes: [],
+      checked:false
     }
     this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
     this._handleMore = this._handleMore.bind(this)
@@ -107,8 +74,8 @@ export default class ReportDetails extends React.Component {
     let { navigation } = this.props
     this.props.store.paylist.map(item => {
       let tgl = new Date(item.CreatedAt)
-      if (tgl.getMonth() === navigation.getParam("id", "") && item.completed === true) {
-        this.state.tes.push({ID: item.ID, name:item.name, amount: item.amount, CreatedAt: item.CreatedAt})
+      if (tgl.getMonth() == navigation.getParam("month","") && tgl.getFullYear()== navigation.getParam("year","") && item.completed === true) {
+        this.state.tes.push({ID: item.ID, name:item.name, amount: item.amount, CreatedAt: item.CreatedAt, completed: item.completed})
       }
     })
   }
@@ -127,7 +94,17 @@ export default class ReportDetails extends React.Component {
   }
 
   render() {
+    let { navigation } = this.props
+    console.log('bulan', navigation.getParam("month",""))
+    console.log('tahun', navigation.getParam("year",""))
+    let { checked } = this.state
+    let paid = <Text style={{color:'#8CAD81'}}>PAID</Text>
+    let message
     let data = this.state.tes.map((val,i) => {
+      if (val.completed == true) {
+        checked = true
+        message = paid
+      }
     let tgl = new Date(val.CreatedAt)
     return (<Card key={i} style={styles.Item}>
           <List.Accordion
@@ -138,14 +115,22 @@ export default class ReportDetails extends React.Component {
             <View style={{flexDirection:'row', alignItems:'center', right:40}}>
             <Text style={{fontSize:17}}>Name : </Text>
             <List.Item
-              titleStyle={{ color: "black" }}
+              titleStyle={{ color: "rgba(0,0,0,0.7)",fontSize:20 }}
               style={{flex:1 }}
               title={val.name}
             /></View>
-            <List.Item titleStyle={{fontWeight:'bold'}}
-              style={{ right: 50}}
+            <View style={{flexDirection:'row', right:50, alignItems:'center'}}>
+            <Checkbox
+                status={checked ? "checked" : "unchecked"}
+                color="#8CAD81"
+                uncheckedColor="#ccbc58"
+                //onPress={this.ConfirmCheck.bind(this, val.ID)}
+              />{message}
+            <List.Item
+              titleStyle={{color: "rgba(0,0,0,0.7)", fontSize:20, fontWeight:'bold',alignSelf:'flex-end'}}
+              style={{flex:1}}
               title={this.currencyFormat(val.amount)}
-            />
+            /></View>
           </List.Accordion>
         </Card>
         )
