@@ -1,10 +1,10 @@
 import React from 'react'
 import { Platform } from 'react-native'
-import { createBottomTabNavigator } from 'react-navigation-tabs'
+import { createBottomTabNavigator, createMaterialBottomTabNavigator } from 'react-navigation-tabs'
 import { createStackNavigator, } from 'react-navigation-stack'
 import TabBarIcon from '../components/TabBarIcon'
 import HomeScreen from '../screens/HomeScreen'
-import LinksScreen from '../screens/LinksScreen'
+import Graphic from '../screens/Graphic'
 import SettingsScreen from '../screens/SettingsScreen'
 import ReportScreen from '../screens/ReportScreen'
 
@@ -22,17 +22,17 @@ let HomeStack = createStackNavigator(
 
 HomeStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: '#54c470',
+    activeTintColor: '#ccbc58',
     inactiveTintColor: 'grey',
-    inactiveBackgroundColor: '#eee',
-    activeBackgroundColor: '#eee',
+    inactiveBackgroundColor: '#2e2d2d',
+    activeBackgroundColor: '#2e2d2d',
   },
   tabBarLabel: 'Home',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
-        Platform.OS === 'ios' ? 'ios-home' : 'md-home'
+        Platform.OS === "ios" ? 'ios-home' : 'md-home'
       }
     />
   ),
@@ -47,47 +47,48 @@ let ReportStack = createStackNavigator(
   config
 )
 
-// ReportStack.navigationOptions = {
-//   tabBarOptions: {
-//     activeTintColor: '#54c470',
-//     inactiveTintColor: 'grey',
-//     inactiveBackgroundColor:'#eee',
-//     activeBackgroundColor: '#eee',
-//   },
-//   tabBarLabel: 'Report',
-//   tabBarIcon: ({ focused }) => (
-//     <TabBarIcon
-//       focused={focused}
-//       name={
-//         Platform.OS === 'ios' ? 'ios-archive' : 'md-archive'
-//       }
-//     />
-//   ),
-// }
+ReportStack.navigationOptions = {
+  tabBarOptions: {
+    activeTintColor: '#ccbc58',
+    inactiveTintColor: 'grey',
+    inactiveBackgroundColor:'#2e2d2d',
+    activeBackgroundColor: '#2e2d2d',
+  },
+  tabBarLabel: 'Report',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios' ? 'ios-archive' : 'md-archive'
+      }
+    />
+  ),
+}
 
 ReportStack.path = ''
 
-let LinksStack = createStackNavigator(
+let GraphicStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Graphic: Graphic,
   },
   config
 )
 
-LinksStack.navigationOptions = {
+GraphicStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: '#54c470',
+    activeTintColor: '#ccbc58',
     inactiveTintColor: 'grey',
-    inactiveBackgroundColor: '#eee',
-    activeBackgroundColor: '#eee',
+    inactiveBackgroundColor: '#2e2d2d',
+    activeBackgroundColor: '#2e2d2d',
   },
-  tabBarLabel: 'About',
+  tabBarLabel: 'Graphic',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-alert' : 'md-alert'} />
+    <TabBarIcon focused={focused} 
+    name={Platform.OS === 'ios' ? 'ios-stats' : 'md-stats'} />
   ),
 }
 
-LinksStack.path = ''
+GraphicStack.path = ''
 
 let SettingsStack = createStackNavigator(
   {
@@ -98,10 +99,10 @@ let SettingsStack = createStackNavigator(
 
 SettingsStack.navigationOptions = {
   tabBarOptions: {
-    activeTintColor: '#54c470',
+    activeTintColor: '#ccbc58',
     inactiveTintColor: 'grey',
-    inactiveBackgroundColor: '#eee',
-    activeBackgroundColor: '#eee',
+    inactiveBackgroundColor: '#2e2d2d',
+    activeBackgroundColor: '#2e2d2d',
   },
   tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
@@ -113,8 +114,8 @@ SettingsStack.path = ''
 
 let tabNavigator = createBottomTabNavigator({
   HomeStack,
-  // ReportStack,
-  LinksStack,
+  ReportStack,
+  GraphicStack,
   SettingsStack,
 })
 

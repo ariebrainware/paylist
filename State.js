@@ -6,6 +6,7 @@ class Initial{
 @observable loadingSetting = true
 @observable data = []
 @observable paylist = []
+@observable year= []
     @action setLoading(){
     this.loading = true
     }

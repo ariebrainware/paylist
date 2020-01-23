@@ -29,6 +29,9 @@
     },
     "ios": {
       "bundleIdentifier": "com.ritalin.paylist"
-    }
-  }
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  },
+  "displayName": "Paylist",
+  "name": "Paylist"
 }
