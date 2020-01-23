@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from "react"
 import {
   ScrollView,
   StyleSheet,
@@ -6,31 +6,30 @@ import {
   TouchableOpacity,
   BackHandler,
   Modal, TextInput
-} from "react-native";
-import Config from "../config";
-import deviceStorage from "../service/deviceStorage";
-import Initial from "../State.js";
-import { observer, inject } from "mobx-react";
-import { IconButton, ActivityIndicator } from "react-native-paper";
-import stylesheet from "../style/formStyle";
+} from "react-native"
+import Config from "../config"
+import deviceStorage from "../service/deviceStorage"
+import Initial from "../State.js"
+import { observer, inject } from "mobx-react"
+import { IconButton, ActivityIndicator } from "react-native-paper"
 
 @inject("store")
 @observer
 export default class EditPassword extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
         OldPassword: "",
         NewPassword: "",
         ConfirmPassword: "",
     }
    
-    this._EditPassword = this._EditPassword.bind(this);
-    this.onBackButtonPressed = this.onBackButtonPressed.bind(this);
+    this._EditPassword = this._EditPassword.bind(this)
+    this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
-    let params = navigation.state.params;
+    let params = navigation.state.params
     return {
       headerRight: Initial.data.map(val => {
         return (
@@ -52,22 +51,22 @@ export default class EditPassword extends React.Component {
               activeOpacity={0.5}
             />
           </TouchableOpacity>
-        );
+        )
       })
-    };
-  };
+    }
+  }
   componentDidMount() {
-    BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressed);
+    BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressed)
   }
   componentWillUnmount() {
     BackHandler.removeEventListener(
       "hardwareBackPress",
       this.onBackButtonPressed
-    );
+    )
   }
   onBackButtonPressed() {
-    this.props.navigation.navigate("Main");
-    return true;
+    this.props.navigation.navigate("Main")
+    return true
   }
   UNSAFE_componentWillMount(){
       this.props.navigation.setParams({ handleUpdate: this._EditPassword})
@@ -75,27 +74,27 @@ export default class EditPassword extends React.Component {
   _onChange = value => {
     this.setState({
       value
-    });
-  };
+    })
+  }
 
   async _EditPassword(id) {
-    let DEMO_TOKEN = await deviceStorage.loadJWT("token");
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     //IF the form valid ..
       let data = {
         OldPassword: this.state.OldPassword,
         NewPassword: this.state.NewPassword,
         ConfirmPassword: this.state.ConfirmPassword
       }
-      let payload = [];
+      let payload = []
       for (let property in data) {
-        let encodedKey = encodeURIComponent(property);
-        let encodedValue = encodeURIComponent(data[property]);
-        payload.push(encodedKey + "=" + encodedValue);
+        let encodedKey = encodeURIComponent(property)
+        let encodedValue = encodeURIComponent(data[property])
+        payload.push(encodedKey + "=" + encodedValue)
       }
-      payload = payload.join("&");
+      payload = payload.join("&")
       //sent post request
       if (data.ConfirmPassword !== data.NewPassword) {
-        alert("confirm password does'n match with new password");
+        alert("confirm password does'n match with new password")
       } else {
         fetch(`${Config.PaylistApiURL}/editpassword/` + id, {
           method: "PUT",
@@ -107,29 +106,29 @@ export default class EditPassword extends React.Component {
           body: payload
         })
           .then(res => {
-            resStatus = res.status;
-            return res.json();
+            resStatus = res.status
+            return res.json()
           })
           .then(res => {
             switch (resStatus) {
               case 200:
-                this.props.store.setLoading();
+                this.props.store.setLoading()
                 setTimeout(() => {
-                  alert("Success Update Password");
-                  this.props.navigation.navigate("SettingsStack");
-                  this.props.store.getLoading();
-                }, 2000);
-                break;
+                  alert("Success Update Password")
+                  this.props.navigation.navigate("SettingsStack")
+                  this.props.store.getLoading()
+                }, 2000)
+                break
               case 404:
-                alert("Old password doesn't match");
-                this.props.store.getLoading();
-                break;
+                alert("Old password doesn't match")
+                this.props.store.getLoading()
+                break
               default:
-                alert("Something wrong, please try again later!");
-                this.props.store.getLoading();
-                break;
+                alert("Something wrong, please try again later!")
+                this.props.store.getLoading()
+                break
             }
-          });
+          })
       }
   }
 
@@ -201,7 +200,7 @@ export default class EditPassword extends React.Component {
           ></View>
         </Modal>
       </View>
-    );
+    )
   }
 }
 
@@ -223,4 +222,4 @@ let styles = StyleSheet.create({
     color:'white', 
     alignSelf:'center'
   }
-});
+})

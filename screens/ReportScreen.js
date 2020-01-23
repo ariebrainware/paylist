@@ -5,7 +5,6 @@ View, Text, FlatList, Alert, StyleSheet, Picker, Dimensions, ScrollView
 import { Card, Title } from 'react-native-paper'
 import { inject, observer } from 'mobx-react'
 import { heightPercentageToDP } from 'react-native-responsive-screen'
-import RNPickerSelect from 'react-native-picker-select'
 
 let width = Dimensions.get('window').width
 let height = Dimensions.get('window').height

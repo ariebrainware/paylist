@@ -1,24 +1,22 @@
-import { createAppContainer } from "react-navigation";
-import { createDrawerNavigator } from "react-navigation-drawer";
-import MainTabNavigator from "./MainTabNavigator";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import { createStackNavigator } from "react-navigation-stack";
-import { Platform, StatusBar } from "react-native";
-import CreatePaylist from "../screens/CreatePaylist";
-import UpdateUser from "../screens/UpdateUser";
-import UpdatePaylist from "../screens/UpdatePaylist";
-import AddBalance from "../screens/AddBalance";
-import EditPassword from "../screens/EditPassword";
-import DrawerScreen from "../screens/Drawer";
+import { createAppContainer } from "react-navigation"
+import { createDrawerNavigator } from "react-navigation-drawer"
+import MainTabNavigator from "./MainTabNavigator"
+import LoginScreen from "../screens/LoginScreen"
+import RegisterScreen from "../screens/RegisterScreen"
+import { createStackNavigator } from "react-navigation-stack"
+import { Platform, StatusBar } from "react-native"
+import CreatePaylist from "../screens/CreatePaylist"
+import UpdatePaylist from "../screens/UpdatePaylist"
+import EditPassword from "../screens/EditPassword"
+import DrawerScreen from "../screens/Drawer"
 import About from "../screens/LinksScreen"
 
-import { Easing, Animated, Dimensions } from "react-native";
-import ReportDetails from "../screens/ReportDetails";
+import { Easing, Animated, Dimensions } from "react-native"
+import ReportDetails from "../screens/ReportDetails"
 let headerStyle = {
   marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
-};
-let width = Dimensions.get("window").width;
+}
+let width = Dimensions.get("window").width
 
 let transitionConfig = () => {
   return {
@@ -29,23 +27,23 @@ let transitionConfig = () => {
       useNativeDriver: true
     },
     screenInterpolator: sceneProps => {
-      let { layout, position, scene } = sceneProps;
+      let { layout, position, scene } = sceneProps
 
-      let thisSceneIndex = scene.index;
-      let width = layout.initWidth;
+      let thisSceneIndex = scene.index
+      let width = layout.initWidth
 
       let translateX = position.interpolate({
         inputRange: [thisSceneIndex - 1, thisSceneIndex],
         outputRange: [-width, 0],
         extrapolate: "clamp"
-      });
+      })
 
       return {
         transform: [{ translateX }]
-      };
+      }
     }
-  };
-};
+  }
+}
 
 let DrawerNavigator = createDrawerNavigator(
   {
@@ -61,7 +59,7 @@ let DrawerNavigator = createDrawerNavigator(
     headerStyle,
     drawerWidth: width / 1.6,
   }
-);
+)
 
 export default createAppContainer(
   createStackNavigator(
@@ -103,25 +101,6 @@ export default createAppContainer(
           }
         }
       },
-      UpdateUser: {
-        screen: UpdateUser,
-        navigationOptions: {
-          title: "Edit Data",
-          headerTitleStyle: {
-            fontSize: 19,
-            textAlign: "center"
-          },
-          headerStyle,
-          headerTintColor: "#fff",
-          headerStyle: {
-            backgroundColor: "#2e2d2d",
-            shadowColor: "transparent",
-            elevation: 0,
-            borderBottomWidth: 0.5,
-            borderBottomColor: "#70706e"
-          }
-        }
-      },
       UpdatePaylist: {
         screen: UpdatePaylist,
         navigationOptions: {
@@ -138,20 +117,6 @@ export default createAppContainer(
             elevation: 0,
             borderBottomWidth: 0.5,
             borderBottomColor: "#70706e"
-          }
-        }
-      },
-      AddBalance: {
-        screen: AddBalance,
-        navigationOptions: {
-          title: "Add Balance",
-          headerTitleStyle: {
-            fontSize: 19,
-            textAlign: "center"
-          },
-          headerStyle,
-          headerStyle: {
-            backgroundColor: "#a9b0ae"
           }
         }
       },
