@@ -4,7 +4,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest --watchAll",
-    "postinstall": "jetify"
+    "postinstall": "jetify",
+    "build:linux": "./android/gradlew assembleRelease --stacktrace -Dorg.gradle.daemon=false"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.7.1",
