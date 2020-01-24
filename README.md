@@ -1,6 +1,6 @@
 # Paylist
 
-Record expenes and income easily
+Record expense and income easily
 
 ## Setup
 
