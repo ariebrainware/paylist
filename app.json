@@ -28,7 +28,10 @@
       "package": "com.ritalin.paylist"
     },
     "ios": {
-      "supportsTablet": true
-    }
-  }
+      "bundleIdentifier": "com.ritalin.paylist"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
+  },
+  "displayName": "Paylist",
+  "name": "Paylist"
 }

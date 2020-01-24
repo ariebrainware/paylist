@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Image} from 'react-native'
+import { StyleSheet, View, Dimensions, Platform} from 'react-native'
 import { Drawer, Card, Avatar, } from 'react-native-paper'
 import deviceStorage from '../service/deviceStorage'
 import Config from '../config'
@@ -11,6 +11,8 @@ import {
   removeOrientationListener as rol
 } from 'react-native-responsive-screen'
 
+let width = Dimensions.get('window').width
+let height = Dimensions.get('window').height
 @inject('store') @observer
 export default class DrawerScreen extends React.Component {
   constructor(){
@@ -30,11 +32,11 @@ componentDidMount(){
   loc(this)
 }
 componentWillUnmount(){
-  rol()
+  rol(this)
 }
 async _handleLogOut(){
     let DEMO_TOKEN = await deviceStorage.deleteJWT('token')
-    const header = {
+    let header = {
       'Authorization' : DEMO_TOKEN
     }
     fetch(`${Config.PaylistApiURL}/users/signout`, {
@@ -63,41 +65,55 @@ render() {
   return (
     <View style={styles.container}>
       <Card style={styles.Drawer}>
-        <Card.Title
-        title='Settings'
-         left={(props) => <Avatar.Icon{...props} style={{width:40, height:40,backgroundColor:'#fff'}} size={50} icon="settings"/>}>
+        <Card.Title style={{alignContent:'center'}} titleStyle={{color:'rgba(255,255,255,0.9)'}}
+         title='Settings' 
+         left={(props) => <Avatar.Icon{...props} style={{width:40, height:40,backgroundColor:'#2e2d2d'}} size={50} icon="settings" color='rgba(255,255,255,0.9)' />}>
         </Card.Title>
         </Card>
-        <Card style={{margin:2, width:500, right:20}}>
-            <Drawer.Item
+          <Drawer.Item style={styles.item}
               icon='lock'
               label="Change Password"
-              onPress={() => this.props.navigation.navigate('EditPassword')}/>
-        </Card>
-        <Card style={{margin:2, width:500, right:20}}>
-          <Drawer.Item
+              onPress={() => this.props.navigation.navigate('EditPassword')}/>     
+          <Drawer.Item style={styles.item}
+            icon='info'
+            label="About"
+            onPress={() => this.props.navigation.navigate('About')}/>
+          <Drawer.Item style={styles.item}
             icon='arrow-forward'
             label="Logout"
             onPress={this._handleLogOut}/>
-        </Card>
     </View>
     )
   }
 }
     
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignContent:'flex-end',
-    backgroundColor: '#fefefe',
-    paddingTop:hp(2.7),
-    paddingHorizontal: 20
+    backgroundColor: '#2e2d2d',
+    paddingHorizontal: 20,
+    color:'red'
   },
   Drawer:{
+    justifyContent:'center',
+    width:width,
+    height:55,
+    right:20,
+    backgroundColor:'#2e2d2d',
+    elevation: 0,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#70706e",
+    marginBottom:5
+  },
+  card:{
     margin:2, 
-    width:wp(100),
-    height:60, 
-    right:22,
-    backgroundColor:'#a9b0ae'
+    width:wp('70.7%'), 
+    right:20,
+    backgroundColor:'#2e2d2d',
+  },
+  item:{
+    backgroundColor:'white',
+    width:width/1.67, 
+    right:25,
   }
 })

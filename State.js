@@ -1,11 +1,12 @@
-import {observable, action, autorun} from 'mobx'
+import {observable, action} from 'mobx'
 
 class Initial{
-@observable loading
+@observable loading = false
 @observable loadingHome = true
 @observable loadingSetting = true
 @observable data = []
 @observable paylist = []
+@observable year= []
     @action setLoading(){
     this.loading = true
     }
