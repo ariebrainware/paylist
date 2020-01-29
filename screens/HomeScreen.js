@@ -28,7 +28,8 @@ export default class HomeScreen extends React.Component {
       checked: false,
       data:[],
       isLoad:false,
-      balance:''
+      balance:'',
+      coba:[]
     }
     this._DeletePaylist = this._DeletePaylist.bind(this)
     this._GetData = this._GetData.bind(this)
@@ -62,14 +63,14 @@ export default class HomeScreen extends React.Component {
     }
   }
   componentDidMount() {
-    const temp = []
+    //this.tes()
     let { navigation } = this.props
     this.focusListener = navigation.addListener("didFocus", () => {
-      this.BalanceLess()
       setTimeout(() => {
         this._GetData()
         this._GetDataUser()
-      }, 2000)
+      }, 1000)
+      this.BalanceLess()
     })
   }
   currencyFormat(num) {
@@ -101,7 +102,7 @@ export default class HomeScreen extends React.Component {
     this.props.store.setLoadingHome()
     setTimeout(() => {
       this._GetData()
-    }, 1000)
+    }, 800)
   }
 
   LoadState(){
@@ -126,7 +127,6 @@ export default class HomeScreen extends React.Component {
         return res.json()
       })
       .then(resJson => {
-        this.setState({data : resJson.data})
         switch (resStatus) {
           case 200:
             let list = JSON.stringify(resJson.data)
@@ -285,7 +285,7 @@ export default class HomeScreen extends React.Component {
                 if (item.balance > 0){
                   alert("Your data has been move to report as PAID Paylist")
                 } else {
-                  alert("Insufficient balance")
+                  alert("Insufficient Balance")
                 }
               })
               this._GetData()
@@ -349,10 +349,13 @@ export default class HomeScreen extends React.Component {
   BalanceLess(){
     this.props.store.data.map((item)=>{
       if (item.balance < 0){
-        alert('your balance is minus, top up your balance')
+        alert('your balance is minus, add your balance')
       }
     })
   }
+  Capitalize(str){
+    return str.charAt(0).toUpperCase() + str.slice(1);
+    }
   render() {
     if (this.props.store.loadingHome){
       return (
@@ -364,132 +367,11 @@ export default class HomeScreen extends React.Component {
     let { checked } = this.state
     let unpaid = <Text style={{color:'#ccbc58'}}>UNPAID</Text>
     let message
-    let pay = this.props.store.paylist.map(item => {
-      if (item.completed == false && item.DueDate != '0001-01-01T00:00:00Z') {
-      let tgl = new Date(item.CreatedAt)
-      let due_date = new Date(item.DueDate)
-      if (item.completed == false) {
-        checked = false
-        message = unpaid
-      }
-      return (
-        <View key={item.ID} >
-        <Text style={{color:'#fefefe', flex:1, left:10, marginBottom:5, marginTop:5}}>{tgl.toDateString()}</Text>
-        <Card style={styles.Item}>
-          <List.Accordion style={{backgroundColor:'#f2f2f0'}}
-            titleStyle={{ color: "#8CAD81" }}
-            title={item.name}
-            left={props => <List.Icon {...props} icon="monetization-on" color='#8CAD81'/>}
-          >
-            <View style={{flexDirection:'row', alignItems:'center', right:50}}>
-            <Checkbox
-                status={checked ? "checked" : "unchecked"}
-                color="#8CAD81"
-                uncheckedColor="#ccbc58"
-                onPress={this.ConfirmCheck.bind(this, item.ID)}
-              />{message}
-            <List.Item
-              titleStyle={{color: "rgba(0,0,0,0.7)", fontSize:20, fontWeight:'bold',alignSelf:'flex-end' }}
-              style={{flex:1}}
-              title={this.currencyFormat(item.amount)}
-            /></View>
-            <View style={{flexDirection:'row', alignItems:'center', right:45}}>
-            <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e',alignSelf:'center'}}>Due Date :</Text>
-            <List.Item
-              titleStyle={{ color: "black" }}
-              style={{flex:1}}
-              title={due_date.toDateString()}
-            /></View>
-            <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
-              <Button
-                color='rgba(255, 16, 0,0.8)'
-                onPress={this.Confirm.bind(this, item.ID)}
-                icon="delete"
-              >
-                Delete
-              </Button>
-              <Button
-                color="black"
-                icon="edit"
-                onPress={() =>
-                  this.props.navigation.navigate("UpdatePaylist", {
-                    id: item.ID,
-                    name: JSON.stringify(item.name),
-                    amount: JSON.stringify(item.amount),
-                    due_date: JSON.stringify(due_date)
-                  })
-                }
-              >
-                edit
-              </Button>
-            </Card.Actions>
-          </List.Accordion>
-        </Card></View>
-      )
-    } else if (item.completed == false && item.DueDate == '0001-01-01T00:00:00Z'){
-      let tgl = new Date(item.CreatedAt)
-      let unpaid = <Text style={{color:'#ccbc58'}}>UNPAID</Text>
-      let message
-      if (item.completed == false) {
-        checked = false
-        message = unpaid
-      }
-      return (
-        <View key={item.ID}>
-        <Text style={{color:'#fefefe', flex:1, left:10, marginBottom:5, marginTop:5}}>{tgl.toDateString()}</Text>
-        <Card style={styles.Item}>
-          <List.Accordion style={{backgroundColor:'#f2f2f0'}}
-            titleStyle={{ color: "#8CAD81" }}
-            title={item.name}
-            left={props => <List.Icon {...props} icon="monetization-on" color='#8CAD81'/>}
-          >
-            <View style={{flexDirection:'row', right:50, alignItems:'center'}}>
-            <Checkbox
-                status={checked ? "checked" : "unchecked"}
-                color="#8CAD81"
-                uncheckedColor="#ccbc58"
-                onPress={this.ConfirmCheck.bind(this, item.ID)}
-              />{message}
-            <List.Item
-              titleStyle={{color: 'rgba(0,0,0,0.7)', fontSize:20, fontWeight:'bold',alignSelf:'flex-end'}}
-              style={{flex:1}}
-              title={this.currencyFormat(item.amount)}
-            /></View>
-            <View style={{flexDirection:'row', right:45}}>
-            <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e',alignSelf:'center'}}>Due Date :</Text>
-            <List.Item
-              titleStyle={{ color: "black" }}
-              style={{flex:1}}
-              title={'-'}
-            /></View>
-            <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
-              <Button
-                color="rgba(255, 16, 0,0.8)"
-                onPress={this.Confirm.bind(this, item.ID)}
-                icon="delete"
-              >
-                Delete
-              </Button>
-              <Button
-                color="black"
-                icon="edit"
-                onPress={() =>
-                  this.props.navigation.navigate("UpdatePaylist", {
-                    id: item.ID,
-                    name: JSON.stringify(item.name),
-                    amount: JSON.stringify(item.amount),
-                    due_date: JSON.stringify('')
-                  })
-                }
-              >
-                edit
-              </Button>
-            </Card.Actions>
-          </List.Accordion>
-        </Card></View>
-      )
-    }
-  })
+    let group = this.props.store.paylist.filter(({completed})=> completed === false)
+    .reduce((r, a) => {
+      r[new Date(a.CreatedAt).toDateString()] = [...r[new Date(a.CreatedAt).toDateString()] || [], a]
+      return r
+     }, {})
     return (
     <Provider>
         <View style={styles.container}>
@@ -499,7 +381,7 @@ export default class HomeScreen extends React.Component {
             <Text style={{fontSize:24,color:'white',fontWeight:'700'}}>
                   {
                   this.props.store.data.map(data=>{
-                    return(data.name)
+                    return(this.Capitalize(data.name))
                     })
                   }
                 </Text></View>
@@ -530,7 +412,6 @@ export default class HomeScreen extends React.Component {
                 </Card.Content>
                 </Card>
             </Card>
-           
             {
             this.props.store.paylist.filter(({completed})=> completed === false) == "" ? <View style={{paddingTop:25,backgroundColor:'transparent', alignItems:'center',backfaceVisibility:'visible'}}>
             <IconButton style={{width:50, height:50}} icon="playlist-add" color='gray' size={50}></IconButton>
@@ -546,12 +427,140 @@ export default class HomeScreen extends React.Component {
               onRefresh={this.onRefresh.bind(this)}
             />
           }
-        >{pay}
+        >{Object.keys(group).map((i, val)=>{
+          return (
+          <View key={val}>
+            <Text style={{color:'#fefefe', flex:1, left:10, marginBottom:5, marginTop:5}}>{i}</Text>
+            {group[i].map((k,item)=>{
+              if (k.completed == false && k.DueDate != '0001-01-01T00:00:00Z') {
+               let due_date = new Date(k.DueDate)
+               if (k.completed == false) {
+                 checked = false
+                 message = unpaid
+               }
+               return (
+                 <View key={item}>
+                 <Card key={item} style={styles.Item}>
+                   <List.Accordion style={{backgroundColor:'#f2f2f0'}}
+                     titleStyle={{ color: "#8CAD81" }}
+                     title={k.name}
+                     left={props => <List.Icon {...props} icon="monetization-on" color='#8CAD81'/>}
+                   >
+                     <View style={{flexDirection:'row', alignItems:'center', right:50}}>
+                     <Checkbox
+                         status={checked ? "checked" : "unchecked"}
+                         color="#8CAD81"
+                         uncheckedColor="#ccbc58"
+                         onPress={this.ConfirmCheck.bind(this, k.ID)}
+                       />{message}
+                     <List.Item
+                       titleStyle={{color: "rgba(0,0,0,0.7)", fontSize:20, fontWeight:'bold',alignSelf:'flex-end' }}
+                       style={{flex:1}}
+                       title={this.currencyFormat(k.amount)}
+                     /></View>
+                     <View style={{flexDirection:'row', alignItems:'center', right:45}}>
+                     <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e',alignSelf:'center'}}>Due Date :</Text>
+                     <List.Item
+                       titleStyle={{ color: "black" }}
+                       style={{flex:1}}
+                       title={due_date.toDateString()}
+                     /></View>
+                     <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
+                       <Button
+                         color='rgba(255, 16, 0,0.8)'
+                         onPress={this.Confirm.bind(this, k.ID)}
+                         icon="delete"
+                       >
+                         Delete
+                       </Button>
+                       <Button
+                         color="black"
+                         icon="edit"
+                         onPress={() =>
+                           this.props.navigation.navigate("UpdatePaylist", {
+                             id: k.ID,
+                             name: JSON.stringify(k.name),
+                             amount: JSON.stringify(k.amount),
+                             due_date: JSON.stringify(due_date)
+                           })
+                         }
+                       >
+                         edit
+                       </Button>
+                     </Card.Actions>
+                   </List.Accordion>
+                 </Card></View>
+               )
+              }  else if (k.completed == false && k.DueDate == '0001-01-01T00:00:00Z'){
+               let unpaid = <Text style={{color:'#ccbc58'}}>UNPAID</Text>
+               let message
+               if (k.completed == false) {
+                 checked = false
+                 message = unpaid
+               }
+               return (
+                 <View key={item}>
+                 <Card key={item} style={styles.Item}>
+                   <List.Accordion style={{backgroundColor:'#f2f2f0'}}
+                     titleStyle={{ color: "#8CAD81" }}
+                     title={k.name}
+                     left={props => <List.Icon {...props} icon="monetization-on" color='#8CAD81'/>}
+                   >
+                     <View style={{flexDirection:'row', right:50, alignItems:'center'}}>
+                     <Checkbox
+                         status={checked ? "checked" : "unchecked"}
+                         color="#8CAD81"
+                         uncheckedColor="#ccbc58"
+                         onPress={this.ConfirmCheck.bind(this, k.ID)}
+                       />{message}
+                     <List.Item
+                       titleStyle={{color: 'rgba(0,0,0,0.7)', fontSize:20, fontWeight:'bold',alignSelf:'flex-end'}}
+                       style={{flex:1}}
+                       title={this.currencyFormat(k.amount)}
+                     /></View>
+                     <View style={{flexDirection:'row', right:45}}>
+                     <Text style={{fontSize:17, fontWeight:'300', color:'#6e6e6e',alignSelf:'center'}}>Due Date :</Text>
+                     <List.Item
+                       titleStyle={{ color: "black" }}
+                       style={{flex:1}}
+                       title={'-'}
+                     /></View>
+                     <Card.Actions style={{ flex:1, alignSelf:'flex-end' }}>
+                       <Button
+                         color="rgba(255, 16, 0,0.8)"
+                         onPress={this.Confirm.bind(this, k.ID)}
+                         icon="delete"
+                       >
+                         Delete
+                       </Button>
+                       <Button
+                         color="black"
+                         icon="edit"
+                         onPress={() =>
+                           this.props.navigation.navigate("UpdatePaylist", {
+                             id: k.ID,
+                             name: JSON.stringify(k.name),
+                             amount: JSON.stringify(k.amount),
+                             due_date: JSON.stringify('')
+                           })
+                         }
+                       >
+                         edit
+                       </Button>
+                     </Card.Actions>
+                   </List.Accordion>
+                 </Card></View>
+               )
+             } 
+           })
+           }
+          </View>)
+        })}
          </ScrollView>
           }
           
           <Modal visible={this.state.isLoad} animationType="slide" animated={true} transparent={true} >
-            <View style={{flex:1, width:300, height:100, alignSelf:'center', justifyContent:'center'}}>
+            <View style={{flex:1, width:width/1.4, alignSelf:'center', justifyContent:'center'}}>
              <View style={{backgroundColor:'#454545', borderRadius:5}}> 
             <Text style={{alignSelf:'center', fontSize:20, color:'#ccbc58', marginBottom:10, marginTop:10}}>Add Balance</Text>
             <TextInput value={this.state.balance} style={styles.textInput} 
@@ -643,7 +652,7 @@ let styles = StyleSheet.create({
     height: 50
   },
   Item: {
-    width: widthPercentageToDP("96%"),
+    width:width-10,
     flex:1,
     alignSelf:'center',
     margin: 1.5,
@@ -663,7 +672,7 @@ let styles = StyleSheet.create({
       textAlign: "center",
       marginBottom: 10,
       backgroundColor: "#8CAD81",
-      width:widthPercentageToDP(33),
+      width:width/3,
       margin:5
     },
     textInput:{
