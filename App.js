@@ -5,6 +5,7 @@ import { Provider } from 'mobx-react'
 import Initial from './State'
 import AppIntroSlider from 'react-native-app-intro-slider'
 import AsyncStorage from '@react-native-community/async-storage'
+
 let width = Dimensions.get('window').width
 let height = Dimensions.get('window').height
 
@@ -16,6 +17,7 @@ export default class App extends React.Component {
       intro:false
     }
   }
+
 
 componentDidMount() {
   setTimeout(()=>{
@@ -68,7 +70,7 @@ _onSkip=()=>{
       )
     } else {
       return(
-        <AppIntroSlider dotStyle={{backgroundColor:'rgba(140, 173, 129,0.5)'}}
+        <AppIntroSlider dotStyle={{backgroundColor:'rgba(255,255,255,0.5)'}}
         slides={slides}
         renderItem={this._renderItem}
         onDone={this._onDone}
@@ -83,16 +85,16 @@ let slides =[
   {
     key: 's1',
     //text: 'Best Recharge offers',
-    title: 'Manage your expenses with Paylist',
+    title: 'Manage your Expenses with Paylist',
     image: require('./assets/images/intro1.png'),
-    backgroundColor: '#2e2d2d',
+    backgroundColor: '#8CAD81',
   },
   {
     key: 's2',
-    title: 'Simply add any of your expenses for you to track',
+    title: 'Simply add any of your Expenses for you to Track',
    //text: 'Upto 25% off on Domestic Flights',
     image: require('./assets/images/intro2.png'),
-    backgroundColor: '#2e2d2d',
+    backgroundColor: '#ccbc58',
   },
   {
     key: 's3',
@@ -109,7 +111,7 @@ let styles = StyleSheet.create({
     backgroundColor: '#ccc',
   },
   image:{
-    width:width/1.5,
+    width:width/2,
     height:height/2
   },
   text:{
@@ -120,8 +122,9 @@ let styles = StyleSheet.create({
   },
   title:{
     fontSize:25,
-    color:'grey',
+    color:'white',
     textAlign:'center',
     marginBottom:16,
+    fontWeight:"700"
   }
 })
