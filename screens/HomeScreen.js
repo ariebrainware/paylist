@@ -5,91 +5,15 @@ import {
   RefreshControl,
   View,
   BackHandler, Text,
-  Alert, Dimensions, Modal, TextInput,AppState
+  Alert, Dimensions, Modal, TextInput,
 } from "react-native"
 import { DrawerActions } from "react-navigation-drawer"
 import Config from "../config"
 import deviceStorage from "../service/deviceStorage"
 import {List,Card,Checkbox,Button,ActivityIndicator,Provider,Portal,FAB,Appbar, IconButton} from "react-native-paper"
 import { observer, inject } from "mobx-react"
-import OneSignal from "react-native-onesignal"
-import BackgroundJob from 'react-native-background-job'
-import Initial from '../State'
 let width = Dimensions.get('window').width
 let height = Dimensions.get('window').height
-
-
-
-backgroundJob = {
-  jobKey: "notification",
-  job: () => Initial.paylist.map(item=>{
-      let hour = new Date().toLocaleTimeString()
-      console.log('h',hour)
-      let due_date = new Date(item.DueDate).toDateString()
-      if (due_date == new Date().toDateString()){
-        let body = {
-          "include_player_ids" : ["All"],
-          "contents" : {
-            "en" : "Some of Your Paylist Due Today"
-          },
-          "headings" : {
-            "en" : "Reminder!"
-          },
-          "data" : {
-            "Data":"Value"
-          },
-          "subtitle" : {
-            "en" : "Subtitle"
-          },
-          "mutable_content" : false,
-          "android_sound" : null,
-          "smallIcon" : "ic_stat_onesignal_default",
-          "largeIcon" : "ic_onesignal_large_icon_default",
-          "largeIconAccentColor":"FF900FF",
-         "big_picture" : null,
-          "android_led_color" : "FF",
-          "android_accent_color" : "FF",
-          "android_group" : null,
-          "android_visibility" : 0,
-          "app_id" : "22b9f6c5-3440-40ec-ae4b-cae3edbab2b3"
-        }
-        let header ={
-            "Authorization":"Basic ODc1ZjlhMDItZWQ1ZC00MTFhLWE3ZDktYmYxZWFlN2M0NTlk",
-            "Content-Type":"application/json; charset=utf-8",
-          }
-            fetch('https://onesignal.com/api/v1/notifications',{
-            method:"POST",
-            headers:header,
-            body:JSON.stringify(body)
-            })
-            .then(res =>{
-              console.log('res',res.status)
-              let TOKEN = deviceStorage.loadJWT("token")
-              console.log('tkn',TOKEN)
-            })
-            .catch(err => {
-              console.error('error',err)
-            })
-            .done()
-      }
-    })
-  }
-
-  BackgroundJob.register(backgroundJob)
-  var backgroundSchedule = {
-    jobKey: "notification",
-    exact: true,
-    period: 1000000,  //28800000, //8 Hours //43200000 // 12 Hours
-   // networkType:NETWORK_TYPE_NONE,
-    timeout:1000,
-    alwaysRunning: true,
-    persist: true,
-    allowExecutionInForeground: true,
-   }
-    
-   BackgroundJob.schedule(backgroundSchedule)
-     .then(() => console.log("Success"))
-     .catch(err => console.err(err));
 
 @inject("store")
 @observer
@@ -97,7 +21,6 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      appState: AppState.currentState,
       open: false,
       checked: false,
       data:[],
@@ -109,7 +32,6 @@ export default class HomeScreen extends React.Component {
     this._AddBalance = this._AddBalance.bind(this)
     this._GetDataUser = this._GetDataUser.bind(this)
     this.BalanceLess = this.BalanceLess.bind(this)
-    //this.sendMessage = this.sendMessage.bind(this)
   }
 
   _onMore = () => {
@@ -134,69 +56,8 @@ export default class HomeScreen extends React.Component {
       )
     }
   }
-  onIds(device) {
-    console.log('Device info: ', device);
-  }
-  // sendMessage=({nextAppState})=>{
-  //   if (this.state.appState.match(/inactive|background/) && nextAppState ==='active'){
-  //     console.log('app come to foreground')
-  //   } else {
-  //    this.setState({appState:nextAppState})
-  //    if (this.state.appState == "background"){
-  //     this.props.store.paylist.map(item=>{
-  //       let hour = String(new Date().toLocaleTimeString())
-  //       console.log('h',hour)
-  //       let due_date = new Date(item.DueDate).toDateString()
-  //       if (due_date == new Date().toDateString()){
-  //         let body = {
-  //           "include_player_ids" : ["5c925dec-3ecd-4e79-93f5-81aeeddffa09"],
-  //           "contents" : {
-  //             "en" : "Some of Your Paylist Due Today"
-  //           },
-  //           "headings" : {
-  //             "en" : "Reminder!"
-  //           },
-  //           "data" : {
-  //             "Data":"Value"
-  //           },
-  //           "subtitle" : {
-  //             "en" : "Subtitle"
-  //           },
-  //           "mutable_content" : false,
-  //           //"android_sound" : null,
-  //           //"small_icon" : "ic_stat_onesignal_default",
-  //           "largeIcon" : "ic_onesignal_large_icon_default",
-  //           "largeIconAccentColor":"FF900FF",
-  //          //"big_picture" : null,
-  //           "android_led_color" : "FF",
-  //           "android_accent_color" : "FF",
-  //           "android_group" : null,
-  //           "android_visibility" : 0,
-  //           "app_id" : "22b9f6c5-3440-40ec-ae4b-cae3edbab2b3"
-  //         }
-  //         let header ={
-  //             "Authorization":"Basic ODc1ZjlhMDItZWQ1ZC00MTFhLWE3ZDktYmYxZWFlN2M0NTlk",
-  //             "Content-Type":"application/json; charset=utf-8",
-  //           }
-  //             fetch('https://onesignal.com/api/v1/notifications',{
-  //             method:"POST",
-  //             headers:header,
-  //             body:JSON.stringify(body)
-  //             })
-  //             .then(res =>{
-  //               console.log('res',res.status)
-  //             })
-  //             .catch(err => {
-  //               console.error('error',err)
-  //             })
-  //             .done()
-  //       }
-  //     })
-  //   }
-  //   }
-  // }
+  
   componentDidMount(){
-    //AppState.addEventListener('change', this.sendMessage)
     let { navigation } = this.props
     this.focusListener = navigation.addListener("didFocus", () => {
       setTimeout(() => {
@@ -214,28 +75,16 @@ export default class HomeScreen extends React.Component {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
     )
   }
-//   onReceived(notification) {
-//     console.log("Notification received: ", notification);
-// }
 
-// onOpened(openResult) {
-//     console.log('Message: ', openResult.notification.payload.body);
-//     console.log('Data: ', openResult.notification.payload.additionalData);
-//     console.log('isActive: ', openResult.notification.isAppInFocus);
-//}
   UNSAFE_componentWillMount() {
     BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressed) 
     this.props.navigation.setParams({ showMore: this._onMore.bind(this) }) 
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    clearInterval()
   }
   componentWillUnmount() {
     BackHandler.removeEventListener(
       "hardwareBackPress",
       this.onBackButtonPressed
     )
-    //AppState.removeEventListener('change', this.sendMessage)
     this.focusListener.remove()
   }
 
@@ -763,17 +612,6 @@ render() {
   }
 }
 
-// HomeScreen.navigationOptions = {
-//   //title: "HOME",
-//   //headerTintColor: '#fff',
-//   headerStyle: {
-//     backgroundColor: "#8CAD81",
-//     shadowColor:'transparent', 
-//     //elevation:0,
-//     // borderBottomWidth:0.5,
-//     // borderBottomColor: '#70706e'
-//   }
-// }
 let styles = StyleSheet.create({
   container: {
     flex: 1,
