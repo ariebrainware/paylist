@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
   BackHandler,
-  Modal, TextInput
+  Modal, TextInput, Dimensions
 } from "react-native"
 import Config from "../config"
 import deviceStorage from "../service/deviceStorage"
@@ -13,6 +13,7 @@ import Initial from "../State.js"
 import { observer, inject } from "mobx-react"
 import { IconButton, ActivityIndicator } from "react-native-paper"
 
+let width = Dimensions.get('window').width
 @inject("store")
 @observer
 export default class EditPassword extends React.Component {
@@ -217,7 +218,7 @@ let styles = StyleSheet.create({
     borderBottomWidth:0.5,  
     borderBottomColor:'#8CAD81',
     marginBottom: 10,
-    width:400,
+    width:width-25,
     height: 55, 
     color:'white', 
     alignSelf:'center'

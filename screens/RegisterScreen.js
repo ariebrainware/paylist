@@ -200,9 +200,15 @@ export default class RegisterScreen extends React.Component {
             mode="contained"
             onPress={() => {
               if (this.state.name === "" && this.state.email === "" && this.state.username === "" && this.state.password === "" && this.state.ConfirmPassword === ""){
-                alert("fields can not be null")
+                alert("fields can not be null!")
               } else if (this.state.name === "" ||this.state.email === "" || this.state.username === "" ||this.state.password === "" || this.state.ConfirmPassword === ""){
                 alert("please fill the blank fields!")
+              } else if (this.state.name.length < 4){
+                alert('name is too short!')
+              } else if (this.state.username.length < 4){
+                alert('username is too short!')
+              } else if (this.state.password.length < 6){
+                alert('password minimal 6 characters')
               } else if (this.state.password != this.state.ConfirmPassword) {
                 alert("password and confirm password doesn't match! ")
               } else {
