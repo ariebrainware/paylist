@@ -1,9 +1,18 @@
 # OSX
-#
 .DS_Store
 
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -22,48 +31,20 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-# Android/IntelliJ
-#
-build/
+# Android/IJ
 .idea
 .gradle
 local.properties
-*.iml
 
 # node.js
-#
 node_modules/
-npm-debug.*
-yarn-error.log
+npm-debug.log
 
 # BUCK
 buck-out/
 \.buckd/
+android/app/libs
+android/keystores/debug.keystore
 *.keystore
-
-# iOS
-ios/Pods
-
-# Bundle artifact
-*.jsbundle
-android/app/src/main/assets/index.android.bundle
-android/app/src/main/assets/index.android.bundle.meta
-
-# Misc
-#
-.env
-.lvimrc
-.nvmrc
-.vscode
-
-.expo/*
-
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
-web-report/
-archieve-apk/
+android/archieve
+android/.gradle/*
