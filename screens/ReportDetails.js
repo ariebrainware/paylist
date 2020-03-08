@@ -94,9 +94,6 @@ export default class ReportDetails extends React.Component {
   }
 
   render() {
-    let { navigation } = this.props
-    console.log('bulan', navigation.getParam("month",""))
-    console.log('tahun', navigation.getParam("year",""))
     let { checked } = this.state
     let paid = <Text style={{color:'#8CAD81'}}>PAID</Text>
     let message
@@ -137,7 +134,6 @@ export default class ReportDetails extends React.Component {
       })    
     return (
       <View style={styles.container}>
-        <View>
             <Card style={{ backgroundColor: "#2e2d2d",shadowColor:'transparent',elevation:0}}>
               <Card.Content
                 style={{ backgroundColor: "#2e2d2d", alignSelf:'center' }}
@@ -153,20 +149,11 @@ export default class ReportDetails extends React.Component {
                 </Text>
               </Card.Content>
             </Card>
-          </View>
-        <ScrollView>
-          {/* <PieChart
-            data={data}
-            width={width}
-            height={height/2}
-            chartConfig={chartConfig}
-            accessor="population"
-            backgroundColor="transparent"
-            paddingLeft="65"
-            absolute={false}
-          /> */}
+            {this.state.tes == "" ? <View style={{flex:1,backgroundColor:'transparent',justifyContent:'center', alignItems:'center'}}>
+              <Text style={{fontSize:17,color:'white'}}>Opps! You have No Paid Paylist</Text>
+            </View> : <ScrollView>
           {data}
-        </ScrollView>
+        </ScrollView>}
       </View>
     )
   }

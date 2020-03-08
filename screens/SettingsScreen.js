@@ -72,15 +72,19 @@ export default class SettingsScreen extends React.Component {
         borderBottomWidth: 0.5,
         borderBottomColor: "#70706e"
       },
-      headerRight: (
-        <Appbar.Action
-          icon="menu"
-          color="#fefefe"
-          onPress={() => params.showMore()}
-        ></Appbar.Action>
-      )
+      // headerRight: (
+      //   <Appbar.Action
+      //     icon="menu"
+      //     color="#fefefe"
+      //     onPress={() => params.showMore()}
+      //   ></Appbar.Action>
+      // )
     }
   }
+  Capitalize(str){
+    return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
   async _GetDataUser() {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     let header = {
@@ -216,7 +220,6 @@ export default class SettingsScreen extends React.Component {
   }
 
   render() {
-    console.log('data', this.state.data)
     if (this.props.store.loadingSetting) {
       return (
         <View style={{ padding: 20 }}>
@@ -229,7 +232,7 @@ export default class SettingsScreen extends React.Component {
         <Card key={i} style={{ backgroundColor: "#2e2d2d" }}>
           <Card style={styles.username}>
             <Card.Content style={styles.content}>
-              <Title style={{color:'#fefefe', fontWeight:'bold'}}>{val.name}</Title>
+              <Title style={{color:'#fefefe', fontWeight:'bold'}}>{this.Capitalize(val.name)}</Title>
               <Paragraph style={{color:'#fefefe', fontWeight:'bold'}}>{val.email}</Paragraph>
             </Card.Content>
           </Card>

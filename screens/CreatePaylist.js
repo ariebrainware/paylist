@@ -22,6 +22,7 @@ export default class CreatePaylist extends React.Component {
     }
     this._CreatePaylist = this._CreatePaylist.bind(this)
     this.onBackButtonPressed = this.onBackButtonPressed.bind(this)
+    this.checkData = this.checkData.bind(this)
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -35,11 +36,14 @@ export default class CreatePaylist extends React.Component {
           justifyContent: 'center',
           right: 5,
         }}
-          onPress={() => params.handleCreate()}>
+          onPress={() =>params.handleCreate()}>
           <IconButton
               icon='check' size={28} color='#8CAD81'/>
         </TouchableOpacity>
     }
+  }
+  checkData(){
+   
   }
   componentDidMount(){
     BackHandler.addEventListener('hardwareBackPress',this.onBackButtonPressed)
@@ -52,7 +56,9 @@ export default class CreatePaylist extends React.Component {
     return true
   }
   UNSAFE_componentWillMount() {
-    this.props.navigation.setParams({ handleCreate: this._CreatePaylist })
+    this.props.navigation.setParams({ 
+      handleCreate: this._CreatePaylist,
+     })
   }
 
   setDate(newDate){
@@ -68,18 +74,6 @@ export default class CreatePaylist extends React.Component {
   async _CreatePaylist() {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
     // If the form is valid...
-    if (this.state.name && this.state.amount === ""){
-      alert("field name and amount can't be null")
-      return
-    }
-    if (this.state.name === ""){
-      alert("name can't be null")
-      return
-    }
-    if (this.state.amount === "" || this.state.amount === 0){
-      alert("amount can't be null or zero")
-      return
-    }
     let data = {
       name : this.state.name,
       amount: this.state.amount,
@@ -99,6 +93,13 @@ export default class CreatePaylist extends React.Component {
         'Authorization': DEMO_TOKEN
       }
       //sent post request
+      if (data.name == "" && data.amount === ""){
+        alert("field name and amount can't be null")
+      } else if (data.name == ""){
+        alert("name can't be null")
+      } else if (data.amount === "" || data.amount ==0){
+        alert("amount can't be null or zero")
+      } else {
       fetch(`${Config.PaylistApiURL}/paylist`, {
         method: 'POST',
         headers: header,
@@ -133,7 +134,7 @@ export default class CreatePaylist extends React.Component {
         .catch(err => {
           console.error(err)
         })
-        .done()
+        .done()}
   }
 
   render() {

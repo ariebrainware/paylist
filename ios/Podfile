@@ -41,4 +41,6 @@ target 'Paylist' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
+  pod 'react-native-onesignal', :path => '../node_modules/react-native-onesignal'
+
 end

@@ -40,12 +40,6 @@ export default class LoginScreen extends React.Component {
       }
     }
   }
-
-  componentDidMount() {
-    this.loadInitialState().done()
-    this.props.store.getLoading()
-  }
-
   async loadInitialState() {
     let token = await deviceStorage.loadJWT("token")
     if (token != null) {
@@ -54,6 +48,11 @@ export default class LoginScreen extends React.Component {
       this.props.navigation.navigate("Login")
     }
   }
+  componentDidMount() {
+    this.loadInitialState().done()
+    this.props.store.getLoading()
+  }
+
   _onChange = value => {
     this.setState({
       value
