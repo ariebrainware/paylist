@@ -8,21 +8,34 @@ import {
   ScrollView,
   Button
 } from "react-native"
-import {BarChart } from "react-native-chart-kit"
+import {LineChart } from "react-native-chart-kit"
 import { observer, inject } from "mobx-react"
+import FlashMessage, {showMessage, hideMessage} from 'react-native-flash-message'
 import { ActivityIndicator, Card } from "react-native-paper"
 import { Svg } from "react-native-svg"
 
 let width = Dimensions.get("window").width
 let height = Dimensions.get("window").height
 
+const data = {
+  labels: ["January", "February", "March", "April", "May", "June"],
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43],
+      color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+      strokeWidth: 2 // optional
+    }
+  ],
+  legend: ["Rainy Days", "Sunny Days", "Snowy Days"] // optional
+};
 @inject("store")
 @observer
 export default class Graphic extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: [],
+      income: [],
+      outcome: [],
       min: 0,
       max: 0,
       tahun: [],
@@ -39,6 +52,18 @@ export default class Graphic extends React.Component {
       oct: 0,
       nov: 0,
       dec: 0,
+      janu: 0,
+      febu: 0,
+      marc: 0,
+      apri: 0,
+      mayy: 0,
+      june: 0,
+      july: 0,
+      augu: 0,
+      sept: 0,
+      octo: 0,
+      nove: 0,
+      dece: 0,
       loading: true
     }
     this.GetData = this.GetData.bind(this)
@@ -59,7 +84,8 @@ export default class Graphic extends React.Component {
       this.setState({ loading: false })
     }, 1500)
     let { navigation } = this.props
-    this.focusListener = navigation.addListener("didFocus", () => {
+    this.focusListener = navigation.addListener("willFocus", () => {
+      // this.setState({value: 0})
       setTimeout(() => {
         this.GetYear()
       }, 200)
@@ -69,7 +95,7 @@ export default class Graphic extends React.Component {
   GetYear() {
     let tes = []
     tes = this.props.store.paylist
-    if (this.props.store.paylist.length > 0) {
+    if (this.props.store.paylist.length > 0 && this.props.store.income.length > 0 ) {
       let min = new Date(tes[0].CreatedAt).getFullYear()
       let max = new Date(tes[tes.length - 1].CreatedAt).getFullYear()
       this.setState({
@@ -88,124 +114,236 @@ export default class Graphic extends React.Component {
       this.setState({ tahun: [] })
     }
   }
+
   GetData() {
-    this.setState({
-      jan: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 0 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      feb: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 1 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      mar: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 2 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      apr: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 3 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      may: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 4 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      jun: this.props.store.paylist
-        .filter(
-          ({CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 5 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      jul: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 6 && completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      aug: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 7 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      sep: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 8 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      oct: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 9 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      nov: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 10 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-      dec: this.props.store.paylist
-        .filter(
-          ({ CreatedAt, completed }) =>
-            new Date(CreatedAt).getFullYear() == this.state.value &&
-            new Date(CreatedAt).getMonth() == 11 &&
-            completed == true
-        )
-        .reduce((sum, i) => (total = sum + i.amount), 0),
-    }, ()=> {
-      setTimeout(()=>{
+    if (this.props.store.income.length > 0 && this.props.store.paylist.length > 0) {
+      this.setState({
+        jan: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 0 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        feb: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 1 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        mar: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 2 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        apr: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 3 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        may: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 4 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        jun: this.props.store.paylist
+          .filter(
+            ({CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 5 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        jul: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 6 && completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        aug: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 7 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        sep: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 8 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        oct: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 9 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        nov: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 10 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+        dec: this.props.store.paylist
+          .filter(
+            ({ CreatedAt, completed }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 11 &&
+              completed == true
+          )
+          .reduce((sum, i) => (total = sum + i.amount), 0),
+      })
+      this.setState({
+        janu: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 0
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        febu: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 1
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        marc: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 2
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        apri: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 3
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        mayy: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 4
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        june: this.props.store.income
+          .filter(
+            ({CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 5
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        july: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 6
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        augu: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 7
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        sept: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 8
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        octo: this.props.store.income
+          .filter(
+            ({ CreatedAt }) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 9
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        nove: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 10
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+        dece: this.props.store.income
+          .filter(
+            ({ CreatedAt}) =>
+              new Date(CreatedAt).getFullYear() == this.state.value &&
+              new Date(CreatedAt).getMonth() == 11
+          )
+          .reduce((sum, i) => (total = sum + i.Income), 0),
+      },()=> {
+        setTimeout(()=>{
+          this.setState({
+            loading:false,
+            outcome: [
+              this.state.jan,
+              this.state.feb,
+              this.state.mar,
+              this.state.apr,
+              this.state.may,
+              this.state.jun,
+              this.state.jul,
+              this.state.aug,
+              this.state.sep,
+              this.state.oct,
+              this.state.nov,
+              this.state.dec
+            ],
+            income: [
+              this.state.janu,
+              this.state.febu,
+              this.state.marc,
+              this.state.apri,
+              this.state.mayy,
+              this.state.june,
+              this.state.july,
+              this.state.augu,
+              this.state.sept,
+              this.state.octo,
+              this.state.nove,
+              this.state.dece
+            ]
+          })
+        },1000)
+      })     
+    } 
+    else {
+      setTimeout(() => {
         this.setState({
-          loading:false,
-          data: [
-            this.state.jan,
-            this.state.feb,
-            this.state.mar,
-            this.state.apr,
-            this.state.may,
-            this.state.jun,
-            this.state.jul,
-            this.state.aug,
-            this.state.sep,
-            this.state.oct,
-            this.state.nov,
-            this.state.dec
-          ]
+          loading: false,
+          // outcome: [2000000,2500000,3000000,3000000,2400000,3500000,2800000,2950000,3000000,5000000,2500000,2200000],
+          // income: [3700000,2800000,2900000,1000000,3500000,4000000,4000000,4250000,4000000,3500000,4000000,4000000]
         })
       },1000)
-    })
+    }
   }
 
   renderPicker() {
@@ -241,66 +379,84 @@ export default class Graphic extends React.Component {
   renderGraph() {
     return (
       <Svg>
-        <BarChart
+        <LineChart
           data={{
             labels: [
-              "Jan",
-              "Feb",
-              "Mar",
-              "Apr",
-              "May",
-              "Jun",
-              "Jul",
-              "Aug",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dec"
+              "Jan","Feb", "March","April",
+              "May","June","July","Aug",
+              "Sep","Oct","Nov","Dec"
             ],
             datasets: [
               {
-                data: this.state.data
-              }
-            ]
+                data: this.state.outcome,
+                color: (opacity = 1) => `rgba(247, 40, 40, ${opacity})`, // optional
+                strokeWidth: 4 // optional
+              },
+              {
+                data: this.state.income, 
+                color: (opacity = 1) => `rgba(204, 188, 88, ${opacity})`, // optional
+                strokeWidth: 4, // optional
+                // stroke: 'red'
+              },
+          ],
+          legend: ["Outcome", "Income"] // optional}
+        }}
+          width={width+200}
+          height={height/2}
+          fromZero
+          // yAxisLabel="Rp"
+          // yAxisSuffix="k"
+          style={{
+            borderRadius: 20,
           }}
-          horizontalLabelRotation={-60}
-          verticalLabelRotation={20}
-          width={800} // from react-native
-          height={height / 2}
-          yAxisLabel="Rp"
-          //yAxisSuffix="k"
+          horizontalLabelRotation={-45}
+          onDataPointClick={({ value, label, getColor }) =>
+          showMessage({
+            message: `Rp: ${value}`,
+            description: '',
+            backgroundColor: getColor(1)
+          })
+        }
           chartConfig={{
-            //backgroundColor: "white",
+            backgroundColor: "white",
             backgroundGradientFrom: "rgb(140, 173, 129)",
             backgroundGradientFromOpacity: 1,
             backgroundGradientTo: "white",
+            barPercentage: 0.5,
             backgroundGradientToOpacity: 0,
-            decimalPlaces: 0, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(235, 232, 52,${opacity})`,
+            propsForBackgroundLines: {
+              strokeDasharray: "4", // solid background lines with no dashes
+              strokeWidth: .25,
+              stroke: `rgba(0, 0, 0, .50)`,
+          },
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(64, 62, 59,${opacity})`,
             labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
             style: {
-              borderRadius: 0
+              borderRadius: 14
             },
             propsForDots: {
-              r: "6",
-              strokeWidth: "12",
-              stroke: "#ffa726"
+              r: "9",
+              // strokeWidth: "",
+              // stroke: "#fff", // dots colors
+              color: (opacity = 1) => `rgba(64, 62, 59,${opacity})`,
             }
           }}
-          bezier
-          style={{
-            marginVertical: 20,
-            borderRadius: 0
-          }}
-          fromZero={true}
+          // bezier
         />
       </Svg>
     )
   }
   render() {
-    console.log('tes', this.state.value)
     return (
       <View style={styles.container}>
+        <FlashMessage 
+          position='top'
+          // hideStatusBar={true}
+          floating={true}
+          duration={1500}
+          style={styles.message}
+        />
         {this.state.loading ? (
           <View>
             <ActivityIndicator
@@ -316,13 +472,23 @@ export default class Graphic extends React.Component {
               shadowColor: "transparent",
               elevation: 0
             }}
-          ><View style={{alignSelf:'center'}}>
+          >
+          <View style={{alignSelf:'center', zIndex: -1}}>
             <Text style={{fontSize:14, marginBottom:-15,color:'white', alignSelf:'flex-start', fontWeight:'700'}}>Select Year</Text>
             {this.renderPicker()}</View>
-            {this.state.value != "" ? <ScrollView horizontal={true}>{this.renderGraph()}</ScrollView> : null}
-            <Card.Content
-              style={{ backgroundColor: "#2e2d2d", alignSelf: "center" }}
-            >
+            {this.state.value != "" ?
+              (
+                <ScrollView horizontal={true}>
+                  {this.renderGraph()}
+                </ScrollView>
+              ) 
+              : (
+                null
+                )
+              }
+              <Card.Content
+                style={{ backgroundColor: "#2e2d2d", alignSelf: "center" }}
+              >
               <Text
                 style={{ fontWeight: "bold", fontSize: 15, color: "#8CAD81" }}
               >
@@ -346,7 +512,7 @@ export default class Graphic extends React.Component {
 }
 
 Graphic.navigationOptions = {
-  title: "BAR CHART",
+  title: "LINE CHART",
   headerTintColor: "#fff",
   headerStyle: {
     backgroundColor: "#2e2d2d",
@@ -360,6 +526,12 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#2e2d2d",
-    justifyContent: "center"
+    justifyContent: "center",
+    paddingTop: height/8
+  },
+  message: {
+    height: height/6,
+    // position: 'absolute',
+    // zIndex: 9999999
   }
 })
