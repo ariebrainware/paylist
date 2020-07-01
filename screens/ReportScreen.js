@@ -41,7 +41,7 @@ GetGridViewItem (item) {
 componentDidMount(){
   this.GetYear()
   let { navigation } = this.props
-    this.focusListener = navigation.addListener("didFocus", () => {
+    this.focusListener = navigation.addListener("willFocus", () => {
       setTimeout(() => {
         this.GetYear()
       }, 200)
@@ -68,8 +68,6 @@ componentWillUnmount() {
       }else {
         console.log("object already exists")
       }
-      //if (this.state.tahun.indexOf(this.state.tahun[i]) < 0) this.state.tahun.push(this.state[i])
-      //this.state.tahun.push(i)
     }
   } else {
     this.setState({tahun:[]})
@@ -80,25 +78,32 @@ componentWillUnmount() {
     return (
     <View style={styles.MainContainer}>
       {
-       this.props.store.paylist.filter(({completed})=> completed == true) == "" ? <View style={{paddingTop:25,alignItems:'center'}}>
-            <Image style={{width:60, height:60}} source={require('../assets/images/icon-list.png')} size={50}/>
-            <Text style={{fontSize:16,color:'gray'}}>This Report Will Show After You Create Paid Paylist</Text>
-            <Text style={{fontSize:16,color:'gray'}}>Go and make one!</Text>
-          </View> :(<Card style={{backgroundColor:'#2e2d2d',shadowColor:'transparent',elevation:0, marginBottom:20}}>
-      <Card.Content style={{backgroundColor:"#2e2d2d",alignSelf:'center', borderBottomWidth:0.5, borderBottomColor:'#8CAD81'}}>
-            <Title style={{fontSize:14,color:'white', marginBottom:7, marginTop:3}}>Check Your Monthly Pay-List Report Here</Title>
-        </Card.Content>
-      <View style={{backgroundColor:'#2e2d2d', width:width * 3 /4,marginTop:10, alignSelf:'center'}}>
-        <Text style={{marginBottom:-7,fontSize:14, color:'white', alignSelf:'flex-start', fontWeight:'700'}}>Select Year</Text>
-      <Picker selectedValue={this.state.value} style={{color:'#fefe', marginBottom:10}}
-      onValueChange={(val) => this.setState({value:val})}>
-        {
-          this.state.tahun.map((val,i)=>{
-            return( <Picker.Item key={i} color='black' label={String(val)} value={val} />)
-          })
-        }
-      </Picker>
-      </View>
+       this.props.store.paylist.filter(({completed})=> completed == true) == "" ? 
+       (
+        <View style={{paddingTop:25,alignItems:'center'}}>
+          <Image style={{width:60, height:60}} source={require('../assets/images/icon-list.png')} size={50}/>
+          <Text style={{fontSize:16,color:'gray'}}>This Report Will Show After You Create Paid Paylist</Text>
+          <Text style={{fontSize:16,color:'gray'}}>Go and make one!</Text>
+        </View>
+        ) : (
+          <Card style={{backgroundColor:'#2e2d2d',shadowColor:'transparent',elevation:0, marginBottom:20}}>
+            <Card.Content style={{backgroundColor:"#2e2d2d",alignSelf:'center', borderBottomWidth:0.5, borderBottomColor:'#8CAD81'}}>
+              <Title style={{fontSize:14,color:'white', marginBottom:7, marginTop:3}}>Check Your Monthly Pay-List Report Here</Title>
+              </Card.Content>
+            <View style={{backgroundColor:'#2e2d2d', width:width * 3 /4,marginTop:10, alignSelf:'center'}}>
+              <Text style={{marginBottom:-7,fontSize:14, color:'white', alignSelf:'flex-start', fontWeight:'700'}}>Select Year</Text>
+              <Picker
+                selectedValue={this.state.value} 
+                style={{color:'#fefe', marginBottom:10}}
+                onValueChange={(val) => this.setState({value:val})}
+              >
+                {
+                  this.state.tahun.map((val,i)=>{
+                    return( <Picker.Item key={i} color='black' label={String(val)} value={val} />)
+                  })
+                }
+              </Picker>
+            </View>
      
         <FlatList style={{}} contentContainerStyle={{paddingBottom:10}}
          data={ this.state.GridViewItems }

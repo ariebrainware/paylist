@@ -94,7 +94,10 @@ export default class EditPassword extends React.Component {
       }
       payload = payload.join("&")
       //sent post request
-      if (data.ConfirmPassword !== data.NewPassword) {
+      console.log(data.NewPassword.length)
+      if (data.NewPassword.length < 6) {
+        alert("password minimal 6 characters")
+      } else if (data.ConfirmPassword !== data.NewPassword) {
         alert("confirm password does'n match with new password")
       } else {
         fetch(`${Config.PaylistApiURL}/editpassword/` + id, {

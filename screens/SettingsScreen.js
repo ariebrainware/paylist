@@ -5,7 +5,7 @@ import {
   StyleSheet,
   RefreshControl,
   ScrollView,
-  Text, Dimensions, KeyboardAvoidingView
+  Text, Dimensions, KeyboardAvoidingView, Alert, Modal
 } from "react-native"
 import deviceStorage from "../service/deviceStorage"
 import {
@@ -15,8 +15,10 @@ import {
   Paragraph,
   Appbar,
   ActivityIndicator,
-  TextInput
+  TextInput,
+  IconButton
 } from "react-native-paper"
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Config from "../config"
 import { observer, inject } from "mobx-react"
 import {
@@ -40,10 +42,12 @@ export default class SettingsScreen extends React.Component {
       name: "",
       balance: "",
       id:'',
-      data: []
+      data: [],
     }
     this._GetDataUser = this._GetDataUser.bind(this)
     this._UpdateUser = this._UpdateUser.bind(this)
+    this._GetDataIncome = this._GetDataIncome.bind(this)
+    this._DeleteIncome = this._DeleteIncome.bind(this)
   }
 
   currencyFormat(num) {
@@ -55,10 +59,10 @@ export default class SettingsScreen extends React.Component {
     )
   }
 
-  _onMore = () => {
-    //Props to open/close the drawer
-    this.props.navigation.dispatch(DrawerActions.openDrawer())
-  }
+  // _onMore = () => {
+  //   //Props to open/close the drawer
+  //   this.props.navigation.dispatch(DrawerActions.openDrawer())
+  // }
 
   static navigationOptions = ({ navigation }) => {
     let params = navigation.state.params
@@ -72,18 +76,136 @@ export default class SettingsScreen extends React.Component {
         borderBottomWidth: 0.5,
         borderBottomColor: "#70706e"
       },
-      // headerRight: (
-      //   <Appbar.Action
-      //     icon="menu"
-      //     color="#fefefe"
-      //     onPress={() => params.showMore()}
-      //   ></Appbar.Action>
-      // )
     }
   }
   Capitalize(str){
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  UNSAFE_componentWillMount() {
+    let { navigation } = this.props
+    this.focusListener = navigation.addListener("didFocus", () => {
+    this._GetDataUser()
+    this.props.store.data.map((item) => {
+      return (
+        this.setState({
+          id : item.ID,
+          email: item.email,
+          name: item.name,
+          balance: item.balance
+      })
+      )
+    })
+  })
+    // this.props.navigation.setParams({ showMore: this._onMore.bind(this) })
+  }
+
+  Confirm(item) {
+    Alert.alert(
+      "Confirm",
+      "Do you want to delete this paylist?",
+      [
+        { text: "Delete", onPress: () => this._DeleteIncome(item) },
+        { text: "Cancel", style: "cancel" }
+      ],
+      { cancelable: true }
+    )
+  }
+  componentDidMount() {
+    let { navigation } = this.props
+    this.focusListener = navigation.addListener("didFocus", () => {
+      setTimeout(() => {
+        this._GetDataIncome()
+        this._GetDataUser()
+      }, 1000)
+    })
+    loc(this)
+  }
+
+  async _GetDataIncome(){
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let header = {
+      Authorization: DEMO_TOKEN
     }
+    fetch(`${Config.PaylistApiURL}/income`, {
+      method: "GET",
+      headers:header
+    })
+    .then(res =>{
+      let resStatus = res.status
+      console.log(resStatus)
+      return res.json()
+    })
+    .then(ress =>{
+      switch(resStatus){
+          case 200:
+            let dataString = JSON.stringify(ress.data)
+            let dataParse = JSON.parse(dataString)
+            console.log('dataa', dataParse)
+            this.props.store.income = dataParse
+            this.props.store.getLoadingSetting()
+          break
+          case 500:
+            alert("token expired")
+            setTimeout(() => {
+              this.props.navigation.navigate("Login")
+            }, 2000)
+          break
+          case 401:
+            alert("Unauthorized")
+            setTimeout(() => {
+              this.props.navigation.navigate("Login")
+            }, 2000)
+          break
+      }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    .done()
+  }
+
+  async _DeleteIncome(id){
+    let DEMO_TOKEN = await deviceStorage.loadJWT("token")
+    let header = {
+      Authorization: DEMO_TOKEN
+    }
+    fetch(`${Config.PaylistApiURL}/income/` + id,{
+      method: "DELETE",
+      headers: header
+    })
+    .then(res=>{
+      resStatus = res.status
+      return res.json()
+    })
+    .then(res => {
+      switch (resStatus) {
+        case 200:
+          this.props.store.setLoadingSetting()
+          setTimeout(() => {
+            alert("Delete Income Success")
+            this._GetDataIncome()
+            this._GetDataUser()
+            this.props.store.getLoadingSetting()
+          }, 1500)
+          break
+        case 404:
+          alert("No ID Found")
+          break
+        case 400:
+          alert("Specify Income ID")
+          break
+        case 500:
+          alert("Token Expired")
+          this.props.navigation.navigate("Login")
+          break
+        default:
+          alert("Something wrong, please try again later!")
+          break
+      }
+    })
+    .done()
+  }
 
   async _GetDataUser() {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
@@ -122,33 +244,7 @@ export default class SettingsScreen extends React.Component {
         console.log(error)
       })
   }
-  UNSAFE_componentWillMount() {
-    let { navigation } = this.props
-    this.focusListener = navigation.addListener("didFocus", () => {
-    this._GetDataUser()
-    this.props.store.data.map((item) => {
-      return (
-        this.setState({
-          id : item.ID,
-          email: item.email,
-          name: item.name,
-          balance: item.balance
-      })
-      )
-    })
-  })
-    this.props.navigation.setParams({ showMore: this._onMore.bind(this) })
-  }
 
-  // componentDidMount() {
-  //   let { navigation } = this.props
-  //   this.focusListener = navigation.addListener("didFocus", () => {
-  //     setTimeout(() => {
-  //       this._GetDataUser()
-  //     }, 2000)
-  //   })
-  //   loc(this)
-  // }
   async _UpdateUser(id) {
     let DEMO_TOKEN = await deviceStorage.loadJWT("token")
        // If the form is valid...
@@ -208,18 +304,24 @@ export default class SettingsScreen extends React.Component {
   }
   LoadState() {
     this.setState({
-      render: !this.state.render
+      render: !this.state.render,
     })
   }
+  validateEmail = email => {
+    var re = /^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
   onRefresh() {
-    // this.props.store.setLoadingSetting()
-    // setTimeout(() => {
-    //   this._GetDataUser()
-    // }, 1000)
+    this.props.store.setLoadingSetting()
+    this._GetDataIncome()
+    setTimeout(() => {
+      this._GetDataUser()
+    }, 500)
     this.setState({render : false})
   }
 
   render() {
+    console.log(this.props.store.income.length)
     if (this.props.store.loadingSetting) {
       return (
         <View style={{ padding: 20 }}>
@@ -260,7 +362,6 @@ export default class SettingsScreen extends React.Component {
     })
     return (
       <KeyboardAvoidingView behavior="height" style={styles.container}>
-      <View>
         <ScrollView
           contentContainerStyle={styles.contentContainer}
           refreshControl={
@@ -272,7 +373,7 @@ export default class SettingsScreen extends React.Component {
           }
         >
           {user}
-          <View style={{shadowColor:'transparent',elevation:0 }}>
+          <View style={{flex:2,shadowColor:'transparent',elevation:0}}>
               {this.state.render ? (
                 <Card style={styles.editForm}>
                   <TextInput
@@ -301,29 +402,63 @@ export default class SettingsScreen extends React.Component {
                     keyboardType="email-address"
                     onChangeText={text => this.setState({ email: text })}
                   />
-                  <TextInput theme={{
-                      colors:{
-                      text:'#ccbc58',
-                      placeholder:'#b5b3b3',
-                      primary:'#ccbc58'
-                    }
-                    }}
-                    label="Balance"
-                    value={String(this.state.balance)}
-                    style={styles.textInput}
-                   
-                    keyboardType="numeric"
-                    onChangeText={text => this.setState({ balance: text })}
-                  />
                   <Button style={styles.button} mode="contained"
-                    onPress={() => this._UpdateUser(this.state.id)}>
+                    onPress={() => {
+                      if (!this.validateEmail(this.state.email)){
+                        Alert.alert('Error', 'Please insert valid email')
+                      } else {
+                      this._UpdateUser(this.state.id)
+                      }
+                    }}
+                  >
                     <Text>Save</Text>
                   </Button>
                 </Card>
               ) : null}
           </View>
+          {
+            this.props.store.income !== 'undefined' && this.props.store.income.length > 0 ? (
+            <View style={{flex:4}}>
+              {
+                this.props.store.income.map((val,key) => {
+                let date =  new Date(val.CreatedAt)
+                return (
+                <Card key={key} style={{width: width-30, height: height/7, backgroundColor:'rgba(255,255,255,0.9)', alignSelf:'center', marginTop: hp(1)}}>
+                  <Card.Content style={{flexDirection:'row', justifyContent: 'space-between'}}>
+                    <Text style={{fontSize:18, fontWeight:'bold'}}>Income</Text>
+                    <Text>{this.currencyFormat(val.Income)}</Text>
+                  </Card.Content>
+                  <Card.Content>
+                    <Paragraph>{date.toDateString()}</Paragraph>
+                  </Card.Content>
+                  <Card.Actions style={{alignSelf: 'flex-end'}}>
+                    <Button
+                      icon="delete"
+                      onPress={this.Confirm.bind(this, val.ID)}
+                      color='rgba(255, 16, 0,0.8)'
+                    >Delete</Button>
+                    <Button
+                      icon="edit"
+                      color='black'
+                      onPress={() => this.props.navigation.navigate('EditInc', {
+                        income: JSON.stringify(val.Income),
+                        id: JSON.stringify(val.ID)
+                      })}
+                    >edit</Button>
+                  </Card.Actions>
+                </Card>
+              )
+            })
+          }
+          </View>
+          ): (
+            <View style={{ paddingTop: 25, backgroundColor: 'transparent', alignItems: 'center' }}>
+              <MaterialIcon name='clipboard-text-outline' size={50} color={'gray'} />
+              <Text style={{ fontSize: 16, color: 'gray' }}>Opps! You have no adding income</Text>
+            </View>
+          )}
         </ScrollView>
-      </View></KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     )
   }
 }
@@ -368,7 +503,6 @@ let styles = StyleSheet.create({
     padding: 3,
     borderRadius: 15,
     textAlign: "center",
-    marginBottom: 10,
     backgroundColor: "#8CAD81",
     width:wp(33),
     justifyContent:'center',
@@ -377,9 +511,7 @@ let styles = StyleSheet.create({
     },
     editForm:{
       backgroundColor:'#2e2d2d',
-      flex: 1, 
-      width: wp("98%"),
-      height:height / 2, 
+      width: wp("98%"), 
       alignSelf: "center",
       justifyContent:'center',
       shadowColor:'transparent', 
