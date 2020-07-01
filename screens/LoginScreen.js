@@ -103,7 +103,7 @@ export default class LoginScreen extends React.Component {
               alert("Login Success")
               this.props.navigation.navigate("Main")
               this.props.store.getLoading()
-            }, 2000)
+            }, 1000)
             this.clearForm()
             break
           case 404:
@@ -154,7 +154,9 @@ export default class LoginScreen extends React.Component {
               borderRadius: 15,
               marginBottom: 10,
               width: (width * 4) / 5,
-              height: 55, paddingLeft:15,color:'white'
+              height: 55, 
+              paddingLeft:15,
+              color:'white'
             }}
             placeholder={"username"}
             autoCorrect={false}
@@ -190,10 +192,7 @@ export default class LoginScreen extends React.Component {
             onPress={() => {
               if (this.state.username === "" && this.state.password === "") {
                 alert("please provide username and password")
-              } else if (
-                this.state.username === "" ||
-                this.state.password === ""
-              ) {
+              } else if (this.state.username === "" || this.state.password === "") {
                 alert("username and password can not be null!")
               } else {
                 this._handleLogin()
