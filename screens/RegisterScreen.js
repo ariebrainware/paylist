@@ -9,11 +9,13 @@ import {
   Modal,
   TextInput,
   Dimensions,
-  Image
+  Image,
+  Alert
 } from "react-native"
 import Config from "../config"
 import { inject, observer } from "mobx-react"
 import { ActivityIndicator, IconButton, Button } from "react-native-paper"
+import { responsiveWidth, responsiveHeight } from "react-native-responsive-dimensions"
 let width = Dimensions.get("window").width
 let height = Dimensions.get("window").height
 
@@ -27,7 +29,8 @@ export default class RegisterScreen extends React.Component {
       email: "",
       username: "",
       password: "",
-      ConfirmPassword: ""
+      ConfirmPassword: "",
+      valid: false
     }
     this.props.navigation.setParams({ handleSignUp: this._handleAdd })
   }
@@ -67,6 +70,11 @@ export default class RegisterScreen extends React.Component {
     })
   }
 
+  validateEmail = email => {
+    var re = /^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  }
+
   _handleAdd = () => {
     //IF the form valid ..
     let data = {
@@ -98,8 +106,10 @@ export default class RegisterScreen extends React.Component {
           return res.json()
         })
         .then(res => {
+          console.log(res)
           switch (resStatus) {
             case 200:
+              this.setState({valid: false})
               this.props.store.setLoading()
               setTimeout(() => {
                 alert("You may login now")
@@ -158,6 +168,15 @@ export default class RegisterScreen extends React.Component {
             blurOnSubmit={false}
             onChangeText={text => this.setState({ email: text })}
           />
+          {this.state.valid ? (
+          <Text
+            style={{
+              color: 'red',
+              fontSize: 12,
+              left: responsiveWidth(3),
+              bottom: responsiveHeight(1)
+            }}>please insert valid email</Text>
+          ) : null }
           <TextInput
             value={this.state.username}
             style={styles.textInput}
@@ -201,7 +220,7 @@ export default class RegisterScreen extends React.Component {
             onPress={() => {
               if (this.state.name === "" && this.state.email === "" && this.state.username === "" && this.state.password === "" && this.state.ConfirmPassword === ""){
                 alert("fields can not be null!")
-              } else if (this.state.name === "" ||this.state.email === "" || this.state.username === "" ||this.state.password === "" || this.state.ConfirmPassword === ""){
+              } else if (this.state.name === "" || this.state.email === "" || this.state.username === "" ||this.state.password === "" || this.state.ConfirmPassword === ""){
                 alert("please fill the blank fields!")
               } else if (this.state.name.length < 4){
                 alert('name is too short!')
@@ -211,6 +230,8 @@ export default class RegisterScreen extends React.Component {
                 alert('password minimal 6 characters')
               } else if (this.state.password != this.state.ConfirmPassword) {
                 alert("password and confirm password doesn't match! ")
+              } else if (!this.validateEmail(this.state.email)) {
+                this.setState({valid: true})
               } else {
                 this._handleAdd()
               }
