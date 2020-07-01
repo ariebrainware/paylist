@@ -7,6 +7,7 @@ import { createStackNavigator } from "react-navigation-stack"
 import { Platform, StatusBar } from "react-native"
 import CreatePaylist from "../screens/CreatePaylist"
 import UpdatePaylist from "../screens/UpdatePaylist"
+import EditInc from "../screens/EditIncome"
 import EditPassword from "../screens/EditPassword"
 import DrawerScreen from "../screens/Drawer"
 import About from "../screens/LinksScreen"
@@ -143,6 +144,24 @@ export default createAppContainer(
         screen: ReportDetails,
         navigationOptions: {
           title: "Report Detail",
+          headerTitleStyle: {
+            fontSize: 19,
+            textAlign: "center"
+          },
+          headerTintColor: "#fff",
+          headerStyle: {
+            backgroundColor: "#2e2d2d",
+            shadowColor: "transparent",
+            elevation: 0,
+            borderBottomWidth: 0.5,
+            borderBottomColor: "#70706e"
+          }
+        }
+      },
+      EditInc: {
+        screen: EditInc,
+        navigationOptions: {
+          title: "Edit Income",
           headerTitleStyle: {
             fontSize: 19,
             textAlign: "center"
